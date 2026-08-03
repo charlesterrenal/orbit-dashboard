@@ -144,7 +144,7 @@ const DockerWidget = () => {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: 'var(--text-subtle)' }}>
                           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.Image.split('@')[0].split(':')[0]}</span>
-                          <span style={{ textTransform: 'capitalize', fontWeight: '500', color: isRunning ? 'var(--accent-online)' : 'var(--text-muted)' }}>{c.State}</span>
+                          <span style={{ textTransform: 'capitalize', fontWeight: '500', color: isRunning ? 'var(--accent-online)' : 'var(--text-muted)' }}></span>
                         </div>
                       </div>
                     );

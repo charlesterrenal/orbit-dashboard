@@ -75,9 +75,10 @@ const TailscaleWidget = () => {
           <Network size={14} /> TAILSCALE NETWORK
         </h3>
         {!loading && (
-          <span className={`pill ${activeCount > 0 ? 'online' : 'unknown'}`} style={{ padding: '2px 8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: activeCount > 0 ? 'var(--accent-online)' : 'var(--text-subtle)', boxShadow: activeCount > 0 ? '0 0 8px var(--accent-online)' : 'none' }} />
             {activeCount} / {devices.length} active
-          </span>
+          </div>
         )}
       </div>
 
@@ -116,9 +117,21 @@ const TailscaleWidget = () => {
                     </div>
                   </div>
                   
-                  <span style={{ fontSize: '11px', color: isOnline ? 'var(--accent-online)' : 'var(--text-subtle)' }}>
-                    {isOnline ? 'online' : getTimeAgo(device.lastSeen)}
-                  </span>
+                  <div style={{ fontSize: '11px', color: isOnline ? 'var(--accent-online)' : 'var(--text-subtle)', display: 'flex', alignItems: 'center' }}>
+                    {isOnline ? (
+                      <div
+                        title="online"
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--accent-online)',
+                          boxShadow: '0 0 8px var(--accent-online)',
+                          flexShrink: 0
+                        }}
+                      />
+                    ) : getTimeAgo(device.lastSeen)}
+                  </div>
                 </div>
               );
             })}

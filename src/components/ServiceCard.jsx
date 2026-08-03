@@ -34,7 +34,7 @@ const UptimeDots = ({ beats }) => {
   if (!beats?.length) return null;
   return (
     <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '8px' }} title="Last 15 heartbeats">
-      {beats.slice(-15).map((b, i) => (
+      {beats.slice(-12).map((b, i) => (
         <div
           key={i}
           style={{
@@ -42,7 +42,7 @@ const UptimeDots = ({ beats }) => {
             height: '6px',
             borderRadius: '50%',
             backgroundColor: b === 1 ? 'var(--accent-online)' : 'var(--accent-offline)',
-            opacity: 0.5 + (i / 15) * 0.5,
+            opacity: 0.5 + (i / 12) * 0.5,
             flexShrink: 0,
           }}
         />
@@ -95,13 +95,18 @@ const ServiceCard = ({ service }) => {
             </PopoverMenu>
           </div>
 
-          {/* Status pill */}
-          <span
-            className={`pill ${liveStatus}`}
-            style={{ padding: '3px 8px', fontSize: '10px' }}
-          >
-            {liveStatus}
-          </span>
+          {/* Status Dot */}
+          <div
+            title={liveStatus}
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: liveStatus === 'online' ? 'var(--accent-online)' : liveStatus === 'offline' ? 'var(--accent-offline)' : 'var(--text-subtle)',
+              boxShadow: liveStatus === 'online' ? '0 0 8px var(--accent-online)' : 'none',
+              flexShrink: 0
+            }}
+          />
         </div>
       </div>
 
