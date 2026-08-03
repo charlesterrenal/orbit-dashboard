@@ -14,32 +14,34 @@ const Home = () => {
       <GreetingClock />
       <div className="home-grid">
         {/* Column 1 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <SystemStats />
-          <WeatherWidget />
+        <div className="home-col">
+          <div className="order-proxmox"><SystemStats /></div>
+          <div className="order-weather"><WeatherWidget /></div>
         </div>
         
         {/* Column 2 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <CalendarWidget />
+        <div className="home-col">
+          <div className="order-calendar"><CalendarWidget /></div>
         </div>
         
         {/* Column 3 */}
-        <div className="widget">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
-            <h3 className="widget-title" style={{ margin: 0 }}>OVERVIEW</h3>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            <ServicesSummaryWidget />
-            <DockerSummaryWidget />
-            <TailscaleSummaryWidget />
-            <JellyfinSummaryWidget />
+        <div className="home-col">
+          <div className="widget order-overview">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
+              <h3 className="widget-title" style={{ margin: 0 }}>OVERVIEW</h3>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <ServicesSummaryWidget />
+              <DockerSummaryWidget />
+              <TailscaleSummaryWidget />
+              <JellyfinSummaryWidget />
+            </div>
           </div>
         </div>
         
         {/* Column 4 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <GithubWidget />
+        <div className="home-col">
+          <div className="order-github"><GithubWidget /></div>
         </div>
       </div>
     </div>

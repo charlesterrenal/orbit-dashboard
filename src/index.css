@@ -168,6 +168,12 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 320px;
 }
 
+.home-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .col-left,
 .col-right {
   display: flex;
@@ -305,11 +311,21 @@ h1, h2, h3, h4, h5, h6 {
   }
   .home-grid {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
-  .home-grid > div {
+  .home-col {
+    display: contents;
+  }
+  .order-proxmox, .order-weather, .order-calendar, .order-overview, .order-github {
     width: 100%;
+    max-width: 320px;
+    margin-bottom: 16px;
   }
+  .order-proxmox { order: 1; }
+  .order-overview { order: 2; }
+  .order-weather { order: 3; }
+  .order-calendar { order: 4; }
+  .order-github { order: 5; }
   .services-grid-mobile {
     grid-template-columns: 1fr !important;
   }
