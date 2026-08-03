@@ -88,8 +88,8 @@
 }
 
 .sidebar-link.active {
-  background-color: color-mix(in srgb, var(--accent-primary) 15%, transparent);
-  color: var(--accent-primary);
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
 .sidebar-link.active::before {
@@ -100,7 +100,7 @@
   transform: translateY(-50%);
   width: 3px;
   height: 16px;
-  background-color: var(--accent-primary);
+  background-color: var(--text-primary);
   border-radius: 0 2px 2px 0;
 }
 

@@ -76,7 +76,7 @@ const TailscaleWidget = () => {
         </h3>
         {!loading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: activeCount > 0 ? 'var(--accent-online)' : 'var(--text-subtle)', boxShadow: activeCount > 0 ? '0 0 8px var(--accent-online)' : 'none' }} />
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: activeCount > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)', boxShadow: activeCount > 0 ? '0 0 8px var(--accent-dot)' : 'none' }} />
             {activeCount} / {devices.length} active
           </div>
         )}
@@ -117,7 +117,7 @@ const TailscaleWidget = () => {
                     </div>
                   </div>
                   
-                  <div style={{ fontSize: '11px', color: isOnline ? 'var(--accent-online)' : 'var(--text-subtle)', display: 'flex', alignItems: 'center' }}>
+                  <div style={{ fontSize: '11px', color: isOnline ? 'var(--accent-dot)' : 'var(--text-subtle)', display: 'flex', alignItems: 'center' }}>
                     {isOnline ? (
                       <div
                         title="online"
@@ -125,8 +125,8 @@ const TailscaleWidget = () => {
                           width: '8px',
                           height: '8px',
                           borderRadius: '50%',
-                          backgroundColor: 'var(--accent-online)',
-                          boxShadow: '0 0 8px var(--accent-online)',
+                          backgroundColor: 'var(--accent-dot)',
+                          boxShadow: '0 0 8px var(--accent-dot)',
                           flexShrink: 0
                         }}
                       />

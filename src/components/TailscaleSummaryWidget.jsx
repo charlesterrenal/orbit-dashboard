@@ -56,7 +56,7 @@ const TailscaleSummaryWidget = () => {
               {stats.active}<span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>/{stats.total}</span>
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: stats.active > 0 ? 'var(--accent-online)' : 'var(--text-subtle)', boxShadow: stats.active > 0 ? '0 0 8px var(--accent-online)' : 'none' }} />
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: stats.active > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)', boxShadow: stats.active > 0 ? '0 0 8px var(--accent-dot)' : 'none' }} />
               <span style={{ fontSize: '10px', color: 'var(--text-subtle)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 online
               </span>

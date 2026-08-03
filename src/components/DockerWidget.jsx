@@ -68,7 +68,7 @@ const DockerWidget = () => {
 
   const statusColor = (state) => {
     switch (state) {
-      case 'running': return 'var(--accent-online)';
+      case 'running': return 'var(--accent-dot)';
       case 'exited': return 'var(--accent-offline)';
       case 'paused': return 'var(--accent-warning)';
       default: return 'var(--text-subtle)';

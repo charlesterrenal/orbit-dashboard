@@ -71,7 +71,7 @@ const SystemStats = () => {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {!error && (
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-online)', animation: 'pulse 2s ease-in-out infinite' }} />
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-dot)', animation: 'pulse 2s ease-in-out infinite' }} />
           )}
         </div>
       </div>

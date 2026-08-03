@@ -7,7 +7,8 @@
   --text-muted: rgba(0, 0, 0, 0.65);
   --text-subtle: rgba(0, 0, 0, 0.45);
   --border: rgba(0, 0, 0, 0.14);
-  --accent-online: #22c55e;
+  --accent-online: var(--accent-primary);
+  --accent-dot: #22c55e;
   --accent-warning: #d97706;
   --accent-offline: #dc2626;
   --accent-primary: #9333ea;

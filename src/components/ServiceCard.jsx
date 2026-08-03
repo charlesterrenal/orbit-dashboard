@@ -102,8 +102,8 @@ const ServiceCard = ({ service }) => {
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              backgroundColor: liveStatus === 'online' ? 'var(--accent-online)' : liveStatus === 'offline' ? 'var(--accent-offline)' : 'var(--text-subtle)',
-              boxShadow: liveStatus === 'online' ? '0 0 8px var(--accent-online)' : 'none',
+              backgroundColor: liveStatus === 'online' ? 'var(--accent-dot)' : liveStatus === 'offline' ? 'var(--accent-offline)' : 'var(--text-subtle)',
+              boxShadow: liveStatus === 'online' ? '0 0 8px var(--accent-dot)' : 'none',
               flexShrink: 0
             }}
           />
