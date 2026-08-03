@@ -98,7 +98,7 @@ const JellyfinWidget = () => {
                       <img src={imageUrl} alt="Poster" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   ) : (
-                    <div style={{ color: 'var(--accent-online)', backgroundColor: 'color-mix(in srgb, var(--accent-online) 10%, transparent)', padding: '12px', borderRadius: '8px', flexShrink: 0 }}>
+                    <div style={{ color: 'var(--accent-primary)', backgroundColor: 'color-mix(in srgb, var(--accent-primary) 10%, transparent)', padding: '12px', borderRadius: '8px', flexShrink: 0 }}>
                       {getIcon(session.NowPlayingItem?.Type)}
                     </div>
                   )}

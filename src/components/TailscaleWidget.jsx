@@ -104,7 +104,7 @@ const TailscaleWidget = () => {
               return (
                 <div key={device.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', backgroundColor: 'rgba(255, 255, 255, 0.02)', borderRadius: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ color: isOnline ? 'var(--accent-online)' : 'var(--text-subtle)' }}>
+                    <div style={{ color: isOnline ? 'var(--accent-primary)' : 'var(--text-subtle)' }}>
                       {getDeviceIcon(device.os)}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
