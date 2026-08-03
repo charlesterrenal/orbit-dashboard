@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  homelab-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Alternatively, once you publish to GitHub Container Registry, you can use:
+    # image: ghcr.io/your-username/your-repo:latest
+    container_name: homelab-dashboard
+    restart: unless-stopped
+    ports:
+      - "5173:80"
