@@ -22,7 +22,7 @@ const ServiceGrid = ({ services }) => {
       {homelab.length > 0 && (
         <div>
           <SectionLabel>services</SectionLabel>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+          <div className="service-grid-layout" style={{ gap: '12px' }}>
             {homelab.map(service => <ServiceCard key={service.id} service={service} />)}
           </div>
         </div>
@@ -30,7 +30,7 @@ const ServiceGrid = ({ services }) => {
       {websites.length > 0 && (
         <div>
           <SectionLabel>websites</SectionLabel>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+          <div className="service-grid-layout" style={{ gap: '12px' }}>
             {websites.map(service => <ServiceCard key={service.id} service={service} />)}
           </div>
         </div>

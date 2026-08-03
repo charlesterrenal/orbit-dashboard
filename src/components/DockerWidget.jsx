@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Container } from 'lucide-react';
+import { Container, Search } from 'lucide-react';
 
 const DockerWidget = () => {
   const [containers, setContainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchContainers = async () => {
@@ -74,12 +75,40 @@ const DockerWidget = () => {
     }
   };
 
-  // Group containers by nodeName
-  const nodes = [...new Set(containers.map(c => c.nodeName))].sort();
+  // Filter containers by search query
+  const filteredContainers = containers.filter(c => {
+    if (!searchQuery) return true;
+    const name = (c.Names?.[0] || c.Id).replace('/', '').toLowerCase();
+    const image = (c.Image || '').toLowerCase();
+    const query = searchQuery.toLowerCase();
+    return name.includes(query) || image.includes(query);
+  });
+
+  // Group filtered containers by nodeName
+  const nodes = [...new Set(filteredContainers.map(c => c.nodeName))].sort();
 
   return (
     <div className="widget">
-      <div className="widget-title">docker containers</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+        <div className="widget-title" style={{ margin: 0 }}>docker containers</div>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-elevated)', borderRadius: '6px', padding: '4px 8px', border: '1px solid var(--border)' }}>
+          <Search size={14} style={{ color: 'var(--text-subtle)', marginRight: '6px' }} />
+          <input
+            type="text"
+            placeholder="Search containers..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-primary)',
+              fontSize: '12px',
+              outline: 'none',
+              width: '160px'
+            }}
+          />
+        </div>
+      </div>
 
       {loading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px', marginTop: '12px' }}>
@@ -95,7 +124,7 @@ const DockerWidget = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '12px' }}>
           {nodes.map(node => {
-            const nodeContainers = containers.filter(c => c.nodeName === node);
+            const nodeContainers = filteredContainers.filter(c => c.nodeName === node);
             if (nodeContainers.length === 0) return null;
             
             return (
@@ -125,8 +154,10 @@ const DockerWidget = () => {
             );
           })}
 
-          {containers.length === 0 && (
-            <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>No containers found</p>
+          {filteredContainers.length === 0 && !loading && (
+            <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>
+              {searchQuery ? 'No containers match your search.' : 'No containers found.'}
+            </p>
           )}
         </div>
       )}

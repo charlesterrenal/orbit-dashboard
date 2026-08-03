@@ -74,7 +74,7 @@ const ServiceCard = ({ service }) => {
       href={service.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="card"
+      className="card service-card"
       style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
