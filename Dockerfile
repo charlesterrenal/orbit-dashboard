@@ -14,5 +14,8 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Expose port 80
 EXPOSE 80
 
+# Copy the nginx template so envsubst can replace the proxy URLs at runtime
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

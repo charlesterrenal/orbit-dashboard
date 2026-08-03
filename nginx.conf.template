@@ -1,0 +1,41 @@
+server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/proxmox/ {
+        # proxy_ssl_verify off is needed if your proxmox uses a self-signed cert
+        proxy_pass ${VITE_PROXMOX_URL}/;
+        proxy_ssl_verify off;
+        proxy_set_header Host $host;
+    }
+
+    location /api/portainer/ {
+        proxy_pass ${VITE_PORTAINER_URL}/;
+        proxy_ssl_verify off;
+        proxy_set_header Host $host;
+    }
+
+    location /api/uptime/ {
+        proxy_pass ${VITE_UPTIME_KUMA_URL}/;
+        proxy_set_header Host $host;
+        # Support websockets for uptime kuma
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /api/jellyfin/ {
+        proxy_pass https://jellyfin.charlesterrenal.com/;
+        proxy_ssl_server_name on;
+    }
+
+    location /api/tailscale/ {
+        proxy_pass https://api.tailscale.com/;
+        proxy_ssl_server_name on;
+    }
+}
