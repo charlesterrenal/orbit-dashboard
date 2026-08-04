@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Cloud, Sun, CloudRain, CloudSnow, CloudLightning, Wind, Droplets } from 'lucide-react';
 
 const LAT = import.meta.env.VITE_WEATHER_LAT || '14.3864';
@@ -99,10 +99,18 @@ const WeatherWidget = () => {
         </div>
 
         <div style={{ position: 'relative', marginTop: '4px' }}>
-          <div className="hide-scrollbar" style={{ 
-            display: 'flex', 
-            borderTop: '1px solid var(--border)', 
-            paddingTop: '8px', 
+          <div 
+            className="hide-scrollbar" 
+            onWheel={(e) => {
+              // Convert vertical wheel to horizontal scroll
+              if (e.deltaY !== 0) {
+                e.currentTarget.scrollLeft += e.deltaY;
+              }
+            }}
+            style={{ 
+              display: 'flex', 
+              borderTop: '1px solid var(--border)', 
+              paddingTop: '8px', 
             gap: '12px',
             overflowX: 'auto',
             scrollbarWidth: 'none',
