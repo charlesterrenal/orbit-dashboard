@@ -65,10 +65,6 @@ const Sidebar = () => {
           }
           {isOpen && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
         </button>
-        <NavLink to="/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Settings">
-          <Settings size={16} className="sidebar-icon" />
-          {isOpen && <span>Settings</span>}
-        </NavLink>
       </div>
 
     </nav>

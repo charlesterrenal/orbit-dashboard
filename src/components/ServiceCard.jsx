@@ -54,7 +54,19 @@ const UptimeDots = ({ beats }) => {
 const ServiceCard = ({ service }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [uptimeData, setUptimeData] = useState(null);
+  const [iconError, setIconError] = useState(false);
   const IconComponent = Icons[service.icon] || Icons.Server;
+
+  let domain = '';
+  try {
+    domain = new URL(service.url).hostname;
+  } catch (e) {
+    // Ignore invalid URLs
+  }
+
+  // Check if domain is a local IP or .local which won't have a public favicon
+  const isLocal = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(domain) || domain.endsWith('.local');
+  const showFavicon = domain && !isLocal && !iconError;
 
   useEffect(() => {
     const unsubscribe = subscribeToUptime((cache) => {
@@ -81,8 +93,17 @@ const ServiceCard = ({ service }) => {
     >
       {/* Top row: icon + actions */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ color: 'var(--text-primary)' }}>
-          <IconComponent size={22} strokeWidth={1.5} />
+        <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px' }}>
+          {showFavicon ? (
+            <img 
+              src={`https://icon.horse/icon/${domain}`} 
+              alt={service.name} 
+              style={{ width: '100%', height: '100%', borderRadius: '4px', objectFit: 'contain' }}
+              onError={() => setIconError(true)}
+            />
+          ) : (
+            <IconComponent size={22} strokeWidth={1.5} />
+          )}
         </div>
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
           {/* Progressive disclosure: only shows on hover */}

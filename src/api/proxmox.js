@@ -10,6 +10,8 @@ export const getClusterStatus = async () => {
           cpu: 0.12,
           memory: { total: 32000000000, used: 16000000000 },
           uptime: 86400 * 14 + 3600 * 5, // 14 days, 5 hours
+          netin: 1048576 * 15, // 15 MB/s
+          netout: 1048576 * 5  // 5 MB/s
         });
       }, 500);
     });
@@ -32,7 +34,9 @@ export const getClusterStatus = async () => {
     return {
       cpu: json.data.cpu,
       memory: { total: json.data.memory.total, used: json.data.memory.used },
-      uptime: json.data.uptime
+      uptime: json.data.uptime,
+      netin: json.data.netin || 0,
+      netout: json.data.netout || 0
     };
   } catch (error) {
     console.error("Proxmox API Error:", error);

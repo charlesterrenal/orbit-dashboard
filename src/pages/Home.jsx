@@ -1,7 +1,8 @@
 import WeatherWidget from '../components/WeatherWidget';
 import CalendarWidget from '../components/CalendarWidget';
 import SystemStats from '../components/SystemStats';
-import GithubWidget from '../components/GithubWidget';
+import TodoistWidget from '../components/TodoistWidget';
+import NetworkWidget from '../components/NetworkWidget';
 import GreetingClock from '../components/GreetingClock';
 import ServicesSummaryWidget from '../components/ServicesSummaryWidget';
 import DockerSummaryWidget from '../components/DockerSummaryWidget';
@@ -40,8 +41,9 @@ const Home = () => {
         </div>
         
         {/* Column 4 */}
-        <div className="home-col">
-          <div className="order-github"><GithubWidget /></div>
+        <div className="home-col" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div className="order-todo"><TodoistWidget /></div>
+          <div className="order-network"><NetworkWidget /></div>
         </div>
       </div>
     </div>
