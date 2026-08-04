@@ -11,13 +11,27 @@ const TodoistWidget = () => {
   const fetchTasks = async () => {
     if (!TODOIST_TOKEN) return;
     setLoading(true);
+    setError('');
     try {
-      const res = await fetch('https://api.todoist.com/rest/v2/tasks', {
-        headers: { Authorization: `Bearer ${TODOIST_TOKEN}` }
+      const token = TODOIST_TOKEN.replace(/['"]/g, '').trim();
+      const res = await fetch('/api/todoist/api/v1/tasks', {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error('Failed to fetch Todoist');
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: Invalid Token`);
+      }
       const data = await res.json();
-      setTasks(data.slice(0, 5)); // show top 5
+      let tasksArray = [];
+      if (Array.isArray(data)) {
+        tasksArray = data;
+      } else if (data && data.items && Array.isArray(data.items)) {
+        tasksArray = data.items;
+      } else if (data && data.tasks && Array.isArray(data.tasks)) {
+        tasksArray = data.tasks;
+      } else if (data && data.data && Array.isArray(data.data)) {
+        tasksArray = data.data;
+      }
+      setTasks(tasksArray.slice(0, 5)); // show top 5
     } catch (err) {
       setError(err.message);
     }
@@ -32,9 +46,10 @@ const TodoistWidget = () => {
     // optimistic UI
     setTasks(prev => prev.filter(t => t.id !== id));
     try {
-      await fetch(`https://api.todoist.com/rest/v2/tasks/${id}/close`, {
+      const token = TODOIST_TOKEN.replace(/['"]/g, '').trim();
+      await fetch(`/api/todoist/api/v1/tasks/${id}/close`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${TODOIST_TOKEN}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
       fetchTasks(); // rollback on error
@@ -59,7 +74,7 @@ const TodoistWidget = () => {
           </div>
         )}
 
-        {TODOIST_TOKEN && !loading && tasks.length === 0 && (
+        {TODOIST_TOKEN && !loading && tasks.length === 0 && !error && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'var(--text-muted)' }}>
             <Check size={24} style={{ marginBottom: '8px', color: 'var(--accent-online)', opacity: 0.8 }} />
             <span style={{ fontSize: '11px' }}>All caught up!</span>
@@ -67,7 +82,9 @@ const TodoistWidget = () => {
         )}
 
         {error && (
-          <div style={{ fontSize: '11px', color: 'var(--accent-offline)' }}>{error}</div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'var(--accent-offline)' }}>
+            <span style={{ fontSize: '11px', textAlign: 'center' }}>Error:<br/>{error}</span>
+          </div>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

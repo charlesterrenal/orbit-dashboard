@@ -43,6 +43,12 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/tailscale/, ''),
         },
+        '/api/todoist': {
+          target: 'https://api.todoist.com',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/todoist/, ''),
+        },
       },
     },
   }
