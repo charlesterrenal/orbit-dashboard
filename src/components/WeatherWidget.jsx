@@ -34,7 +34,7 @@ const WeatherWidget = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&hourly=temperature_2m,weather_code&forecast_hours=6&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&hourly=temperature_2m,weather_code&forecast_hours=14&timezone=auto`;
         const res = await fetch(url);
         if (!res.ok) throw new Error('Weather API failed');
         const data = await res.json();
@@ -79,7 +79,7 @@ const WeatherWidget = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div className="widget-title" style={{ margin: 0 }}>weather · General Trias</div>
       </div>
-      <div className="card" style={{ padding: '12px 16px', aspectRatio: '2 / 1', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+      <div className="card" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: '28px', fontWeight: '700', lineHeight: '1', color: 'var(--text-primary)' }}>{Math.round(temp)}°C</div>
@@ -97,16 +97,26 @@ const WeatherWidget = () => {
           </span>
         </div>
 
-        <div style={{ display: 'flex', borderTop: '1px solid var(--border)', paddingTop: '4px' }}>
-          {hourlyTemps.slice(1, 4).map((tempStr, i) => {
+        <div className="hide-scrollbar" style={{ 
+          display: 'flex', 
+          borderTop: '1px solid var(--border)', 
+          paddingTop: '8px', 
+          marginTop: '4px',
+          gap: '12px',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}>
+          {/* Hide webkit scrollbar via inline style not possible, but standard properties usually hide it well enough on modern browsers */}
+          {hourlyTemps.slice(1, 13).map((tempStr, i) => {
             const index = i + 1;
             const hourCode = hourlyCodes[index];
             const HourIcon = (WMO_CONDITIONS[hourCode] || { Icon: Cloud }).Icon;
             const date = new Date(hourlyTimes[index]);
             const hour = date.getHours();
-            const timeStr = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour} ${hour >= 12 ? 'PM' : 'AM'}`;
+            const timeStr = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}${hour >= 12 ? 'PM' : 'AM'}`;
             return (
-              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+              <div key={i} style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', minWidth: '32px' }}>
                 <span style={{ fontSize: '9px', color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{timeStr}</span>
                 <HourIcon size={14} style={{ color: 'var(--text-muted)' }} />
                 <span style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>{Math.round(tempStr)}°</span>
