@@ -41,7 +41,7 @@ const Home = () => {
         </div>
         
         {/* Column 4 */}
-        <div className="home-col" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div className="home-col">
           <div className="order-todo"><TodoistWidget /></div>
           <div className="order-network"><NetworkWidget /></div>
         </div>
