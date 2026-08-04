@@ -326,16 +326,17 @@ h1, h2, h3, h4, h5, h6 {
   .home-col {
     display: contents;
   }
-  .order-proxmox, .order-weather, .order-calendar, .order-overview, .order-github {
+  .order-proxmox, .order-weather, .order-calendar, .order-overview, .order-todo, .order-network {
     width: 100%;
     max-width: 320px;
     margin-bottom: 16px;
   }
   .order-proxmox { order: 1; }
   .order-overview { order: 2; }
-  .order-weather { order: 3; }
-  .order-calendar { order: 4; }
-  .order-github { order: 5; }
+  .order-network { order: 3; }
+  .order-weather { order: 4; }
+  .order-calendar { order: 5; }
+  .order-todo { order: 6; }
   .services-grid-mobile {
     grid-template-columns: 1fr !important;
   }
