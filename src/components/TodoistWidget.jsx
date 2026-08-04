@@ -14,7 +14,7 @@ const TodoistWidget = () => {
     setError('');
     try {
       const token = TODOIST_TOKEN.replace(/['"]/g, '').trim();
-      const res = await fetch('/api/todoist/api/v1/tasks', {
+      const res = await fetch('https://api.todoist.com/api/v1/tasks', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) {
@@ -47,7 +47,7 @@ const TodoistWidget = () => {
     setTasks(prev => prev.filter(t => t.id !== id));
     try {
       const token = TODOIST_TOKEN.replace(/['"]/g, '').trim();
-      await fetch(`/api/todoist/api/v1/tasks/${id}/close`, {
+      await fetch(`https://api.todoist.com/api/v1/tasks/${id}/close`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
