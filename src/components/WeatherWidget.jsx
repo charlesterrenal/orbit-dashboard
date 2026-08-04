@@ -34,7 +34,7 @@ const WeatherWidget = () => {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&hourly=temperature_2m,weather_code&forecast_hours=14&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m&hourly=temperature_2m,weather_code,precipitation_probability&forecast_hours=14&timezone=auto`;
         const res = await fetch(url);
         if (!res.ok) throw new Error('Weather API failed');
         const data = await res.json();
@@ -72,6 +72,7 @@ const WeatherWidget = () => {
 
   const hourlyTemps = weather.hourly.temperature_2m;
   const hourlyCodes = weather.hourly.weather_code;
+  const hourlyPrecip = weather.hourly.precipitation_probability;
   const hourlyTimes = weather.hourly.time;
 
   return (
@@ -97,32 +98,51 @@ const WeatherWidget = () => {
           </span>
         </div>
 
-        <div className="hide-scrollbar" style={{ 
-          display: 'flex', 
-          borderTop: '1px solid var(--border)', 
-          paddingTop: '8px', 
-          marginTop: '4px',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}>
-          {/* Hide webkit scrollbar via inline style not possible, but standard properties usually hide it well enough on modern browsers */}
-          {hourlyTemps.slice(1, 13).map((tempStr, i) => {
-            const index = i + 1;
-            const hourCode = hourlyCodes[index];
-            const HourIcon = (WMO_CONDITIONS[hourCode] || { Icon: Cloud }).Icon;
-            const date = new Date(hourlyTimes[index]);
-            const hour = date.getHours();
-            const timeStr = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}${hour >= 12 ? 'PM' : 'AM'}`;
-            return (
-              <div key={i} style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', minWidth: '32px' }}>
-                <span style={{ fontSize: '9px', color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{timeStr}</span>
-                <HourIcon size={14} style={{ color: 'var(--text-muted)' }} />
-                <span style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>{Math.round(tempStr)}°</span>
-              </div>
-            );
-          })}
+        <div style={{ position: 'relative', marginTop: '4px' }}>
+          <div className="hide-scrollbar" style={{ 
+            display: 'flex', 
+            borderTop: '1px solid var(--border)', 
+            paddingTop: '8px', 
+            gap: '12px',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            paddingRight: '16px' // extra padding to scroll past the fade
+          }}>
+            {hourlyTemps.slice(1, 13).map((tempStr, i) => {
+              const index = i + 1;
+              const hourCode = hourlyCodes[index];
+              const precipProb = hourlyPrecip[index];
+              const HourIcon = (WMO_CONDITIONS[hourCode] || { Icon: Cloud }).Icon;
+              const date = new Date(hourlyTimes[index]);
+              const hour = date.getHours();
+              const timeStr = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}${hour >= 12 ? 'PM' : 'AM'}`;
+              return (
+                <div key={i} style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', minWidth: '32px' }}>
+                  <span style={{ fontSize: '9px', color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{timeStr}</span>
+                  <HourIcon size={14} style={{ color: 'var(--text-muted)' }} />
+                  <span style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>{Math.round(tempStr)}°</span>
+                  {precipProb > 0 ? (
+                    <span style={{ fontSize: '8px', color: '#0ea5e9', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
+                      {precipProb}%
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '8px', height: '12px' }}></span> // placeholder to keep alignment
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {/* Fade Effect on the right side */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: '30px',
+            background: 'linear-gradient(to right, transparent, var(--bg-surface))',
+            pointerEvents: 'none'
+          }} />
         </div>
       </div>
     </div>
