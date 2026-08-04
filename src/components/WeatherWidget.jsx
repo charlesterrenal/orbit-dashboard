@@ -48,6 +48,23 @@ const WeatherWidget = () => {
     fetchWeather();
   }, []);
 
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleWheel = (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, [weather]);
+
   if (loading) {
     return (
       <div className="widget">
@@ -100,13 +117,8 @@ const WeatherWidget = () => {
 
         <div style={{ position: 'relative', marginTop: '4px' }}>
           <div 
+            ref={scrollRef}
             className="hide-scrollbar" 
-            onWheel={(e) => {
-              // Convert vertical wheel to horizontal scroll
-              if (e.deltaY !== 0) {
-                e.currentTarget.scrollLeft += e.deltaY;
-              }
-            }}
             style={{ 
               display: 'flex', 
               borderTop: '1px solid var(--border)', 
