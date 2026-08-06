@@ -43,3 +43,40 @@ export const getClusterStatus = async () => {
     throw error;
   }
 };
+
+export const getStorageStatus = async () => {
+  if (!import.meta.env.VITE_PROXMOX_URL) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          { storage: 'local', total: 100000000000, used: 45000000000 },
+          { storage: 'nas-mount', total: 2000000000000, used: 1500000000000 }
+        ]);
+      }, 500);
+    });
+  }
+
+  try {
+    const node = import.meta.env.VITE_PROXMOX_NODE || 'pve';
+    const response = await fetch(`/api/proxmox/nodes/${node}/storage`, {
+      headers: {
+        'Authorization': `PVEAPIToken=${import.meta.env.VITE_PROXMOX_TOKEN_ID}=${import.meta.env.VITE_PROXMOX_SECRET}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json.data.map(store => ({
+      storage: store.storage,
+      total: store.total || 0,
+      used: store.used || 0
+    }));
+  } catch (error) {
+    console.error("Proxmox API Storage Error:", error);
+    throw error;
+  }
+};
+

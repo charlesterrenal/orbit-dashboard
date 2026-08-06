@@ -8,6 +8,8 @@ import ServicesSummaryWidget from '../components/ServicesSummaryWidget';
 import DockerSummaryWidget from '../components/DockerSummaryWidget';
 import TailscaleSummaryWidget from '../components/TailscaleSummaryWidget';
 import JellyfinSummaryWidget from '../components/JellyfinSummaryWidget';
+import StorageWidget from '../components/StorageWidget';
+import ActivityFeedWidget from '../components/ActivityFeedWidget';
 
 const Home = () => {
   return (
@@ -38,6 +40,7 @@ const Home = () => {
               <JellyfinSummaryWidget />
             </div>
           </div>
+          <StorageWidget />
         </div>
         
         {/* Column 4 */}
@@ -46,6 +49,8 @@ const Home = () => {
           <div className="order-network"><NetworkWidget /></div>
         </div>
       </div>
+      
+      <ActivityFeedWidget />
     </div>
   );
 };
