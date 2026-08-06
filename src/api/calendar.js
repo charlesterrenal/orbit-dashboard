@@ -65,8 +65,8 @@ const parseIcsDate = (dateString) => {
 export const fetchCalendarEvents = async (url) => {
   if (!url) return [];
   try {
-    // We use allorigins as a simple CORS proxy
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    // Use corsproxy.io as it is less frequently blocked
+    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(url)}`;
     const res = await fetch(proxyUrl);
     if (!res.ok) throw new Error('Failed to fetch calendar');
     const text = await res.text();

@@ -30,6 +30,8 @@ const TodoistWidget = () => {
         tasksArray = data.tasks;
       } else if (data && data.data && Array.isArray(data.data)) {
         tasksArray = data.data;
+      } else if (data && data.results && Array.isArray(data.results)) {
+        tasksArray = data.results;
       }
       setTasks(tasksArray.slice(0, 5)); // show top 5
     } catch (err) {
