@@ -127,8 +127,10 @@ const TodoistWidget = () => {
                   gap: '4px'
                 }}
               >
-                {activeProjectId === 'all' ? 'all projects' : projects.find(p => p.id === activeProjectId)?.name.toLowerCase() || 'projects'}
-                <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '70px', display: 'inline-block' }}>
+                  {activeProjectId === 'all' ? 'all projects' : projects.find(p => p.id === activeProjectId)?.name.toLowerCase() || 'projects'}
+                </span>
+                <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease', flexShrink: 0 }} />
               </button>
 
               <div style={{
