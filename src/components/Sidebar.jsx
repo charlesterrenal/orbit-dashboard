@@ -38,17 +38,17 @@ const Sidebar = () => {
 
       {/* Main Nav */}
       <div className="sidebar-links">
-        <NavLink to="/" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} end title="Home">
+        <NavLink to="/" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} end title="home">
           <Home size={16} className="sidebar-icon" />
-          {isOpen && <span>Home</span>}
+          {isOpen && <span>home</span>}
         </NavLink>
-        <NavLink to="/services" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Services">
+        <NavLink to="/services" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="services">
           <LayoutGrid size={16} className="sidebar-icon" />
-          {isOpen && <span>Services</span>}
+          {isOpen && <span>services</span>}
         </NavLink>
-        <NavLink to="/containers" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Containers">
+        <NavLink to="/containers" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="containers">
           <Server size={16} className="sidebar-icon" />
-          {isOpen && <span>Containers</span>}
+          {isOpen && <span>containers</span>}
         </NavLink>
       </div>
 
@@ -57,13 +57,13 @@ const Sidebar = () => {
         <button
           className="sidebar-link sidebar-theme-btn"
           onClick={toggleTheme}
-          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          title={theme === 'dark' ? 'switch to light mode' : 'switch to dark mode'}
         >
           {theme === 'dark'
             ? <Sun size={16} className="sidebar-icon" />
             : <Moon size={16} className="sidebar-icon" />
           }
-          {isOpen && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+          {isOpen && <span>{theme === 'dark' ? 'light mode' : 'dark mode'}</span>}
         </button>
       </div>
 

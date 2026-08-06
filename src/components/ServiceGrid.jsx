@@ -4,7 +4,7 @@ const SectionLabel = ({ children }) => (
   <h2 style={{
     fontSize: '10px',
     fontWeight: '600',
-    textTransform: 'uppercase',
+    textTransform: 'lowercase',
     letterSpacing: '0.08em',
     color: 'var(--text-subtle)',
     marginBottom: '12px',

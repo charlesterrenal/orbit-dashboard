@@ -90,12 +90,12 @@ const DockerWidget = () => {
   return (
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-        <div className="widget-title" style={{ margin: 0 }}>docker containers</div>
+        <div className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><Container size={12} />docker containers</div>
         <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-elevated)', borderRadius: '6px', padding: '4px 8px', border: '1px solid var(--border)' }}>
           <Search size={14} style={{ color: 'var(--text-subtle)', marginRight: '6px' }} />
           <input
             type="text"
-            placeholder="Search containers..."
+            placeholder="search containers..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
@@ -129,7 +129,7 @@ const DockerWidget = () => {
             
             return (
               <div key={node}>
-                <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-subtle)', marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'lowercase', letterSpacing: '0.05em', color: 'var(--text-subtle)', marginBottom: '12px' }}>
                   {node}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>

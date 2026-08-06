@@ -44,7 +44,7 @@ const TailscaleSummaryWidget = () => {
 
   return (
     <Link to="/services" style={{ textDecoration: 'none', display: 'block' }} title="Tailscale Overview">
-      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', aspectRatio: '1 / 1', boxSizing: 'border-box' }}>
+      <div className="card service-card summary-widget-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', boxSizing: 'border-box' }}>
         <Network size={24} style={{ color: 'var(--text-subtle)' }} />
         {loading ? (
           <div className="skeleton" style={{ width: '40px', height: '20px', borderRadius: '4px' }} />
@@ -57,7 +57,7 @@ const TailscaleSummaryWidget = () => {
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: stats.active > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)', boxShadow: stats.active > 0 ? '0 0 8px var(--accent-dot)' : 'none' }} />
-              <span style={{ fontSize: '10px', color: 'var(--text-subtle)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '10px', color: 'var(--text-subtle)', fontWeight: 500, textTransform: 'lowercase', letterSpacing: '0.05em' }}>
                 online
               </span>
             </div>

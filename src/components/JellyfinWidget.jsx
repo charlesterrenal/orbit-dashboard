@@ -55,8 +55,8 @@ const JellyfinWidget = () => {
   return (
     <div className="widget" style={{ marginBottom: '0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="widget-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-          <HardDrive size={14} /> JELLYFIN STREAMS
+        <h3 className="widget-title" style={{ margin: 0 }}>
+          <HardDrive size={12} /> jellyfin streams
         </h3>
         {!loading && (
           <span className={`pill ${sessions.length > 0 ? 'online' : 'unknown'}`} style={{ padding: '2px 8px' }}>
@@ -68,7 +68,7 @@ const JellyfinWidget = () => {
       <div className="card" style={{ padding: '16px' }}>
         {loading ? (
           <div style={{ padding: '15px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '13px' }}>
-            Loading sessions...
+            loading sessions...
           </div>
         ) : error ? (
           <div style={{ padding: '15px 0', textAlign: 'center', color: 'var(--accent-offline)', fontSize: '13px' }}>
@@ -77,7 +77,7 @@ const JellyfinWidget = () => {
         ) : sessions.length === 0 ? (
           <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '13px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
             <StopCircle size={24} strokeWidth={1.5} opacity={0.5} />
-            <span>No active streams right now</span>
+            <span>no active streams right now</span>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -115,7 +115,7 @@ const JellyfinWidget = () => {
 
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
                     <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', backgroundColor: isTranscoding ? 'color-mix(in srgb, var(--accent-warning) 15%, transparent)' : 'color-mix(in srgb, var(--accent-online) 15%, transparent)', color: isTranscoding ? 'var(--accent-warning)' : 'var(--accent-online)' }}>
-                      {isTranscoding ? 'Transcoding' : 'Direct Play'}
+                      {isTranscoding ? 'transcoding' : 'direct play'}
                     </span>
                   </div>
                 </div>

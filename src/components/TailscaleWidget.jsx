@@ -71,8 +71,8 @@ const TailscaleWidget = () => {
   return (
     <div className="widget" style={{ marginBottom: '0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="widget-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-          <Network size={14} /> TAILSCALE NETWORK
+        <h3 className="widget-title" style={{ margin: 0 }}>
+          <Network size={12} /> tailscale network
         </h3>
         {!loading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Cloud, Sun, CloudRain, CloudSnow, CloudLightning, Wind, Droplets } from 'lucide-react';
+import { Cloud, Sun, CloudRain, CloudSnow, CloudLightning, Wind, Droplets, CloudSun } from 'lucide-react';
 
 const LAT = import.meta.env.VITE_WEATHER_LAT || '14.3864';
 const LON = import.meta.env.VITE_WEATHER_LON || '120.8810';
@@ -68,7 +68,7 @@ const WeatherWidget = () => {
   if (loading) {
     return (
       <div className="widget">
-        <div className="widget-title">weather</div>
+        <div className="widget-title"><CloudSun size={12} />weather</div>
         <div className="skeleton" style={{ height: '100px', borderRadius: '10px' }} />
       </div>
     );
@@ -77,7 +77,7 @@ const WeatherWidget = () => {
   if (error || !weather) {
     return (
       <div className="widget">
-        <div className="widget-title">weather</div>
+        <div className="widget-title"><CloudSun size={12} />weather</div>
         <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>{error}</p>
       </div>
     );
@@ -95,13 +95,13 @@ const WeatherWidget = () => {
   return (
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
-        <div className="widget-title" style={{ margin: 0 }}>weather · General Trias</div>
+        <div className="widget-title" style={{ margin: 0 }}><CloudSun size={12} />weather · general trias</div>
       </div>
       <div className="card" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: '28px', fontWeight: '700', lineHeight: '1', color: 'var(--text-primary)' }}>{Math.round(temp)}°C</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-subtle)', marginTop: '4px' }}>{condition.label}</div>
+            <div style={{ fontSize: '36px', fontWeight: '700', lineHeight: '1', color: 'var(--text-primary)' }}>{Math.round(temp)}°C</div>
+            <div style={{ fontSize: '13px', color: 'var(--text-subtle)', marginTop: '8px' }}>{condition.label.toLowerCase()}</div>
           </div>
           <ConditionIcon size={32} style={{ color: 'var(--accent-primary)' }} />
         </div>
@@ -115,7 +115,7 @@ const WeatherWidget = () => {
           </span>
         </div>
 
-        <div style={{ position: 'relative', marginTop: '4px' }}>
+        <div className="hide-on-mobile" style={{ position: 'relative', marginTop: '4px' }}>
           <div 
             ref={scrollRef}
             className="hide-scrollbar" 
@@ -139,7 +139,7 @@ const WeatherWidget = () => {
               const timeStr = `${hour === 0 ? 12 : hour > 12 ? hour - 12 : hour}${hour >= 12 ? 'PM' : 'AM'}`;
               return (
                 <div key={i} style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', minWidth: '32px' }}>
-                  <span style={{ fontSize: '9px', color: 'var(--text-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{timeStr}</span>
+                  <span style={{ fontSize: '9px', color: 'var(--text-subtle)', textTransform: 'lowercase', letterSpacing: '0.05em' }}>{timeStr}</span>
                   <HourIcon size={14} style={{ color: 'var(--text-muted)' }} />
                   <span style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: 600 }}>{Math.round(tempStr)}°</span>
                   {precipProb > 0 ? (

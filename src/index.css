@@ -11,8 +11,8 @@
   --accent-dot: #22c55e;
   --accent-warning: #d97706;
   --accent-offline: #dc2626;
-  --accent-primary: #9333ea;
-  --accent-blue: #9333ea; /* alias for light mode */
+  --accent-primary: #111111;
+  --accent-blue: #111111;
 
   /* Theme Transitions */
   --transition-slow: 0.5s ease;
@@ -32,8 +32,8 @@
   --text-muted: rgba(255, 255, 255, 0.6);
   --text-subtle: rgba(255, 255, 255, 0.4);
   --border: rgba(255, 255, 255, 0.15);
-  --accent-primary: #a855f7;
-  --accent-blue: #a855f7; /* alias — all accent-blue refs now resolve to primary */
+  --accent-primary: #ededed;
+  --accent-blue: #ededed;
 }
 
 /* ─── Animations ───────────────────────────── */
@@ -206,11 +206,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .widget-title {
   font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   color: var(--text-subtle);
   margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px; /* Ensure uniform title height so cards align below them */
 }
 
 /* ─── Glance-style section rows ─── */
@@ -231,6 +234,19 @@ h1, h2, h3, h4, h5, h6 {
 .text-muted { color: var(--text-muted); }
 .text-subtle { color: var(--text-subtle); }
 .lowercase { text-transform: lowercase; }
+
+.hide-on-mobile {
+  display: flex;
+}
+.hide-on-desktop {
+  display: none !important;
+}
+
+.calendar-events {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
 
 /* ─── Pills ────────────────────────────────── */
 .pill {
@@ -313,6 +329,7 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 768px) {
   .app-layout {
     flex-direction: column;
+    --storage-dir: column;
   }
   .app-content {
     max-width: 100vw;
@@ -320,15 +337,42 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 80px;
   }
   .home-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .tile-widget {
+    /* Removed aspect-ratio here */
+  }
+  
+  .tile-widget > .widget,
+  .tile-widget > div > .widget {
+    display: flex;
     flex-direction: column;
-    align-items: center;
+    min-height: 0;
+  }
+  
+  .tile-widget .card {
+    aspect-ratio: 1 / 1 !important;
+    width: 100%;
+    min-height: 0 !important;
+    padding: 16px !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .order-overview {
+    grid-column: span 2; /* Let overview widgets take full width so the 2x2 inside works */
   }
   .home-col {
     display: contents;
   }
   .order-proxmox, .order-weather, .order-calendar, .order-overview, .order-todo, .order-network {
     width: 100%;
-    max-width: 320px;
+    max-width: none; /* Let widgets fill the screen on mobile */
     margin-bottom: 16px;
   }
   .order-proxmox { order: 1; }
@@ -337,18 +381,38 @@ h1, h2, h3, h4, h5, h6 {
   .order-weather { order: 4; }
   .order-calendar { order: 5; }
   .order-todo { order: 6; }
+  
+  .calendar-events {
+    border-top: none;
+    padding-top: 0;
+  }
+  
   .services-grid-mobile {
     grid-template-columns: 1fr !important;
   }
   .service-grid-layout {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Keep the 2x2 grid of squares on mobile */
   }
   .service-card {
-    aspect-ratio: 1 / 1;
+    min-height: auto;
     justify-content: space-between;
   }
   .page-container {
     max-width: 100%;
+  }
+  
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  .hide-on-desktop {
+    display: flex !important;
+  }
+  
+  .summary-widget-content {
+    /* Keeping the summary widgets on the dashboard strictly 1x1 */
+    align-items: center;
+    aspect-ratio: 1 / 1 !important;
   }
 }
 

@@ -80,3 +80,38 @@ export const getStorageStatus = async () => {
   }
 };
 
+
+export const getSyslog = async (limit = 20) => {
+  if (!import.meta.env.VITE_PROXMOX_URL) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          { n: 1, t: "Aug 06 12:30:15 pve systemd[1]: Started Crafty Controller." },
+          { n: 2, t: "Aug 06 12:35:02 pve pveproxy[1234]: proxy error" },
+          { n: 3, t: "Aug 06 14:10:44 pve apt-get: update complete" }
+        ]);
+      }, 500);
+    });
+  }
+
+  try {
+    const node = import.meta.env.VITE_PROXMOX_NODE || "pve";
+    // Using the /journal endpoint with lastentries fetches the most recent logs
+    const response = await fetch(`/api/proxmox/nodes/${node}/journal?lastentries=${limit}`, {
+      headers: {
+        "Authorization": `PVEAPIToken=${import.meta.env.VITE_PROXMOX_TOKEN_ID}=${import.meta.env.VITE_PROXMOX_SECRET}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json.data || [];
+  } catch (error) {
+    console.error("Proxmox Syslog Error:", error);
+    throw error;
+  }
+};
+

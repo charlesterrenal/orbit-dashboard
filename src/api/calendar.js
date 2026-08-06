@@ -31,6 +31,12 @@ export const parseICS = (icsString) => {
         if (value) {
           currentEvent.end = parseIcsDate(value);
         }
+      } else if (line.startsWith('LOCATION:')) {
+        currentEvent.location = line.substring(9).trim();
+      } else if (line.startsWith('URL:')) {
+        currentEvent.url = line.substring(4).trim();
+      } else if (line.startsWith('DESCRIPTION:')) {
+        currentEvent.description = line.substring(12).trim();
       }
     }
   }

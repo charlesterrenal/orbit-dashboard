@@ -33,7 +33,7 @@ const ServicesSummaryWidget = () => {
 
   return (
     <Link to="/services" style={{ textDecoration: 'none', display: 'block' }} title="Services Overview">
-      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', aspectRatio: '1 / 1', boxSizing: 'border-box' }}>
+      <div className="card service-card summary-widget-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', boxSizing: 'border-box' }}>
         <LayoutGrid size={24} style={{ color: 'var(--text-subtle)' }} />
         {loading ? (
           <div className="skeleton" style={{ width: '40px', height: '20px', borderRadius: '4px' }} />
@@ -42,9 +42,12 @@ const ServicesSummaryWidget = () => {
             <span style={{ fontSize: '24px', fontWeight: 700, color: 'var(--accent-primary)', lineHeight: 1 }}>
               {stats.online}<span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>/{stats.total}</span>
             </span>
-            <span style={{ fontSize: '10px', color: 'var(--text-subtle)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              online
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: stats.online === stats.total ? 'var(--accent-dot)' : stats.online > 0 ? 'var(--accent-warning)' : 'var(--accent-offline)', boxShadow: stats.online > 0 ? `0 0 8px ${stats.online === stats.total ? 'var(--accent-dot)' : 'var(--accent-warning)'}` : 'none' }} />
+              <span style={{ fontSize: '10px', color: 'var(--text-subtle)', fontWeight: 500, textTransform: 'lowercase', letterSpacing: '0.05em' }}>
+                online
+              </span>
+            </div>
           </div>
         )}
       </div>

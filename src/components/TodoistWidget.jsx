@@ -83,7 +83,7 @@ const TodoistWidget = () => {
   return (
     <div className="widget" style={{ gridColumn: 'span 1' }}>
       <div className="widget-title" style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span>TODOIST</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><CheckSquare size={12} />todoist</span>
         
         {/* Actions Row */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -127,7 +127,7 @@ const TodoistWidget = () => {
                   gap: '4px'
                 }}
               >
-                {activeProjectId === 'all' ? 'All Projects' : projects.find(p => p.id === activeProjectId)?.name || 'Projects'}
+                {activeProjectId === 'all' ? 'all projects' : projects.find(p => p.id === activeProjectId)?.name.toLowerCase() || 'projects'}
                 <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
 
@@ -148,24 +148,44 @@ const TodoistWidget = () => {
                 transform: isDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
                 transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
               }}>
-                <div
+                <button
                   onClick={() => { setActiveProjectId('all'); setIsDropdownOpen(false); }}
-                  style={{ padding: '6px 12px', fontSize: '11px', cursor: 'pointer', color: activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)', background: activeProjectId === 'all' ? 'var(--border)' : 'transparent', transition: 'background 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.background = 'var(--border)'}
-                  onMouseOut={(e) => e.currentTarget.style.background = activeProjectId === 'all' ? 'var(--border)' : 'transparent'}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '6px 12px',
+                    background: activeProjectId === 'all' ? 'var(--border)' : 'transparent',
+                    border: 'none',
+                    color: activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = activeProjectId === 'all' ? 'var(--border)' : 'transparent'; e.currentTarget.style.color = activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)'; }}
                 >
-                  All Projects
-                </div>
+                  all projects
+                </button>
                 {projects.map(p => (
-                  <div
+                  <button 
                     key={p.id}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '6px 12px',
+                      background: activeProjectId === p.id ? 'var(--border)' : 'transparent',
+                      border: 'none',
+                      color: activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      fontSize: '11px',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = activeProjectId === p.id ? 'var(--border)' : 'transparent'; e.currentTarget.style.color = activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)'; }}
                     onClick={() => { setActiveProjectId(p.id); setIsDropdownOpen(false); }}
-                    style={{ padding: '6px 12px', fontSize: '11px', cursor: 'pointer', color: activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)', background: activeProjectId === p.id ? 'var(--border)' : 'transparent', transition: 'background 0.2s' }}
-                    onMouseOver={(e) => e.currentTarget.style.background = 'var(--border)'}
-                    onMouseOut={(e) => e.currentTarget.style.background = activeProjectId === p.id ? 'var(--border)' : 'transparent'}
                   >
-                    {p.name}
-                  </div>
+                    {p.name.toLowerCase()}
+                  </button>
                 ))}
               </div>
             </div>
@@ -202,8 +222,8 @@ const TodoistWidget = () => {
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {displayTasks.map(task => (
-            <div key={task.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', group: 'true' }} onClick={() => completeTask(task.id)}>
+          {displayTasks.map((task, index) => (
+            <div key={task.id} className={index >= 3 ? 'hide-on-mobile' : ''} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', group: 'true' }} onClick={() => completeTask(task.id)}>
               <button style={{ background: 'none', border: 'none', color: 'var(--text-subtle)', padding: 0, marginTop: '2px', cursor: 'pointer', transition: 'color 0.2s' }}>
                 <Square size={14} />
               </button>

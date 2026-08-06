@@ -83,7 +83,7 @@ const SystemStats = () => {
             <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', justifyContent: 'space-evenly' }}>
             {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)' }}>{error}</div>}
 
             <Tooltip content="CPU load across all cores">
@@ -94,7 +94,7 @@ const SystemStats = () => {
               <ProgressBar percent={memPercent} label="ram" />
             </Tooltip>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '4px' }}>
+            <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '4px' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>uptime</span>
               <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
             </div>

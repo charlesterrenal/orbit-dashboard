@@ -9,8 +9,8 @@ const ProgressBar = ({ percent, label }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-muted)' }}>{label}</span>
-        <span style={{ fontSize: '13px', fontWeight: '700', color: `var(${colorVar})`, fontVariantNumeric: 'tabular-nums' }}>
+        <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-muted)' }}>{label}</span>
+        <span style={{ fontSize: '14px', fontWeight: '700', color: `var(${colorVar})`, fontVariantNumeric: 'tabular-nums' }}>
           {percent.toFixed(1)}%
         </span>
       </div>
