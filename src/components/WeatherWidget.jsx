@@ -95,13 +95,14 @@ const WeatherWidget = () => {
   return (
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
-        <div className="widget-title" style={{ margin: 0 }}><CloudSun size={12} />weather · general trias</div>
+        <div className="widget-title" style={{ margin: 0 }}><CloudSun size={12} />weather</div>
       </div>
       <div className="card" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: '36px', fontWeight: '700', lineHeight: '1', color: 'var(--text-primary)' }}>{Math.round(temp)}°C</div>
             <div style={{ fontSize: '13px', color: 'var(--text-subtle)', marginTop: '8px' }}>{condition.label.toLowerCase()}</div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>general trias</div>
           </div>
           <ConditionIcon size={32} style={{ color: 'var(--accent-primary)' }} />
         </div>

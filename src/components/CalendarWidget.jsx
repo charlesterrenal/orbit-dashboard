@@ -119,7 +119,7 @@ const CalendarWidget = () => {
         </div>
 
         {/* Events Section */}
-        <div className="calendar-events" style={{ flex: 1 }}>
+        <div className="calendar-events" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           <div style={{ fontSize: '10px', color: 'var(--text-subtle)', fontWeight: 600, textTransform: 'lowercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
             upcoming events
           </div>
@@ -143,26 +143,28 @@ const CalendarWidget = () => {
             </div>
           )}
 
-          {!loading && events.map((ev, i) => {
-            const link = getEventLink(ev);
-            return (
-            <div key={i} className={i >= 2 ? 'hide-on-mobile' : ''} style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }}>
-                  {ev.title.toLowerCase()}
+          <div className="hide-scrollbar" style={{ overflowY: 'auto', flex: 1, minHeight: 0, paddingBottom: '8px' }}>
+            {!loading && events.map((ev, i) => {
+              const link = getEventLink(ev);
+              return (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }}>
+                    {ev.title.toLowerCase()}
+                  </div>
+                  {link && (
+                    <a href={link} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-primary)', opacity: 0.8, transition: 'opacity var(--transition-fast)' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.8} title="Join Meeting">
+                      <ExternalLink size={12} />
+                    </a>
+                  )}
                 </div>
-                {link && (
-                  <a href={link} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-primary)', opacity: 0.8, transition: 'opacity var(--transition-fast)' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.8} title="Join Meeting">
-                    <ExternalLink size={12} />
-                  </a>
-                )}
+                <div style={{ fontSize: '10px', color: 'var(--text-subtle)' }}>
+                  {ev.start ? ev.start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).toLowerCase() : ''}
+                </div>
               </div>
-              <div style={{ fontSize: '10px', color: 'var(--accent-primary)' }}>
-                {ev.start ? ev.start.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).toLowerCase() : ''}
-              </div>
-            </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

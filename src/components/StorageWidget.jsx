@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getStorageStatus } from '../api/proxmox';
 import { HardDrive } from 'lucide-react';
 import Tooltip from './Tooltip';
+import ProgressBar from './ProgressBar';
 
 const formatBytes = (bytes) => {
   if (bytes === 0) return '0 B';
@@ -60,17 +61,24 @@ const StorageWidget = () => {
       </div>
 
       <div className="card" style={{ padding: '16px', minHeight: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', gap: '16px', width: '100%', height: '100%', flex: 1, flexDirection: 'var(--storage-dir, row)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'var(--storage-align, center)', gap: '16px', width: '100%', height: '100%', flex: 1, flexDirection: 'var(--storage-dir, row)' }}>
         {loading ? (
           <div className="skeleton" style={{ width: '100%', height: '80px', borderRadius: '8px' }} />
         ) : (
           storages.map((store, i) => {
             const strokeDasharray = `${(store.percent / 100) * circumference} ${circumference}`;
+            let colorVar = '--accent-primary';
+            if (store.percent > 85) {
+              colorVar = '--accent-offline';
+            } else if (store.percent > 70) {
+              colorVar = '--accent-warning';
+            }
+
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', flex: 1 }}>
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '12px', flex: 1, width: '100%' }}>
                 
                 {/* Donut (Desktop only) */}
-                <div className="hide-on-mobile" style={{ width: '64px', height: '64px', position: 'relative' }}>
+                <div className="hide-on-mobile" style={{ width: '64px', height: '64px', position: 'relative', alignSelf: 'center' }}>
                   <svg viewBox="0 0 36 36" style={{ width: '100%', height: '100%' }}>
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -78,9 +86,9 @@ const StorageWidget = () => {
                     />
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      fill="none" stroke="var(--accent-dot)" strokeWidth="4"
+                      fill="none" stroke={`var(${colorVar})`} strokeWidth="4"
                       strokeDasharray={strokeDasharray}
-                      style={{ transition: 'stroke-dasharray 1s ease-in-out' }}
+                      style={{ transition: 'stroke-dasharray 1s ease-in-out, stroke 0.5s ease' }}
                       strokeLinecap="round"
                     />
                   </svg>
@@ -88,7 +96,7 @@ const StorageWidget = () => {
                     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--text-primary)' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 'bold', color: `var(${colorVar})`, transition: 'color 0.5s ease' }}>
                       {store.percent.toFixed(0)}%
                     </span>
                   </div>
@@ -96,21 +104,8 @@ const StorageWidget = () => {
 
                 {/* Flat Bar (Mobile only) */}
                 <div className="hide-on-desktop" style={{ width: '100%', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-primary)' }}>{store.storage}</span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                      {store.percent.toFixed(0)}%
-                    </span>
-                  </div>
-                  <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-primary)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ 
-                      width: `${store.percent}%`, 
-                      height: '100%', 
-                      backgroundColor: 'var(--accent-dot)',
-                      transition: 'width 1s ease-in-out'
-                    }} />
-                  </div>
-                  <div style={{ textAlign: 'left', fontSize: '11px', color: 'var(--text-subtle)' }}>
+                  <ProgressBar percent={store.percent} label={store.storage} />
+                  <div style={{ textAlign: 'left', fontSize: '11px', color: 'var(--text-subtle)', marginTop: '2px' }}>
                     {formatBytes(store.used)} / {formatBytes(store.total)}
                   </div>
                 </div>
