@@ -45,6 +45,9 @@ const TodoistWidget = () => {
       if (Array.isArray(projectsData)) projectsArray = projectsData;
       else if (projectsData?.results && Array.isArray(projectsData.results)) projectsArray = projectsData.results;
 
+      // Filter out the default "Inbox" project
+      projectsArray = projectsArray.filter(p => p.name !== 'Inbox');
+
       setTasks(tasksArray);
       setProjects(projectsArray);
     } catch (err) {
