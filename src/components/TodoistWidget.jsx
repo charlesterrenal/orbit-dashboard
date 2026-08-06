@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CheckSquare, Square, Check, Loader2 } from 'lucide-react';
 
 const TODOIST_TOKEN = import.meta.env.VITE_TODOIST_TOKEN || '';
+const TODOIST_PROJECT_ID = import.meta.env.VITE_TODOIST_PROJECT_ID || '';
 
 const TodoistWidget = () => {
   const [tasks, setTasks] = useState([]);
@@ -14,7 +15,13 @@ const TodoistWidget = () => {
     setError('');
     try {
       const token = TODOIST_TOKEN.replace(/['"]/g, '').trim();
-      const res = await fetch('https://api.todoist.com/api/v1/tasks', {
+      let url = 'https://api.todoist.com/api/v1/tasks';
+      if (TODOIST_PROJECT_ID) {
+        const projectId = TODOIST_PROJECT_ID.replace(/['"]/g, '').trim();
+        url += `?project_id=${projectId}`;
+      }
+      
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) {
