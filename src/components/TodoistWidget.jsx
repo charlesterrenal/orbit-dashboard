@@ -95,8 +95,8 @@ const TodoistWidget = () => {
               <button style={{ background: 'none', border: 'none', color: 'var(--text-subtle)', padding: 0, marginTop: '2px', cursor: 'pointer', transition: 'color 0.2s' }}>
                 <Square size={14} />
               </button>
-              <span style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: '1.4' }}>
-                {task.content}
+              <span style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: '1.4', wordBreak: 'break-word' }}>
+                {task.content.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}
               </span>
             </div>
           ))}
