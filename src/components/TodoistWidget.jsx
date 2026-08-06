@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckSquare, Square, Check, Loader2 } from 'lucide-react';
+import { CheckSquare, Square, Check, Loader2, ChevronDown } from 'lucide-react';
 
 const TODOIST_TOKEN = import.meta.env.VITE_TODOIST_TOKEN || '';
 const TODOIST_PROJECT_ID = import.meta.env.VITE_TODOIST_PROJECT_ID || '';
@@ -8,6 +8,7 @@ const TodoistWidget = () => {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [activeProjectId, setActiveProjectId] = useState('all');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -81,27 +82,67 @@ const TodoistWidget = () => {
       <div className="widget-title" style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>TODOIST</span>
         
-        {/* Project Tabs Dropdown or Scroll */}
+        {/* Project Tabs Custom Dropdown */}
         {projects.length > 0 && (
-          <select 
-            value={activeProjectId} 
-            onChange={(e) => setActiveProjectId(e.target.value)}
-            style={{ 
-              background: 'var(--bg-secondary)', 
-              color: 'var(--text-secondary)',
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              style={{
+                background: 'var(--bg-secondary)', 
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border)',
+                borderRadius: '4px',
+                padding: '2px 6px',
+                fontSize: '11px',
+                outline: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              {activeProjectId === 'all' ? 'All Projects' : projects.find(p => p.id === activeProjectId)?.name || 'Projects'}
+              <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+            </button>
+
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '4px',
+              background: 'var(--bg-secondary)',
               border: '1px solid var(--border)',
               borderRadius: '4px',
-              padding: '2px 6px',
-              fontSize: '11px',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="all">All Projects</option>
-            {projects.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              zIndex: 50,
+              minWidth: '120px',
+              overflow: 'hidden',
+              opacity: isDropdownOpen ? 1 : 0,
+              visibility: isDropdownOpen ? 'visible' : 'hidden',
+              transform: isDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}>
+              <div
+                onClick={() => { setActiveProjectId('all'); setIsDropdownOpen(false); }}
+                style={{ padding: '6px 12px', fontSize: '11px', cursor: 'pointer', color: activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)', background: activeProjectId === 'all' ? 'var(--border)' : 'transparent', transition: 'background 0.2s' }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--border)'}
+                onMouseOut={(e) => e.currentTarget.style.background = activeProjectId === 'all' ? 'var(--border)' : 'transparent'}
+              >
+                All Projects
+              </div>
+              {projects.map(p => (
+                <div
+                  key={p.id}
+                  onClick={() => { setActiveProjectId(p.id); setIsDropdownOpen(false); }}
+                  style={{ padding: '6px 12px', fontSize: '11px', cursor: 'pointer', color: activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)', background: activeProjectId === p.id ? 'var(--border)' : 'transparent', transition: 'background 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'var(--border)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = activeProjectId === p.id ? 'var(--border)' : 'transparent'}
+                >
+                  {p.name}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
