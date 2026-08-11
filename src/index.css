@@ -392,7 +392,7 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr !important;
   }
   .service-grid-layout {
-    grid-template-columns: repeat(2, 1fr) !important; /* Keep the 2x2 grid of squares on mobile */
+    grid-template-columns: 1fr !important;
   }
   .service-card {
     min-height: auto;
