@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Square, Check, Loader2, ChevronDown, RefreshCw } from 'lucide-react';
+import { Square, Check, Loader2, ChevronDown, RefreshCw, CheckSquare } from 'lucide-react';
 import { SiTodoist } from '@icons-pack/react-simple-icons';
 
 const TODOIST_TOKEN = import.meta.env.VITE_TODOIST_TOKEN || '';
