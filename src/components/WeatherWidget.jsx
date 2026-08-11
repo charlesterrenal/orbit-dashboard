@@ -102,7 +102,9 @@ const WeatherWidget = () => {
           <div>
             <div style={{ fontSize: '36px', fontWeight: '700', lineHeight: '1', color: 'var(--text-primary)' }}>{Math.round(temp)}°C</div>
             <div style={{ fontSize: '13px', color: 'var(--text-subtle)', marginTop: '8px' }}>{condition.label.toLowerCase()}</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>general trias</div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+              general trias • {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toLowerCase()}
+            </div>
           </div>
           <ConditionIcon size={32} style={{ color: 'var(--accent-primary)' }} />
         </div>
