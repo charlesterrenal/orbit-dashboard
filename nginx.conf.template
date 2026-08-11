@@ -46,23 +46,23 @@ server {
 
     location /api/qbit/ {
         proxy_pass http://192.168.254.203:8080/;
-        proxy_set_header Host $host;
+        proxy_set_header Host 192.168.254.203:8080;
         proxy_set_header Origin http://192.168.254.203:8080;
         proxy_set_header Referer http://192.168.254.203:8080/;
     }
 
     location /api/radarr/ {
         proxy_pass http://192.168.254.203:7878/;
-        proxy_set_header Host $host;
+        proxy_set_header Host 192.168.254.203:7878;
     }
 
     location /api/sonarr/ {
         proxy_pass http://192.168.254.203:8989/;
-        proxy_set_header Host $host;
+        proxy_set_header Host 192.168.254.203:8989;
     }
 
     location /api/jellyseerr/ {
         proxy_pass http://192.168.254.203:5055/;
-        proxy_set_header Host $host;
+        proxy_set_header Host 192.168.254.203:5055;
     }
 }
