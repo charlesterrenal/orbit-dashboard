@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PlayCircle, Tv, Film, Music, StopCircle, HardDrive } from 'lucide-react';
 
-const JellyfinWidget = () => {
+const JellyfinWidget = ({ onActiveStatusChange }) => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,6 +29,9 @@ const JellyfinWidget = () => {
         const activeSessions = data.filter(s => s.NowPlayingItem);
         
         setSessions(activeSessions);
+        if (onActiveStatusChange) {
+          onActiveStatusChange(activeSessions.length > 0);
+        }
         setError(null);
       } catch (err) {
         console.error('Failed to fetch Jellyfin sessions:', err);
@@ -53,19 +56,17 @@ const JellyfinWidget = () => {
   };
 
   return (
-    <div className="widget" style={{ marginBottom: '0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="widget-title" style={{ margin: 0 }}>
-          <HardDrive size={12} /> jellyfin streams
-        </h3>
-        {!loading && (
-          <span className={`pill ${sessions.length > 0 ? 'online' : 'unknown'}`} style={{ padding: '2px 8px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '130px' }}>
+      <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+        {!loading && !error && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>
+            <HardDrive size={10} style={{ color: sessions.length > 0 ? 'var(--accent-warning)' : 'inherit' }} /> 
             {sessions.length} active
-          </span>
+          </div>
         )}
       </div>
 
-      <div className="card" style={{ padding: '16px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
         {loading ? (
           <div style={{ padding: '15px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '13px' }}>
             loading sessions...

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { getClusterStatus } from '../api/proxmox';
 import Tooltip from './Tooltip';
 import ProgressBar from './ProgressBar';
-import { ChevronDown, ChevronUp, Server } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { SiProxmox } from '@icons-pack/react-simple-icons';
 
 const formatUptime = (seconds) => {
   const days = Math.floor(seconds / (3600 * 24));
@@ -66,7 +67,7 @@ const SystemStats = () => {
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Server size={12} style={{ color: 'var(--text-subtle)' }} />
+          <SiProxmox size={14} color="#E57000" />
           <div className="widget-title" style={{ margin: 0 }}>proxmox · pve</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -76,14 +77,14 @@ const SystemStats = () => {
         </div>
       </div>
 
-      <div className="card" style={{ padding: '16px', aspectRatio: '2 / 1', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+      <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden', height: '100%' }}>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
             <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', justifyContent: 'space-evenly' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', justifyContent: 'space-evenly' }}>
             {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)' }}>{error}</div>}
 
             <Tooltip content="CPU load across all cores">
@@ -94,7 +95,7 @@ const SystemStats = () => {
               <ProgressBar percent={memPercent} label="ram" />
             </Tooltip>
 
-            <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '4px' }}>
+            <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', marginTop: '4px', borderTop: '1px solid var(--border)' }}>
               <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>uptime</span>
               <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
             </div>

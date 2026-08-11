@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import JellyfinWidget from '../components/JellyfinWidget';
 import TailscaleWidget from '../components/TailscaleWidget';
 import ServiceGrid from '../components/ServiceGrid';
+import QbittorrentWidget from '../components/QbittorrentWidget';
 import servicesConfig from '../config/services.json';
 
 const Services = () => {
@@ -14,8 +14,8 @@ const Services = () => {
           <ServiceGrid services={services} />
         </div>
         <aside className="col-right" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <JellyfinWidget />
           <TailscaleWidget />
+          <QbittorrentWidget />
         </aside>
       </div>
     </div>

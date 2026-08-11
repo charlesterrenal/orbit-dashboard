@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CalendarDays, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, ExternalLink } from 'lucide-react';
+import { SiGooglecalendar } from '@icons-pack/react-simple-icons';
 import { fetchCalendarEvents } from '../api/calendar';
 
 const CALENDAR_URL = import.meta.env.VITE_CALENDAR_URL || '';
@@ -53,7 +54,7 @@ const CalendarWidget = () => {
   return (
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
-        <div className="widget-title" style={{ margin: 0 }}><CalendarDays size={12} />calendar</div>
+        <div className="widget-title" style={{ margin: 0 }}><SiGooglecalendar size={12} color="#1A73E8" />calendar</div>
         <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <button
             onClick={() => setOffset(o => o - 1)}

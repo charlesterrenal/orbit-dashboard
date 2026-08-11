@@ -38,7 +38,7 @@ const JellyfinSummaryWidget = () => {
   }, []);
 
   return (
-    <Link to="/media" style={{ textDecoration: 'none', display: 'block' }} title="Jellyfin Status">
+    <Link to="/services" style={{ textDecoration: 'none', display: 'block' }} title="Jellyfin Status">
       <div className="card service-card summary-widget-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', boxSizing: 'border-box' }}>
         <HardDrive size={24} style={{ color: 'var(--text-subtle)' }} />
         {loading ? (

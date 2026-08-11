@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 
-const CopyToClipboard = ({ text }) => {
+const CopyToClipboard = ({ text, customIcon }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e) => {
@@ -30,7 +30,7 @@ const CopyToClipboard = ({ text }) => {
         transition: 'all var(--transition-fast)'
       }}
     >
-      {copied ? <Check size={14} /> : <Copy size={14} />}
+      {copied ? <Check size={14} /> : (customIcon || <Copy size={14} />)}
     </button>
   );
 };

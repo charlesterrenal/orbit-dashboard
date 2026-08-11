@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getClusterStatus } from '../api/proxmox';
-import { ArrowDown, ArrowUp, Activity } from 'lucide-react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
+import { SiProxmox } from '@icons-pack/react-simple-icons';
 
 const formatSpeed = (bytesPerSec) => {
   if (bytesPerSec === 0 || isNaN(bytesPerSec)) return '0 B/s';
@@ -49,7 +50,7 @@ const NetworkWidget = () => {
 
   return (
     <div className="widget" style={{ gridColumn: 'span 1' }}>
-      <div className="widget-title" style={{ marginBottom: '8px' }}><Activity size={12} />network speed</div>
+      <div className="widget-title" style={{ marginBottom: '8px' }}><SiProxmox size={12} color="#E57000" />network speed</div>
       <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', justifyContent: 'space-evenly' }}>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

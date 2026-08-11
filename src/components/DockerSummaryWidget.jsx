@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Container, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { SiDocker } from '@icons-pack/react-simple-icons';
 import { Link } from 'react-router-dom';
 
 const DockerSummaryWidget = () => {
@@ -54,7 +55,7 @@ const DockerSummaryWidget = () => {
   return (
     <Link to="/containers" style={{ textDecoration: 'none', display: 'block' }} title="Docker Overview">
       <div className="card service-card summary-widget-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', boxSizing: 'border-box' }}>
-        <Container size={24} style={{ color: 'var(--text-subtle)' }} />
+        <SiDocker size={24} color="#2496ED" style={{ opacity: 0.7 }} />
         {loading ? (
           <div className="skeleton" style={{ width: '40px', height: '20px', borderRadius: '4px' }} />
         ) : error ? (

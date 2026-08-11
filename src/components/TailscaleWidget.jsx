@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Network, Laptop, Smartphone, Server, Globe } from 'lucide-react';
+import { Laptop, Smartphone, Server, Globe } from 'lucide-react';
+import { SiTailscale } from '@icons-pack/react-simple-icons';
 
 const TailscaleWidget = () => {
   const [devices, setDevices] = useState([]);
@@ -72,7 +73,7 @@ const TailscaleWidget = () => {
     <div className="widget" style={{ marginBottom: '0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 className="widget-title" style={{ margin: 0 }}>
-          <Network size={12} /> tailscale network
+          <SiTailscale size={14} color="var(--text-primary)" /> tailscale network
         </h3>
         {!loading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>

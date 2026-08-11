@@ -49,6 +49,34 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/todoist/, ''),
         },
+        '/api/qbit': {
+          target: 'http://192.168.254.203:8080',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/qbit/, ''),
+          headers: {
+            'Origin': 'http://192.168.254.203:8080',
+            'Referer': 'http://192.168.254.203:8080/'
+          }
+        },
+        '/api/radarr': {
+          target: 'http://192.168.254.203:7878',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/radarr/, ''),
+        },
+        '/api/sonarr': {
+          target: 'http://192.168.254.203:8989',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/sonarr/, ''),
+        },
+        '/api/jellyseerr': {
+          target: 'http://192.168.254.203:5055',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/jellyseerr/, ''),
+        },
       },
     },
   }

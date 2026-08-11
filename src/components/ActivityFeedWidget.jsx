@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Terminal, RefreshCcw } from 'lucide-react';
+import { RefreshCcw } from 'lucide-react';
+import { SiProxmox } from '@icons-pack/react-simple-icons';
 import { getSyslog } from '../api/proxmox';
 
 const ActivityFeedWidget = () => {
@@ -50,7 +51,7 @@ const ActivityFeedWidget = () => {
     <div className="widget" style={{ marginTop: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Terminal size={12} style={{ color: 'var(--text-subtle)' }} />
+          <SiProxmox size={12} color="#E57000" />
           <h3 className="widget-title" style={{ margin: 0 }}>system logs</h3>
         </div>
         <button
@@ -73,11 +74,12 @@ const ActivityFeedWidget = () => {
           borderRadius: '6px',
           fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
           fontSize: '11px',
-          color: 'var(--text-primary)',
+          color: 'var(--text-muted)',
           display: 'flex', 
           flexDirection: 'column',
           gap: '6px',
-          boxShadow: 'none'
+          boxShadow: 'none',
+          opacity: 0.75
         }}
       >
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '180px' }}>
@@ -88,10 +90,10 @@ const ActivityFeedWidget = () => {
           ) : (
             logs.map((log) => (
               <div key={log.id} style={{ display: 'flex', gap: '12px' }}>
-                <span style={{ color: 'var(--text-subtle)', whiteSpace: 'nowrap' }}>[{log.time}]</span>
+                <span style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>[{log.time}]</span>
                 <span style={{ 
                   color: log.message.includes('warn') ? 'var(--accent-warning)' : 
-                         (log.message.includes('error') || log.message.includes('fail')) ? 'var(--accent-offline)' : 'var(--text-primary)',
+                         (log.message.includes('error') || log.message.includes('fail')) ? 'var(--accent-offline)' : 'var(--text-muted)',
                   wordBreak: 'break-all'
                 }}>
                   {log.message}
@@ -102,7 +104,7 @@ const ActivityFeedWidget = () => {
         </div>
         <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
           <span style={{ color: 'var(--text-subtle)' }}>[{new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })} {new Date().toLocaleTimeString('en-US', { hour12: false })}]</span>
-          <span style={{ animation: 'pulse 1s step-end infinite', color: 'var(--text-primary)' }}>_</span>
+          <span style={{ animation: 'pulse 1s step-end infinite', color: 'var(--text-muted)' }}>_</span>
         </div>
       </div>
     </div>

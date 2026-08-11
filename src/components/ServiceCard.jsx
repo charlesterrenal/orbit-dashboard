@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as Icons from 'lucide-react';
-import PopoverMenu from './PopoverMenu';
+import { ChevronDown, ChevronUp, ExternalLink, Link } from 'lucide-react';
 import CopyToClipboard from './CopyToClipboard';
+import ServiceIcon from './ServiceIcon';
 import { fetchUptimeStatuses } from '../api/uptime';
 
 // Global uptime state shared across all cards (avoid N fetches)
@@ -51,17 +52,20 @@ const UptimeDots = ({ beats }) => {
   );
 };
 
-const ServiceCard = ({ service }) => {
+const ServiceCard = ({ service, expandedContent }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hasActiveProcess, setHasActiveProcess] = useState(false);
   const [uptimeData, setUptimeData] = useState(null);
-  const IconComponent = Icons[service.icon] || Icons.Server;
 
   // No longer needed, using standard Lucide icons
 
   useEffect(() => {
     const unsubscribe = subscribeToUptime((cache) => {
-      const key = service.monitorName;
-      if (key && cache[key]) setUptimeData(cache[key]);
+      if (!service.monitorName || !cache) return;
+      const target = service.monitorName.toLowerCase().trim();
+      const match = Object.keys(cache).find(k => k.toLowerCase().trim() === target);
+      if (match) setUptimeData(cache[match]);
     });
     return unsubscribe;
   }, [service.monitorName]);
@@ -72,30 +76,55 @@ const ServiceCard = ({ service }) => {
   const uptime24h = uptimeData?.uptime;
 
   return (
-    <a
-      href={service.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       className="card service-card"
-      style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative' }}
+      style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      <div
+        style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: 'inherit' }}
+      >
       {/* Top row: icon + actions */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px' }}>
-          <IconComponent size={22} strokeWidth={1.5} />
+          <ServiceIcon id={service.id} iconName={service.icon} size={20} />
         </div>
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          {/* Progressive disclosure: only shows on hover */}
-          <div style={{ opacity: isHovered ? 1 : 0, transition: 'opacity var(--transition-fast)' }}>
-            <PopoverMenu>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 8px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-primary)' }}>Copy URL</span>
-                <CopyToClipboard text={service.url} />
-              </div>
-            </PopoverMenu>
-          </div>
+
+          {/* Expand Button */}
+          {expandedContent && (
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: hasActiveProcess ? 'var(--accent-warning)' : 'var(--text-subtle)',
+                cursor: 'pointer',
+                padding: '2px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '4px',
+                transition: 'background-color 0.2s, color 0.2s',
+                filter: hasActiveProcess ? 'drop-shadow(0 0 4px color-mix(in srgb, var(--accent-warning) 50%, transparent))' : 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                if (!hasActiveProcess) e.currentTarget.style.color = 'var(--text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                if (!hasActiveProcess) e.currentTarget.style.color = 'var(--text-subtle)';
+              }}
+            >
+              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+          )}
 
           {/* Status Dot */}
           <div
@@ -112,14 +141,63 @@ const ServiceCard = ({ service }) => {
         </div>
       </div>
 
-      {/* Service name + description */}
-      <div style={{ marginTop: 'auto' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
-          {service.name}
-        </h3>
-        {service.description && (
-          <p style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>{service.description}</p>
-        )}
+      {/* Service name + description and Open App button */}
+      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '8px' }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {service.name}
+          </h3>
+          {service.description && (
+            <p style={{ fontSize: '11px', color: 'var(--text-subtle)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{service.description}</p>
+          )}
+        </div>
+        
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <div 
+            title="Copy URL"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid var(--border)',
+              borderRadius: '6px',
+              display: 'flex',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'}
+          >
+            <CopyToClipboard text={service.url} customIcon={<Link size={12} />} />
+          </div>
+          
+          {/* External Link Button */}
+          <a
+            href={service.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open App"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              color: 'var(--text-subtle)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4px',
+              borderRadius: '6px',
+              transition: 'color 0.2s, background-color 0.2s',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid var(--border)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--text-primary)';
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-subtle)';
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
+            }}
+          >
+            <ExternalLink size={12} />
+          </a>
+        </div>
       </div>
 
       {/* Live metrics row (only if Uptime Kuma data available) */}
@@ -140,7 +218,25 @@ const ServiceCard = ({ service }) => {
 
       {/* Heartbeat history dots */}
       {uptimeData?.beats && <UptimeDots beats={uptimeData.beats} />}
-    </a>
+      </div>
+
+      {/* Expanded Content Area with smooth grid animation */}
+      {expandedContent && (
+        <div 
+          style={{ 
+            display: 'grid', 
+            gridTemplateRows: isExpanded ? '1fr' : '0fr',
+            transition: 'grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+              {React.cloneElement(expandedContent, { onActiveStatusChange: setHasActiveProcess })}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -46,7 +46,37 @@
     "icon": "Droplets",
     "status": "online",
     "category": "websites",
-    "description": "Smart water project",
+    "description": "Landing page",
     "monitorName": "smarth2wo-landing"
+  },
+  {
+    "id": "radarr",
+    "name": "Radarr",
+    "url": "http://192.168.254.203:7878",
+    "icon": "Film",
+    "status": "online",
+    "category": "arr-stack",
+    "description": "Movie management",
+    "monitorName": "radarr"
+  },
+  {
+    "id": "sonarr",
+    "name": "Sonarr",
+    "url": "http://192.168.254.203:8989",
+    "icon": "Tv",
+    "status": "online",
+    "category": "arr-stack",
+    "description": "TV show management",
+    "monitorName": "sonarr"
+  },
+  {
+    "id": "jellyseerr",
+    "name": "Jellyseerr",
+    "url": "https://requests.charlesterrenal.com",
+    "icon": "GitPullRequest",
+    "status": "online",
+    "category": "arr-stack",
+    "description": "Media requests",
+    "monitorName": "jellyseerr"
   }
 ]

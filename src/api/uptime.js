@@ -37,7 +37,7 @@ export const fetchUptimeStatuses = async () => {
       const uptimeDecimal = uptimeList[`${id}_24`];
       const uptimePercentage = uptimeDecimal !== undefined ? (uptimeDecimal * 100) : null;
 
-      statusMap[name] = {
+      statusMap[name.toLowerCase()] = {
         status: latest.status === 1 ? 'online' : (latest.status === 0 ? 'offline' : 'pending'),
         ping: latest.ping ?? null,
         uptime: uptimePercentage,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Network } from 'lucide-react';
+import { SiTailscale } from '@icons-pack/react-simple-icons';
 import { Link } from 'react-router-dom';
 
 const TailscaleSummaryWidget = () => {
@@ -45,7 +45,7 @@ const TailscaleSummaryWidget = () => {
   return (
     <Link to="/services" style={{ textDecoration: 'none', display: 'block' }} title="Tailscale Overview">
       <div className="card service-card summary-widget-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', width: '100%', boxSizing: 'border-box' }}>
-        <Network size={24} style={{ color: 'var(--text-subtle)' }} />
+        <SiTailscale size={24} color="var(--text-primary)" style={{ opacity: 0.5 }} />
         {loading ? (
           <div className="skeleton" style={{ width: '40px', height: '20px', borderRadius: '4px' }} />
         ) : error ? (

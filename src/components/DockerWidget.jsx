@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Container, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { SiDocker } from '@icons-pack/react-simple-icons';
 
 const DockerWidget = () => {
   const [containers, setContainers] = useState([]);
@@ -90,7 +91,7 @@ const DockerWidget = () => {
   return (
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-        <div className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><Container size={12} />docker containers</div>
+        <div className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><SiDocker size={14} color="#2496ED" />docker containers</div>
         <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-elevated)', borderRadius: '6px', padding: '4px 8px', border: '1px solid var(--border)' }}>
           <Search size={14} style={{ color: 'var(--text-subtle)', marginRight: '6px' }} />
           <input

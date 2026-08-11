@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getStorageStatus } from '../api/proxmox';
 import { HardDrive } from 'lucide-react';
+import { SiProxmox } from '@icons-pack/react-simple-icons';
 import Tooltip from './Tooltip';
 import ProgressBar from './ProgressBar';
 
@@ -55,7 +56,7 @@ const StorageWidget = () => {
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <HardDrive size={12} style={{ color: 'var(--text-subtle)' }} />
+          <SiProxmox size={12} color="#E57000" />
           <div className="widget-title" style={{ margin: 0 }}>storage overview</div>
         </div>
       </div>
