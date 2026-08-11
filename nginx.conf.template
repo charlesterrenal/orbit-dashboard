@@ -38,4 +38,31 @@ server {
         proxy_pass https://api.tailscale.com/;
         proxy_ssl_server_name on;
     }
+
+    location /api/todoist/ {
+        proxy_pass https://api.todoist.com/;
+        proxy_ssl_server_name on;
+    }
+
+    location /api/qbit/ {
+        proxy_pass http://192.168.254.203:8080/;
+        proxy_set_header Host $host;
+        proxy_set_header Origin http://192.168.254.203:8080;
+        proxy_set_header Referer http://192.168.254.203:8080/;
+    }
+
+    location /api/radarr/ {
+        proxy_pass http://192.168.254.203:7878/;
+        proxy_set_header Host $host;
+    }
+
+    location /api/sonarr/ {
+        proxy_pass http://192.168.254.203:8989/;
+        proxy_set_header Host $host;
+    }
+
+    location /api/jellyseerr/ {
+        proxy_pass http://192.168.254.203:5055/;
+        proxy_set_header Host $host;
+    }
 }
