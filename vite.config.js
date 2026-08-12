@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api\/uptime/, ''),
         },
         '/api/jellyfin': {
-          target: 'https://jellyfin.charlesterrenal.com',
+          target: 'http://192.168.254.203:8096',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/jellyfin/, ''),

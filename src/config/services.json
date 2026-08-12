@@ -2,7 +2,7 @@
   {
     "id": "jellyfin",
     "name": "Jellyfin",
-    "url": "https://jellyfin.charlesterrenal.com",
+    "url": "http://192.168.254.203:8096",
     "icon": "Tv2",
     "status": "online",
     "category": "services",
@@ -78,5 +78,15 @@
     "category": "arr-stack",
     "description": "Media requests",
     "monitorName": "jellyseerr"
+  },
+  {
+    "id": "qbit",
+    "name": "qBittorrent",
+    "url": "http://192.168.254.203:8080",
+    "icon": "Download",
+    "status": "online",
+    "category": "arr-stack",
+    "description": "Torrent client",
+    "monitorName": "qbit"
   }
 ]
