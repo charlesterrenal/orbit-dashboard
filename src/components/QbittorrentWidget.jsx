@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Download, Upload, Activity } from 'lucide-react';
+import { Download, Upload, Activity, ExternalLink } from 'lucide-react';
 import { SiQbittorrent } from '@icons-pack/react-simple-icons';
 
 const QbittorrentWidget = () => {
@@ -47,8 +47,19 @@ const QbittorrentWidget = () => {
   return (
     <div className="widget" style={{ marginBottom: '0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="widget-title" style={{ margin: 0 }}>
-          <SiQbittorrent size={14} color="#2F67BA" /> qbittorrent
+        <h3 className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <SiQbittorrent size={14} color="#2F67BA" /> qbittorrent
+          </div>
+          <a 
+            href="http://192.168.254.203:8080" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', transition: 'color 0.2s', marginTop: '2px' }}
+            title="Open Web UI"
+          >
+            <ExternalLink size={12} style={{ cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'currentColor'} />
+          </a>
         </h3>
         {!loading && !error && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>
