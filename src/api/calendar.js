@@ -1,4 +1,5 @@
-import * as ICAL from 'ical.js';
+import ICAL_mod from 'ical.js';
+const ICAL = ICAL_mod.default || ICAL_mod;
 
 export const fetchCalendarEvents = async (url) => {
   if (!url) return [];
