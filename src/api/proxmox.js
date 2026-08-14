@@ -8,7 +8,11 @@ export const getClusterStatus = async () => {
       setTimeout(() => {
         resolve({
           cpu: 0.12,
+          wait: 0.01,
+          loadavg: ['1.23', '1.05', '0.98'],
+          cpuinfo: { cpus: 12, model: 'Intel(R) Core(TM) i7-8700T CPU @ 2.40GHz' },
           memory: { total: 32000000000, used: 16000000000 },
+          swap: { total: 8000000000, used: 1200000000 },
           uptime: 86400 * 14 + 3600 * 5, // 14 days, 5 hours
           netin: 1048576 * 15, // 15 MB/s
           netout: 1048576 * 5  // 5 MB/s
@@ -33,7 +37,11 @@ export const getClusterStatus = async () => {
     const json = await response.json();
     return {
       cpu: json.data.cpu,
+      wait: json.data.wait || 0,
+      loadavg: json.data.loadavg || [],
+      cpuinfo: json.data.cpuinfo || {},
       memory: { total: json.data.memory.total, used: json.data.memory.used },
+      swap: json.data.swap ? { total: json.data.swap.total, used: json.data.swap.used } : null,
       uptime: json.data.uptime,
       netin: json.data.netin || 0,
       netout: json.data.netout || 0

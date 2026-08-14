@@ -27,10 +27,17 @@ const SystemStats = () => {
         const data = await getClusterStatus();
         setStats({
           cpu: (data.cpu * 100) || 0,
+          wait: (data.wait * 100) || 0,
+          loadavg: data.loadavg || [],
+          cpuinfo: data.cpuinfo || {},
           memory: {
             used: data.memory?.used ? data.memory.used / (1024 ** 3) : 0,
             total: data.memory?.total ? data.memory.total / (1024 ** 3) : 32,
           },
+          swap: data.swap ? {
+            used: data.swap.used / (1024 ** 3),
+            total: data.swap.total / (1024 ** 3),
+          } : null,
           uptime: formatUptime(data.uptime || 0),
           disk: data.rootfs ? {
             used: data.rootfs.used / (1024 ** 3),
@@ -43,7 +50,11 @@ const SystemStats = () => {
       } catch (err) {
         setStats({
           cpu: 24.5,
+          wait: 1.2,
+          loadavg: ['1.23', '1.05', '0.98'],
+          cpuinfo: { cpus: 12, model: 'Intel(R) Core(TM) i7' },
           memory: { used: 16.2, total: 32 },
+          swap: { used: 1.2, total: 8 },
           uptime: '14d 2h',
           disk: { used: 120, total: 500 },
           netIn: null,
@@ -61,10 +72,11 @@ const SystemStats = () => {
   }, []);
 
   const memPercent = stats ? (stats.memory.used / stats.memory.total) * 100 : 0;
+  const swapPercent = stats?.swap && stats.swap.total > 0 ? (stats.swap.used / stats.swap.total) * 100 : 0;
   const diskPercent = stats?.disk ? (stats.disk.used / stats.disk.total) * 100 : null;
 
   return (
-    <div className="widget">
+    <div className="widget" style={{ gridRow: 'span 2' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <SiProxmox size={14} color="#E57000" />
@@ -77,29 +89,52 @@ const SystemStats = () => {
         </div>
       </div>
 
-      <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden', height: '100%' }}>
+      <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', height: 'calc(100% - 28px)', gap: '16px' }}>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
             <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
+            <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', justifyContent: 'space-evenly' }}>
-            {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)' }}>{error}</div>}
+          <>
+            {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)', marginBottom: '-8px' }}>{error}</div>}
 
-            <Tooltip content="CPU load across all cores">
-              <ProgressBar percent={stats?.cpu || 0} label="cpu" />
-            </Tooltip>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <Tooltip content={`Load Avg: ${stats?.loadavg?.join(', ')} | ${stats?.cpuinfo?.cpus || 0} Cores`}>
+                <ProgressBar percent={stats?.cpu || 0} label="cpu" />
+              </Tooltip>
 
-            <Tooltip content={`${stats?.memory.used.toFixed(1)} GB / ${stats?.memory.total.toFixed(0)} GB`}>
-              <ProgressBar percent={memPercent} label="ram" />
-            </Tooltip>
+              <Tooltip content="IO Delay (Wait)">
+                <ProgressBar percent={stats?.wait || 0} label="io wait" />
+              </Tooltip>
 
-            <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', marginTop: '4px', borderTop: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>uptime</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
+              <Tooltip content={`${stats?.memory.used.toFixed(1)} GB / ${stats?.memory.total.toFixed(0)} GB`}>
+                <ProgressBar percent={memPercent} label="ram" />
+              </Tooltip>
+              
+              {stats?.swap && (
+                <Tooltip content={`${stats?.swap.used.toFixed(1)} GB / ${stats?.swap.total.toFixed(0)} GB`}>
+                  <ProgressBar percent={swapPercent} label="swap" />
+                </Tooltip>
+              )}
             </div>
-          </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', paddingTop: '12px', marginTop: 'auto', borderTop: '1px solid var(--border)' }}>
+              <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>uptime</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
+              </div>
+              <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>load</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.loadavg?.join(' · ')}</span>
+              </div>
+              <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>cpu</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }} title={stats?.cpuinfo?.model}>{stats?.cpuinfo?.model || 'Unknown'}</span>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
