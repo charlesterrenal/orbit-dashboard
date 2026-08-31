@@ -156,13 +156,20 @@
   }
 
   .sidebar-link {
-    flex-direction: column;
-    padding: 8px;
-    gap: 3px;
-    font-size: 9px;
+    padding: 12px;
     justify-content: center;
-    letter-spacing: 0.04em;
     width: auto;
+  }
+
+  /* Hide the text labels completely on mobile */
+  .sidebar-link span {
+    display: none;
+  }
+
+  /* Enlarge the icons slightly */
+  .sidebar-link svg {
+    width: 22px !important;
+    height: 22px !important;
   }
 
   .sidebar.collapsed .sidebar-link {
@@ -181,9 +188,6 @@
     border-left: 1px solid var(--border);
     gap: 4px;
   }
-
-  .sidebar-footer .sidebar-link span {
-    display: none;
-  }
 }
+
 
