@@ -105,10 +105,6 @@ const SystemStats = () => {
                 <ProgressBar percent={stats?.cpu || 0} label="cpu" />
               </Tooltip>
 
-              <Tooltip content="IO Delay (Wait)">
-                <ProgressBar percent={stats?.wait || 0} label="io wait" />
-              </Tooltip>
-
               <Tooltip content={`${stats?.memory.used.toFixed(1)} GB / ${stats?.memory.total.toFixed(0)} GB`}>
                 <ProgressBar percent={memPercent} label="ram" />
               </Tooltip>
