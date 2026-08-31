@@ -54,6 +54,44 @@ export const getClusterStatus = async () => {
   }
 };
 
+export const getNodeGuests = async () => {
+  if (!import.meta.env.VITE_PROXMOX_URL) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          vms:  { total: 6,  running: 5 },
+          lxcs: { total: 16, running: 16 },
+        });
+      }, 500);
+    });
+  }
+
+  try {
+    const node = import.meta.env.VITE_PROXMOX_NODE || 'pve';
+    const headers = {
+      'Authorization': `PVEAPIToken=${import.meta.env.VITE_PROXMOX_TOKEN_ID}=${import.meta.env.VITE_PROXMOX_SECRET}`
+    };
+
+    const [vmRes, lxcRes] = await Promise.all([
+      fetch(`/api/proxmox/nodes/${node}/qemu`, { headers }),
+      fetch(`/api/proxmox/nodes/${node}/lxc`,  { headers }),
+    ]);
+
+    const [vmJson, lxcJson] = await Promise.all([vmRes.json(), lxcRes.json()]);
+
+    const vms  = vmJson.data  || [];
+    const lxcs = lxcJson.data || [];
+
+    return {
+      vms:  { total: vms.length,  running: vms.filter(v  => v.status === 'running').length },
+      lxcs: { total: lxcs.length, running: lxcs.filter(c => c.status === 'running').length },
+    };
+  } catch (error) {
+    console.error("Proxmox Guests Error:", error);
+    return null;
+  }
+};
+
 export const getStorageStatus = async () => {
   if (!import.meta.env.VITE_PROXMOX_URL) {
     return new Promise((resolve) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getClusterStatus } from '../api/proxmox';
+import { getClusterStatus, getNodeGuests } from '../api/proxmox';
 import Tooltip from './Tooltip';
 import ProgressBar from './ProgressBar';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -18,6 +18,7 @@ const formatBytes = (bytes, unit = 'GB') => {
 
 const SystemStats = () => {
   const [stats, setStats] = useState(null);
+  const [guests, setGuests] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -70,7 +71,16 @@ const SystemStats = () => {
 
     fetchStats();
     const interval = setInterval(fetchStats, 5000);
-    return () => clearInterval(interval);
+
+    // Fetch guests less frequently (every 15s) as it needs 2 API calls
+    const fetchGuests = async () => {
+      const g = await getNodeGuests();
+      if (g) setGuests(g);
+    };
+    fetchGuests();
+    const guestInterval = setInterval(fetchGuests, 15000);
+
+    return () => { clearInterval(interval); clearInterval(guestInterval); };
   }, []);
 
   const memPercent = stats ? (stats.memory.used / stats.memory.total) * 100 : 0;
@@ -129,14 +139,18 @@ const SystemStats = () => {
                   {stats?.memory.used.toFixed(1)} / {stats?.memory.total.toFixed(0)} GB
                 </span>
               </div>
-              {stats?.thermal != null ? (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>temp</span>
-                  <span style={{ fontSize: '12px', fontWeight: '500', color: stats.thermal > 80 ? 'var(--accent-offline)' : stats.thermal > 65 ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
-                    {stats.thermal}°C
-                  </span>
-                </div>
-              ) : null}
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>vms</span>
+                <span style={{ fontSize: '12px', fontWeight: '500', color: guests?.vms && guests.vms.running < guests.vms.total ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
+                  {guests ? `${guests.vms.running} / ${guests.vms.total} running` : '—'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>lxc</span>
+                <span style={{ fontSize: '12px', fontWeight: '500', color: guests?.lxcs && guests.lxcs.running < guests.lxcs.total ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
+                  {guests ? `${guests.lxcs.running} / ${guests.lxcs.total} running` : '—'}
+                </span>
+              </div>
             </div>
           </>
         )}

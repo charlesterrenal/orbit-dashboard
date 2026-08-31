@@ -1,46 +1,54 @@
 import { useState, useRef } from 'react';
 
 const Tooltip = ({ children, content }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [pos, setPos] = useState(null);
   const hideTimer = useRef(null);
+  const triggerRef = useRef(null);
 
   const show = () => {
     clearTimeout(hideTimer.current);
-    setIsVisible(true);
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setPos({
+        top: rect.top + window.scrollY - 8,
+        left: rect.left + rect.width / 2,
+      });
+    }
   };
+
   const hide = () => {
-    hideTimer.current = setTimeout(() => setIsVisible(false), 120);
+    hideTimer.current = setTimeout(() => setPos(null), 120);
   };
 
   return (
     <div
+      ref={triggerRef}
       className="tooltip-container"
       onMouseEnter={show}
       onMouseLeave={hide}
       style={{ position: 'relative', display: 'inline-block' }}
     >
       {children}
-      {isVisible && (
-        <div 
-          className="tooltip-content"
+      {pos && (
+        <div
           style={{
-            position: 'absolute',
-            bottom: '100%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            marginBottom: '8px',
-            padding: '6px 10px',
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            transform: 'translate(-50%, -100%)',
+            marginBottom: '6px',
+            padding: '5px 10px',
             backgroundColor: 'var(--bg-elevated)',
             color: 'var(--text-primary)',
             fontSize: '11px',
             fontWeight: '500',
             borderRadius: '6px',
             whiteSpace: 'nowrap',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            zIndex: 50,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+            zIndex: 9999,
             border: '1px solid var(--border)',
             pointerEvents: 'none',
-            animation: 'fadeIn 0.15s ease-in-out'
+            animation: 'fadeIn 0.15s ease-in-out',
           }}
         >
           {content}
