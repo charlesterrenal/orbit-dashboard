@@ -100,7 +100,7 @@ const SystemStats = () => {
           <>
             {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)', marginBottom: '-8px' }}>{error}</div>}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <Tooltip content={`Load Avg: ${stats?.loadavg?.join(', ')} | ${stats?.cpuinfo?.cpus || 0} Cores`}>
                 <ProgressBar percent={stats?.cpu || 0} label="cpu" />
               </Tooltip>
@@ -120,16 +120,16 @@ const SystemStats = () => {
               )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', paddingTop: '12px', marginTop: 'auto', borderTop: '1px solid var(--border)' }}>
-              <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '6px', paddingTop: '12px', marginTop: 'auto', borderTop: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>uptime</span>
                 <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
               </div>
-              <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>load</span>
                 <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.loadavg?.join(' · ')}</span>
               </div>
-              <div className="hide-on-mobile" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>cpu</span>
                 <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }} title={stats?.cpuinfo?.model}>{stats?.cpuinfo?.model || 'Unknown'}</span>
               </div>
