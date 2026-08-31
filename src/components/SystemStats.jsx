@@ -140,12 +140,6 @@ const SystemStats = () => {
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>vms</span>
-                <span style={{ fontSize: '12px', fontWeight: '500', color: guests?.vms && guests.vms.running < guests.vms.total ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
-                  {guests ? `${guests.vms.running} / ${guests.vms.total} running` : '—'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>lxc</span>
                 <span style={{ fontSize: '12px', fontWeight: '500', color: guests?.lxcs && guests.lxcs.running < guests.lxcs.total ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
                   {guests ? `${guests.lxcs.running} / ${guests.lxcs.total} running` : '—'}
