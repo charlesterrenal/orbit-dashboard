@@ -45,6 +45,7 @@ const SystemStats = () => {
           } : null,
           netIn: data.netin ?? null,
           netOut: data.netout ?? null,
+          thermal: data.thermal ?? null,
         });
         setError(null);
       } catch (err) {
@@ -59,6 +60,7 @@ const SystemStats = () => {
           disk: { used: 120, total: 500 },
           netIn: null,
           netOut: null,
+          thermal: null,
         });
         setError('mock data — check credentials');
       } finally {
@@ -122,13 +124,19 @@ const SystemStats = () => {
                 <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>load</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.loadavg?.join(' · ')}</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>memory</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>
+                  {stats?.memory.used.toFixed(1)} / {stats?.memory.total.toFixed(0)} GB
+                </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>cpu</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }} title={stats?.cpuinfo?.model}>{stats?.cpuinfo?.model || 'Unknown'}</span>
-              </div>
+              {stats?.thermal != null ? (
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>temp</span>
+                  <span style={{ fontSize: '12px', fontWeight: '500', color: stats.thermal > 80 ? 'var(--accent-offline)' : stats.thermal > 65 ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
+                    {stats.thermal}°C
+                  </span>
+                </div>
+              ) : null}
             </div>
           </>
         )}

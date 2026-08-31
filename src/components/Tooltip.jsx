@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const Tooltip = ({ children, content }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const hideTimer = useRef(null);
+
+  const show = () => {
+    clearTimeout(hideTimer.current);
+    setIsVisible(true);
+  };
+  const hide = () => {
+    hideTimer.current = setTimeout(() => setIsVisible(false), 120);
+  };
 
   return (
-    <div 
+    <div
       className="tooltip-container"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
+      onMouseEnter={show}
+      onMouseLeave={hide}
       style={{ position: 'relative', display: 'inline-block' }}
     >
       {children}
