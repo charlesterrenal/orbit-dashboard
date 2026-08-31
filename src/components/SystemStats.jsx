@@ -100,7 +100,7 @@ const SystemStats = () => {
           <>
             {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)', marginBottom: '-8px' }}>{error}</div>}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', height: '100%', justifyContent: 'space-evenly' }}>
               <Tooltip content={`Load Avg: ${stats?.loadavg?.join(', ')} | ${stats?.cpuinfo?.cpus || 0} Cores`}>
                 <ProgressBar percent={stats?.cpu || 0} label="cpu" />
               </Tooltip>
