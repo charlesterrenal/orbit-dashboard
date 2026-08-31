@@ -242,6 +242,18 @@ h1, h2, h3, h4, h5, h6 {
   display: none !important;
 }
 
+/* Theme-aware monochrome icon utility */
+.icon-mono {
+  filter: brightness(0) invert(1);
+  opacity: 0.65;
+  transition: opacity var(--transition-fast), filter var(--transition-slow);
+}
+
+[data-theme='light'] .icon-mono {
+  filter: brightness(0);
+  opacity: 0.55;
+}
+
 .calendar-events {
   border-top: 1px solid var(--border);
   padding-top: 12px;

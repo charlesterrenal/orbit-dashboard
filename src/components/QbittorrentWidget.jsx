@@ -49,7 +49,7 @@ const QbittorrentWidget = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <SiQbittorrent size={14} color="#2F67BA" /> qbittorrent
+            <SiQbittorrent size={14} className="icon-mono" /> qbittorrent
           </div>
           <a 
             href="http://192.168.254.203:8080" 

@@ -50,7 +50,12 @@ const NetworkWidget = () => {
 
   return (
     <div className="widget" style={{ gridColumn: 'span 1' }}>
-      <div className="widget-title" style={{ marginBottom: '8px' }}><SiProxmox size={12} color="#E57000" />network speed</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <SiProxmox size={12} className="icon-mono" />
+          <div className="widget-title" style={{ margin: 0 }}>network speed</div>
+        </div>
+      </div>
       <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', justifyContent: 'space-evenly' }}>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

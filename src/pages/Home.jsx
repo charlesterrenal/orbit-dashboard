@@ -32,7 +32,7 @@ const Home = () => {
         <div className="home-col">
           <div className="widget order-overview">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
-              <h3 className="widget-title" style={{ margin: 0 }}><SiHomeassistant size={12} color="#18BCF2" />overview</h3>
+              <h3 className="widget-title" style={{ margin: 0 }}><SiHomeassistant size={12} className="icon-mono" />overview</h3>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
               <ServicesSummaryWidget />

@@ -56,7 +56,7 @@ const StorageWidget = () => {
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <SiProxmox size={12} color="#E57000" />
+          <SiProxmox size={12} className="icon-mono" />
           <div className="widget-title" style={{ margin: 0 }}>storage overview</div>
         </div>
       </div>

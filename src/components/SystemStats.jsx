@@ -79,7 +79,7 @@ const SystemStats = () => {
     <div className="widget" style={{ gridRow: 'span 2' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <SiProxmox size={14} color="#E57000" />
+          <SiProxmox size={14} className="icon-mono" />
           <div className="widget-title" style={{ margin: 0 }}>proxmox · pve</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
