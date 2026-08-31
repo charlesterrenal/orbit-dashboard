@@ -163,7 +163,7 @@
 
   /* Hide the text labels completely on mobile */
   .sidebar-link span {
-    display: none;
+    display: none !important;
   }
 
   /* Enlarge the icons slightly */
