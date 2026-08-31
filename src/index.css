@@ -4,8 +4,8 @@
   --bg-surface: #e3e3de;
   --bg-elevated: #d4d4ce;
   --text-primary: #111111;
-  --text-muted: rgba(0, 0, 0, 0.65);
-  --text-subtle: rgba(0, 0, 0, 0.45);
+  --text-muted: #3a3a3a;
+  --text-subtle: #606060;
   --border: rgba(0, 0, 0, 0.14);
   --accent-online: #22c55e;
   --accent-dot: #22c55e;
@@ -290,7 +290,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Service Card ─────────────────────────── */
 .card {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #201f1b;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
@@ -299,15 +299,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 [data-theme="light"] .card {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #f0efe9;
 }
 
 .card:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: #252420;
 }
 
 [data-theme="light"] .card:hover {
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: #eae9e2;
 }
 
 /* ─── Animations ───────────────────────────── */

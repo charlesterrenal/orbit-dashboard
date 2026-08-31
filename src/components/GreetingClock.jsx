@@ -1,14 +1,34 @@
 import { useState, useEffect } from 'react';
-import { Activity } from 'lucide-react';
+import { Activity, AlertTriangle } from 'lucide-react';
+import { fetchUptimeStatuses } from '../api/uptime';
+import services from '../config/services.json';
+import Tooltip from './Tooltip';
 
 const GreetingClock = () => {
   const [time, setTime] = useState(new Date());
+  const [systemStatus, setSystemStatus] = useState(null); // null = loading
 
   useEffect(() => {
-    // Only need to update every minute now since we don't show seconds/clock,
-    // but updating every second is fine for midnight rollovers.
     const timer = setInterval(() => setTime(new Date()), 60000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        const statuses = await fetchUptimeStatuses();
+        const offlineServices = services.filter(s => {
+          const monitor = statuses[s.monitorName?.toLowerCase()];
+          return monitor && monitor.status === 'offline';
+        });
+        setSystemStatus(offlineServices.length === 0 ? 'ok' : offlineServices);
+      } catch {
+        setSystemStatus('ok'); // fail silently, assume ok
+      }
+    };
+    checkStatus();
+    const interval = setInterval(checkStatus, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const hours = time.getHours();
@@ -32,10 +52,31 @@ const GreetingClock = () => {
     });
   };
 
+  const isDown = Array.isArray(systemStatus) && systemStatus.length > 0;
+  const statusColor = isDown ? 'var(--accent-offline)' : 'var(--accent-dot)';
+  const statusText = systemStatus === null
+    ? 'checking...'
+    : isDown
+      ? `${systemStatus.length} service${systemStatus.length > 1 ? 's' : ''} down`
+      : 'all systems operational';
+  const statusGlow = isDown
+    ? '0 0 12px rgba(220, 38, 38, 0.5)'
+    : '0 0 12px rgba(34, 197, 94, 0.5)';
+  const iconGlow = isDown
+    ? 'drop-shadow(0 0 4px rgba(220, 38, 38, 0.6))'
+    : 'drop-shadow(0 0 4px rgba(34, 197, 94, 0.6))';
+
   return (
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '12px' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)', margin: 0 }}>
+        <h1 style={{
+          fontSize: '2.5rem',
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+          color: 'var(--text-primary)',
+          margin: 0,
+          textShadow: '0 2px 24px rgba(255, 255, 255, 0.06), 0 1px 4px rgba(0,0,0,0.08)'
+        }}>
           {greeting}, charles.
         </h1>
         <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
@@ -47,13 +88,25 @@ const GreetingClock = () => {
           {formatDate(time)}
         </p>
         <span style={{ color: 'var(--border)' }}>•</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-dot)' }}>
-          <Activity size={14} />
-          <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>all systems operational</span>
-        </div>
+        <Tooltip content={
+          isDown
+            ? `down: ${systemStatus.map(s => s.name).join(', ')}`
+            : `${services.length} services monitored`
+        }>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: statusColor, cursor: 'default' }}>
+            {isDown
+              ? <AlertTriangle size={14} style={{ filter: iconGlow }} />
+              : <Activity size={14} style={{ filter: iconGlow }} />
+            }
+            <span style={{ fontSize: '0.875rem', fontWeight: 500, textShadow: statusGlow }}>
+              {statusText}
+            </span>
+          </div>
+        </Tooltip>
       </div>
     </div>
   );
 };
 
 export default GreetingClock;
+
