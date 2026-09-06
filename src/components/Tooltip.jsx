@@ -26,7 +26,7 @@ const Tooltip = ({ children, content }) => {
       className="tooltip-container"
       onMouseEnter={show}
       onMouseLeave={hide}
-      style={{ position: 'relative', display: 'inline-block' }}
+      style={{ position: 'relative', display: 'block', width: '100%' }}
     >
       {children}
       {pos && (
@@ -36,22 +36,42 @@ const Tooltip = ({ children, content }) => {
             top: pos.top,
             left: pos.left,
             transform: 'translate(-50%, -100%)',
-            marginBottom: '6px',
-            padding: '5px 10px',
+            marginBottom: '8px',
+            padding: '6px 12px',
             backgroundColor: 'var(--bg-elevated)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
             color: 'var(--text-primary)',
             fontSize: '11px',
             fontWeight: '500',
-            borderRadius: '6px',
+            letterSpacing: '0.02em',
+            borderRadius: '8px',
             whiteSpace: 'nowrap',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.15)',
             zIndex: 9999,
             border: '1px solid var(--border)',
             pointerEvents: 'none',
-            animation: 'fadeIn 0.15s ease-in-out',
+            animation: 'fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          {content}
+          <span>{content}</span>
+          {/* Subtle Bottom Caret */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-4px',
+              left: '50%',
+              transform: 'translateX(-50%) rotate(45deg)',
+              width: '8px',
+              height: '8px',
+              backgroundColor: 'var(--bg-elevated)',
+              borderRight: '1px solid var(--border)',
+              borderBottom: '1px solid var(--border)',
+            }}
+          />
         </div>
       )}
     </div>

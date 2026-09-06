@@ -112,6 +112,20 @@
   flex-shrink: 0;
 }
 
+.sidebar-search-btn {
+  font: inherit;
+}
+
+.sidebar-kbd {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-subtle);
+  margin-left: auto;
+}
+
 /* ─── Footer ─── */
 .sidebar-footer {
   display: flex;
@@ -126,15 +140,18 @@
 @media (max-width: 768px) {
   .sidebar {
     width: 100% !important;
-    height: 60px;
+    height: 56px;
     position: fixed;
     bottom: 0;
     top: auto;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     z-index: 100;
     border-right: none;
     border-top: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    padding: 0 8px;
   }
 
   .sidebar-brand {
@@ -150,26 +167,32 @@
     justify-content: space-around;
     align-items: center;
     flex: 1;
-    padding: 0 8px;
-    gap: 0;
+    padding: 0;
+    gap: 8px;
     overflow: visible;
   }
 
   .sidebar-link {
-    padding: 12px;
+    padding: 10px;
     justify-content: center;
+    align-items: center;
     width: auto;
+    flex: 1;
+    max-width: 60px;
+    border-radius: 8px;
   }
 
-  /* Hide the text labels completely on mobile */
-  .sidebar-link span {
+  /* Hide the text labels and kbd completely on mobile */
+  .sidebar-link span,
+  .sidebar-link kbd,
+  .sidebar-kbd {
     display: none !important;
   }
 
   /* Enlarge the icons slightly */
   .sidebar-link svg {
-    width: 22px !important;
-    height: 22px !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 
   .sidebar.collapsed .sidebar-link {
@@ -183,10 +206,18 @@
   .sidebar-footer {
     flex-direction: row;
     align-items: center;
-    padding: 0 8px;
+    padding: 0 4px 0 8px;
     border-top: none;
     border-left: 1px solid var(--border);
     gap: 4px;
+    margin-left: 4px;
+  }
+
+  .sidebar-footer .sidebar-link {
+    flex: initial;
+    width: 42px;
+    height: 42px;
+    padding: 0;
   }
 }
 

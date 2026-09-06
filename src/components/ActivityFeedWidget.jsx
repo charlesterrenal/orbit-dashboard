@@ -49,7 +49,7 @@ const ActivityFeedWidget = () => {
   }, [fetchLogs]);
   return (
     <div className="widget" style={{ marginTop: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <SiProxmox size={12} className="icon-mono" />
           <h3 className="widget-title" style={{ margin: 0 }}>system logs</h3>

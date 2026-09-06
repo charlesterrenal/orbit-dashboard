@@ -94,7 +94,7 @@ const WeatherWidget = () => {
 
   return (
     <div className="widget">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
         <div className="widget-title" style={{ margin: 0 }}><CloudSun size={12} />weather</div>
       </div>
       <div className="card" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>

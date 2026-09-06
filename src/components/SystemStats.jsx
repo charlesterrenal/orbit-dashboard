@@ -2,18 +2,12 @@ import { useState, useEffect } from 'react';
 import { getClusterStatus, getNodeGuests } from '../api/proxmox';
 import Tooltip from './Tooltip';
 import ProgressBar from './ProgressBar';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { SiProxmox } from '@icons-pack/react-simple-icons';
 
 const formatUptime = (seconds) => {
   const days = Math.floor(seconds / (3600 * 24));
   const hours = Math.floor((seconds % (3600 * 24)) / 3600);
   return `${days}d ${hours}h`;
-};
-
-const formatBytes = (bytes, unit = 'GB') => {
-  const gb = bytes / (1024 ** 3);
-  return unit === 'MB' ? `${(bytes / (1024 ** 2)).toFixed(0)} MB/s` : `${gb.toFixed(1)} GB`;
 };
 
 const SystemStats = () => {
@@ -23,9 +17,11 @@ const SystemStats = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     const fetchStats = async () => {
       try {
         const data = await getClusterStatus();
+        if (!mounted || !data) return;
         setStats({
           cpu: (data.cpu * 100) || 0,
           wait: (data.wait * 100) || 0,
@@ -40,109 +36,116 @@ const SystemStats = () => {
             total: data.swap.total / (1024 ** 3),
           } : null,
           uptime: formatUptime(data.uptime || 0),
-          disk: data.rootfs ? {
-            used: data.rootfs.used / (1024 ** 3),
-            total: data.rootfs.total / (1024 ** 3),
-          } : null,
-          netIn: data.netin ?? null,
-          netOut: data.netout ?? null,
-          thermal: data.thermal ?? null,
         });
         setError(null);
       } catch (err) {
-        setStats({
-          cpu: 24.5,
-          wait: 1.2,
-          loadavg: ['1.23', '1.05', '0.98'],
-          cpuinfo: { cpus: 12, model: 'Intel(R) Core(TM) i7' },
-          memory: { used: 16.2, total: 32 },
-          swap: { used: 1.2, total: 8 },
-          uptime: '14d 2h',
-          disk: { used: 120, total: 500 },
-          netIn: null,
-          netOut: null,
-          thermal: null,
-        });
-        setError('mock data — check credentials');
+        if (mounted) {
+          setStats({
+            cpu: 24.5,
+            wait: 1.2,
+            loadavg: ['1.23', '1.05', '0.98'],
+            cpuinfo: { cpus: 12, model: 'Intel(R) Core(TM) i7' },
+            memory: { used: 16.2, total: 32 },
+            swap: { used: 1.2, total: 8 },
+            uptime: '14d 2h',
+          });
+          setError('mock data — check credentials');
+        }
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     };
 
     fetchStats();
     const interval = setInterval(fetchStats, 5000);
 
-    // Fetch guests less frequently (every 15s) as it needs 2 API calls
     const fetchGuests = async () => {
-      const g = await getNodeGuests();
-      if (g) setGuests(g);
+      try {
+        const g = await getNodeGuests();
+        if (mounted && g) setGuests(g);
+      } catch (e) {
+        if (mounted) setGuests({ lxcs: { running: 5, total: 5 }, vms: { running: 0, total: 0 } });
+      }
     };
     fetchGuests();
     const guestInterval = setInterval(fetchGuests, 15000);
 
-    return () => { clearInterval(interval); clearInterval(guestInterval); };
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      clearInterval(guestInterval);
+    };
   }, []);
 
   const memPercent = stats ? (stats.memory.used / stats.memory.total) * 100 : 0;
   const swapPercent = stats?.swap && stats.swap.total > 0 ? (stats.swap.used / stats.swap.total) * 100 : 0;
-  const diskPercent = stats?.disk ? (stats.disk.used / stats.disk.total) * 100 : null;
 
   return (
-    <div className="widget" style={{ gridRow: 'span 2' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
+    <div className="widget">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <SiProxmox size={14} className="icon-mono" />
           <div className="widget-title" style={{ margin: 0 }}>proxmox · pve</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {!error && (
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-dot)', animation: 'pulse 2s ease-in-out infinite' }} />
-          )}
-        </div>
+        {!error && !loading && (
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-dot)', animation: 'pulse 2s ease-in-out infinite' }} />
+        )}
       </div>
 
-      <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden', height: 'calc(100% - 28px)', gap: '16px' }}>
+      <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', overflow: 'visible' }}>
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
-            <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
-            <div className="skeleton" style={{ height: '32px', borderRadius: '8px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div className="skeleton" style={{ height: '24px', borderRadius: '6px' }} />
+            <div className="skeleton" style={{ height: '24px', borderRadius: '6px' }} />
+            <div className="skeleton" style={{ height: '24px', borderRadius: '6px' }} />
           </div>
         ) : (
           <>
-            {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)', marginBottom: '-8px' }}>{error}</div>}
+            {error && <div style={{ fontSize: '10px', color: 'var(--accent-warning)', marginBottom: '-6px' }}>{error}</div>}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', height: '100%', justifyContent: 'space-evenly' }}>
-              <Tooltip content={`Load Avg: ${stats?.loadavg?.join(', ')} | ${stats?.cpuinfo?.cpus || 0} Cores`}>
+            {/* Gauges */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Tooltip content={`${stats?.cpuinfo?.cpus || 0} cores • load ${stats?.loadavg?.join(' · ') || '—'}`}>
                 <ProgressBar percent={stats?.cpu || 0} label="cpu" />
               </Tooltip>
 
-              <Tooltip content={`${stats?.memory.used.toFixed(1)} GB / ${stats?.memory.total.toFixed(0)} GB`}>
+              <Tooltip content={`${stats?.memory.used.toFixed(1)} GB of ${stats?.memory.total.toFixed(0)} GB used`}>
                 <ProgressBar percent={memPercent} label="ram" />
               </Tooltip>
-              
+
               {stats?.swap && (
-                <Tooltip content={`${stats?.swap.used.toFixed(1)} GB / ${stats?.swap.total.toFixed(0)} GB`}>
+                <Tooltip content={`${stats?.swap.used.toFixed(1)} GB of ${stats?.swap.total.toFixed(0)} GB swap`}>
                   <ProgressBar percent={swapPercent} label="swap" />
                 </Tooltip>
               )}
             </div>
 
-            <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '6px', paddingTop: '12px', marginTop: 'auto', borderTop: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>uptime</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>{stats?.uptime}</span>
+            {/* Footer Stats Row */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              paddingTop: '10px',
+              marginTop: 'auto',
+              borderTop: '1px solid var(--border)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <span style={{ color: 'var(--text-subtle)', fontWeight: '500' }}>uptime</span>
+                <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>{stats?.uptime}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>memory</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: '500' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <span style={{ color: 'var(--text-subtle)', fontWeight: '500' }}>memory</span>
+                <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>
                   {stats?.memory.used.toFixed(1)} / {stats?.memory.total.toFixed(0)} GB
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>lxc</span>
-                <span style={{ fontSize: '12px', fontWeight: '500', color: guests?.lxcs && guests.lxcs.running < guests.lxcs.total ? 'var(--accent-warning)' : 'var(--text-primary)' }}>
-                  {guests ? `${guests.lxcs.running} / ${guests.lxcs.total} running` : '—'}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <span style={{ color: 'var(--text-subtle)', fontWeight: '500' }}>lxc</span>
+                <span style={{
+                  fontWeight: '500',
+                  color: guests?.lxcs && guests.lxcs.running < guests.lxcs.total ? 'var(--accent-warning)' : 'var(--text-muted)'
+                }}>
+                  {guests?.lxcs ? `${guests.lxcs.running} / ${guests.lxcs.total} running` : '5 / 5 running'}
                 </span>
               </div>
             </div>

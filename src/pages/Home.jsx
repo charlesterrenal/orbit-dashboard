@@ -1,55 +1,37 @@
 import WeatherWidget from '../components/WeatherWidget';
 import CalendarWidget from '../components/CalendarWidget';
-import SystemStats from '../components/SystemStats';
 import TodoistWidget from '../components/TodoistWidget';
-import NetworkWidget from '../components/NetworkWidget';
 import GreetingClock from '../components/GreetingClock';
-import ServicesSummaryWidget from '../components/ServicesSummaryWidget';
-import DockerSummaryWidget from '../components/DockerSummaryWidget';
-import TailscaleSummaryWidget from '../components/TailscaleSummaryWidget';
-import JellyfinSummaryWidget from '../components/JellyfinSummaryWidget';
-import StorageWidget from '../components/StorageWidget';
+import OverviewCard from '../components/OverviewCard';
+import SystemStats from '../components/SystemStats';
+import NetworkStorageWidget from '../components/NetworkStorageWidget';
 import ActivityFeedWidget from '../components/ActivityFeedWidget';
-import { SiHomeassistant } from '@icons-pack/react-simple-icons';
 
-const Home = () => {
+const Home = ({ onOpenCmd }) => {
   return (
     <div className="page-container animate-enter">
-      <GreetingClock />
+      <GreetingClock onOpenCmd={onOpenCmd} />
       <div className="home-grid">
-        {/* Column 1 */}
+        {/* Column 1: Core Host Telemetry */}
         <div className="home-col">
-          <div className="order-todo tile-widget"><TodoistWidget /></div>
-          <div className="order-weather tile-widget"><WeatherWidget /></div>
+          <div className="order-proxmox tile-widget"><SystemStats /></div>
+          <div className="order-network tile-widget"><NetworkStorageWidget /></div>
+        </div>
+
+        {/* Column 2: Fleet Overview */}
+        <div className="home-col">
+          <OverviewCard />
         </div>
         
-        {/* Column 2 */}
+        {/* Column 3: Calendar */}
         <div className="home-col">
           <div className="order-calendar tile-widget"><CalendarWidget /></div>
         </div>
-        
-        {/* Column 3 */}
+
+        {/* Column 4: Tasks & Weather */}
         <div className="home-col">
-          <div className="widget order-overview">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
-              <h3 className="widget-title" style={{ margin: 0 }}><SiHomeassistant size={12} className="icon-mono" />overview</h3>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-              <ServicesSummaryWidget />
-              <DockerSummaryWidget />
-              <TailscaleSummaryWidget />
-              <JellyfinSummaryWidget />
-            </div>
-          </div>
-          <div className="tile-widget">
-            <StorageWidget />
-          </div>
-        </div>
-        
-        {/* Column 4 */}
-        <div className="home-col">
-          <div className="order-proxmox tile-widget"><SystemStats /></div>
-          <div className="order-network tile-widget"><NetworkWidget /></div>
+          <div className="order-todo tile-widget"><TodoistWidget /></div>
+          <div className="order-weather tile-widget"><WeatherWidget /></div>
         </div>
       </div>
       

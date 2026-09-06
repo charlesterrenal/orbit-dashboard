@@ -78,32 +78,40 @@ const QbittorrentWidget = () => {
             {error}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.02)', borderRadius: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ color: 'var(--accent-dot)' }}>
-                  <Download size={20} />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>Download</span>
-                  <span style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
-                    {formatSpeed(stats?.dl_info_speed)}
-                  </span>
-                </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', alignItems: 'center' }}>
+            {/* Download (Left) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '50%',
+                backgroundColor: 'color-mix(in srgb, var(--accent-dot) 12%, transparent)',
+                color: 'var(--accent-dot)', flexShrink: 0
+              }}>
+                <Download size={18} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-subtle)', textTransform: 'lowercase', letterSpacing: '0.04em', fontWeight: 600 }}>down</span>
+                <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+                  {formatSpeed(stats?.dl_info_speed)}
+                </span>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.02)', borderRadius: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ color: 'var(--accent-blue)' }}>
-                  <Upload size={20} />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>Upload</span>
-                  <span style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
-                    {formatSpeed(stats?.up_info_speed)}
-                  </span>
-                </div>
+            {/* Upload (Right) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '8px', borderLeft: '1px solid var(--border)' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '50%',
+                backgroundColor: 'color-mix(in srgb, var(--accent-blue) 12%, transparent)',
+                color: 'var(--accent-blue)', flexShrink: 0
+              }}>
+                <Upload size={18} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-subtle)', textTransform: 'lowercase', letterSpacing: '0.04em', fontWeight: 600 }}>up</span>
+                <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+                  {formatSpeed(stats?.up_info_speed)}
+                </span>
               </div>
             </div>
           </div>

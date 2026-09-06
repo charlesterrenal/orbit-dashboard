@@ -4,7 +4,7 @@ import { fetchUptimeStatuses } from '../api/uptime';
 import services from '../config/services.json';
 import Tooltip from './Tooltip';
 
-const GreetingClock = () => {
+const GreetingClock = ({ onOpenCmd }) => {
   const [time, setTime] = useState(new Date());
   const [systemStatus, setSystemStatus] = useState(null); // null = loading
 
@@ -60,17 +60,17 @@ const GreetingClock = () => {
       ? `${systemStatus.length} service${systemStatus.length > 1 ? 's' : ''} down`
       : 'all systems operational';
   const statusGlow = isDown
-    ? '0 0 12px rgba(220, 38, 38, 0.5)'
-    : '0 0 12px rgba(34, 197, 94, 0.5)';
+    ? '0 0 12px rgba(239, 68, 68, 0.45)'
+    : '0 0 12px rgba(34, 197, 94, 0.35)';
   const iconGlow = isDown
-    ? 'drop-shadow(0 0 4px rgba(220, 38, 38, 0.6))'
-    : 'drop-shadow(0 0 4px rgba(34, 197, 94, 0.6))';
+    ? 'drop-shadow(0 0 4px rgba(239, 68, 68, 0.5))'
+    : 'drop-shadow(0 0 4px rgba(34, 197, 94, 0.5))';
 
   return (
-    <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    <div style={{ marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '12px' }}>
         <h1 style={{
-          fontSize: '2.5rem',
+          fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
           fontWeight: 700,
           letterSpacing: '-0.02em',
           color: 'var(--text-primary)',
@@ -79,8 +79,45 @@ const GreetingClock = () => {
         }}>
           {greeting}, charles.
         </h1>
-        <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-          {formatTime(time)}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {onOpenCmd && (
+            <button
+              onClick={onOpenCmd}
+              title="Command Palette (Ctrl+K)"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '5px 10px',
+                borderRadius: '6px',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-subtle)',
+                fontSize: '12px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                transition: 'border-color var(--transition-fast), color var(--transition-fast)'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--text-subtle)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-subtle)'; }}
+            >
+              <span>quick find</span>
+              <kbd style={{
+                fontSize: '10px',
+                fontWeight: 600,
+                padding: '1px 5px',
+                borderRadius: '3px',
+                background: 'var(--bg-elevated)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-muted)'
+              }}>
+                Ctrl+K
+              </kbd>
+            </button>
+          )}
+          <div style={{ fontSize: 'clamp(1rem, 3.5vw, 1.25rem)', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+            {formatTime(time)}
+          </div>
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>

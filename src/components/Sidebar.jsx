@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, LayoutGrid, Server, Settings, ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
+import { Home, LayoutGrid, Server, Search, ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onOpenCmd }) => {
   const [isOpen, setIsOpen] = useState(() => {
     const stored = localStorage.getItem('sidebar-open');
     return stored === null ? true : stored === 'true';
@@ -38,6 +38,16 @@ const Sidebar = () => {
 
       {/* Main Nav */}
       <div className="sidebar-links">
+        <button 
+          className="sidebar-link sidebar-search-btn" 
+          onClick={onOpenCmd} 
+          title="Command Palette (Ctrl+K)"
+        >
+          <Search size={16} className="sidebar-icon" />
+          {isOpen && <span>search</span>}
+          {isOpen && <kbd className="sidebar-kbd">⌘K</kbd>}
+        </button>
+
         <NavLink to="/" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} end title="home">
           <Home size={16} className="sidebar-icon" />
           {isOpen && <span>home</span>}

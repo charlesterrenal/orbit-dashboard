@@ -65,4 +65,9 @@ server {
         proxy_pass http://192.168.254.203:5055/;
         proxy_set_header Host 192.168.254.203:5055;
     }
+
+    location /api/updates/ {
+        proxy_pass http://192.168.254.200:8199/;
+        proxy_set_header Host $host;
+    }
 }

@@ -77,6 +77,12 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/jellyseerr/, ''),
         },
+        '/api/updates': {
+          target: 'http://192.168.254.200:8199',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/updates/, ''),
+        },
       },
     },
   }

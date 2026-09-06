@@ -53,7 +53,7 @@ const CalendarWidget = () => {
 
   return (
     <div className="widget">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', minHeight: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
         <div className="widget-title" style={{ margin: 0 }}><SiGooglecalendar size={12} className="icon-mono" />calendar</div>
         <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <button

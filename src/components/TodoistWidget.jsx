@@ -83,7 +83,7 @@ const TodoistWidget = () => {
 
   return (
     <div className="widget" style={{ gridColumn: 'span 1' }}>
-      <div className="widget-title" style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="widget-title" style={{ marginBottom: '4px', minHeight: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><SiTodoist size={12} className="icon-mono" />todoist</span>
         
         {/* Actions Row */}
