@@ -21,6 +21,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
+  const selectedItemRef = useRef(null);
   const navigate = useNavigate();
 
   const commands = [
@@ -72,12 +73,35 @@ const CommandPalette = ({ isOpen, onClose }) => {
       setQuery('');
       setSelectedIndex(0);
       setTimeout(() => inputRef.current?.focus(), 50);
+
+      // Lock body scroll and prevent page shift
+      const originalOverflow = document.body.style.overflow;
+      const originalPaddingRight = document.body.style.paddingRight;
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.paddingRight = originalPaddingRight;
+      };
     }
   }, [isOpen]);
 
   useEffect(() => {
     setSelectedIndex(0);
   }, [query]);
+
+  useEffect(() => {
+    if (selectedItemRef.current) {
+      selectedItemRef.current.scrollIntoView({
+        block: 'nearest'
+      });
+    }
+  }, [selectedIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -110,6 +134,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
     <div 
       className="cmd-palette-backdrop"
       onClick={onClose}
+      onWheel={(e) => e.stopPropagation()}
       style={{
         position: 'fixed',
         inset: 0,
@@ -121,12 +146,14 @@ const CommandPalette = ({ isOpen, onClose }) => {
         alignItems: 'flex-start',
         justifyContent: 'center',
         paddingTop: '12vh',
-        animation: 'fadeIn 0.15s ease forwards'
+        animation: 'fadeIn 0.15s ease forwards',
+        overscrollBehavior: 'contain'
       }}
     >
       <div 
         className="cmd-palette-dialog"
         onClick={(e) => e.stopPropagation()}
+        onWheel={(e) => e.stopPropagation()}
         style={{
           width: '100%',
           maxWidth: '540px',
@@ -137,7 +164,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          fontFamily: 'inherit'
+          fontFamily: 'inherit',
+          overscrollBehavior: 'contain'
         }}
       >
         {/* Search Header */}
@@ -179,11 +207,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
         </div>
 
         {/* Command Results */}
-        <div style={{
-          maxHeight: '340px',
-          overflowY: 'auto',
-          padding: '8px'
-        }}>
+        <div className="cmd-palette-list">
           {filteredCommands.length === 0 ? (
             <div style={{
               padding: '24px 16px',
@@ -200,6 +224,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
               return (
                 <div
                   key={cmd.id}
+                  ref={isSelected ? selectedItemRef : null}
                   onClick={cmd.action}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   style={{
