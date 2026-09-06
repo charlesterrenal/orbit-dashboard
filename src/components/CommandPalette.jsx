@@ -24,24 +24,24 @@ const CommandPalette = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
   const commands = [
-    // Navigation
-    { id: 'nav-home', title: 'Go to Home', category: 'Navigation', icon: Home, action: () => { navigate('/'); onClose(); } },
-    { id: 'nav-services', title: 'Go to Services', category: 'Navigation', icon: LayoutGrid, action: () => { navigate('/services'); onClose(); } },
-    { id: 'nav-containers', title: 'Go to Containers', category: 'Navigation', icon: Server, action: () => { navigate('/containers'); onClose(); } },
+    // navigation
+    { id: 'nav-home', title: 'go to home', category: 'navigation', icon: Home, action: () => { navigate('/'); onClose(); } },
+    { id: 'nav-services', title: 'go to services', category: 'navigation', icon: LayoutGrid, action: () => { navigate('/services'); onClose(); } },
+    { id: 'nav-containers', title: 'go to containers', category: 'navigation', icon: Server, action: () => { navigate('/containers'); onClose(); } },
 
-    // Infrastructure & Services
-    { id: 'svc-pve', title: 'Open Proxmox VE WebUI', category: 'Services', icon: Cpu, action: () => { window.open('https://192.168.254.200:8006', '_blank'); onClose(); } },
-    { id: 'svc-portainer', title: 'Open Portainer', category: 'Services', icon: Layers, action: () => { window.open('https://192.168.254.204:9443', '_blank'); onClose(); } },
-    { id: 'svc-uptime', title: 'Open Uptime Kuma', category: 'Services', icon: Radio, action: () => { window.open('http://192.168.254.204:3001', '_blank'); onClose(); } },
-    { id: 'svc-jellyfin', title: 'Open Jellyfin', category: 'Services', icon: Tv, action: () => { window.open('http://192.168.254.203:8096', '_blank'); onClose(); } },
-    { id: 'svc-jellyseerr', title: 'Open Jellyseerr', category: 'Services', icon: Film, action: () => { window.open('http://192.168.254.203:5055', '_blank'); onClose(); } },
-    { id: 'svc-qbit', title: 'Open qBittorrent', category: 'Services', icon: DownloadCloud, action: () => { window.open('http://192.168.254.203:8080', '_blank'); onClose(); } },
+    // infrastructure & services
+    { id: 'svc-pve', title: 'open proxmox ve webui', category: 'services', icon: Cpu, action: () => { window.open('https://192.168.254.200:8006', '_blank'); onClose(); } },
+    { id: 'svc-portainer', title: 'open portainer', category: 'services', icon: Layers, action: () => { window.open('https://192.168.254.204:9443', '_blank'); onClose(); } },
+    { id: 'svc-uptime', title: 'open uptime kuma', category: 'services', icon: Radio, action: () => { window.open('http://192.168.254.204:3001', '_blank'); onClose(); } },
+    { id: 'svc-jellyfin', title: 'open jellyfin', category: 'services', icon: Tv, action: () => { window.open('http://192.168.254.203:8096', '_blank'); onClose(); } },
+    { id: 'svc-jellyseerr', title: 'open jellyseerr', category: 'services', icon: Film, action: () => { window.open('http://192.168.254.203:5055', '_blank'); onClose(); } },
+    { id: 'svc-qbit', title: 'open qbittorrent', category: 'services', icon: DownloadCloud, action: () => { window.open('http://192.168.254.203:8080', '_blank'); onClose(); } },
 
-    // Quick Actions
+    // quick actions
     {
       id: 'act-theme',
-      title: 'Toggle Dark / Light Theme',
-      category: 'Actions',
+      title: 'toggle dark / light theme',
+      category: 'actions',
       icon: Sun,
       action: () => {
         const current = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -53,8 +53,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
     },
     {
       id: 'act-reload',
-      title: 'Reload Page Data',
-      category: 'Actions',
+      title: 'reload page data',
+      category: 'actions',
       icon: RefreshCw,
       action: () => {
         window.location.reload();
@@ -136,7 +136,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
           boxShadow: '0 24px 48px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.25)',
           overflow: 'hidden',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          fontFamily: 'inherit'
         }}
       >
         {/* Search Header */}
@@ -151,7 +152,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Type a command or search services..."
+            placeholder="type a command or search services..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             style={{
@@ -172,8 +173,9 @@ const CommandPalette = ({ isOpen, onClose }) => {
             borderRadius: '4px',
             backgroundColor: 'var(--bg-elevated)',
             border: '1px solid var(--border)',
-            color: 'var(--text-subtle)'
-          }}>ESC</kbd>
+            color: 'var(--text-subtle)',
+            textTransform: 'lowercase'
+          }}>esc</kbd>
         </div>
 
         {/* Command Results */}
@@ -189,7 +191,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
               color: 'var(--text-subtle)',
               fontSize: '13px'
             }}>
-              No matching commands or services found.
+              no matching commands or services found.
             </div>
           ) : (
             filteredCommands.map((cmd, idx) => {
@@ -228,11 +230,9 @@ const CommandPalette = ({ isOpen, onClose }) => {
                     </span>
                   </div>
                   <span style={{
-                    fontSize: '10px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
+                    fontSize: '11px',
                     color: 'var(--text-subtle)',
-                    fontWeight: 600
+                    fontWeight: 500
                   }}>
                     {cmd.category}
                   </span>
@@ -257,7 +257,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
             <span><kbd style={{ padding: '1px 4px', borderRadius: '3px', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>↑↓</kbd> navigate</span>
             <span><kbd style={{ padding: '1px 4px', borderRadius: '3px', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>↵</kbd> select</span>
           </div>
-          <span>Proxmox Command Center</span>
+          <span>ahhs command center</span>
         </div>
       </div>
     </div>

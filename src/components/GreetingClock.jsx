@@ -68,7 +68,7 @@ const GreetingClock = ({ onOpenCmd }) => {
 
   return (
     <div style={{ marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <h1 style={{
           fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
           fontWeight: 700,
@@ -83,12 +83,12 @@ const GreetingClock = ({ onOpenCmd }) => {
           {onOpenCmd && (
             <button
               onClick={onOpenCmd}
-              title="Command Palette (Ctrl+K)"
+              title="quick find (ctrl+k)"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '5px 10px',
+                padding: '6px 12px',
                 borderRadius: '6px',
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border)',
@@ -111,11 +111,18 @@ const GreetingClock = ({ onOpenCmd }) => {
                 border: '1px solid var(--border)',
                 color: 'var(--text-muted)'
               }}>
-                Ctrl+K
+                ctrl+k
               </kbd>
             </button>
           )}
-          <div style={{ fontSize: 'clamp(1rem, 3.5vw, 1.25rem)', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+          <div style={{
+            fontSize: 'clamp(1.75rem, 4.5vw, 2.5rem)',
+            fontWeight: 700,
+            color: 'var(--text-primary)',
+            letterSpacing: '-0.03em',
+            lineHeight: 1,
+            fontVariantNumeric: 'tabular-nums'
+          }}>
             {formatTime(time)}
           </div>
         </div>
