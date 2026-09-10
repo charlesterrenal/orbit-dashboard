@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Download, Upload, Activity, ExternalLink } from 'lucide-react';
-import { SiQbittorrent } from '@icons-pack/react-simple-icons';
 
 const QbittorrentWidget = () => {
   const [stats, setStats] = useState(null);
@@ -46,29 +45,29 @@ const QbittorrentWidget = () => {
 
   return (
     <div className="widget" style={{ marginBottom: '0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="card" style={{ padding: '14px 16px' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <SiQbittorrent size={14} className="icon-mono" /> qbittorrent
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              qbittorrent
+            </span>
+            <a 
+              href="http://192.168.254.203:8080" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
+              title="Open Web UI"
+            >
+              <ExternalLink size={12} style={{ cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'currentColor'} />
+            </a>
           </div>
-          <a 
-            href="http://192.168.254.203:8080" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', transition: 'color 0.2s', marginTop: '2px' }}
-            title="Open Web UI"
-          >
-            <ExternalLink size={12} style={{ cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'currentColor'} />
-          </a>
-        </h3>
-        {!loading && !error && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>
-            <Activity size={10} /> {activeCount} active
-          </div>
-        )}
-      </div>
-
-      <div className="card" style={{ padding: '16px' }}>
+          {!loading && !error && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-subtle)' }}>
+              <Activity size={11} /> {activeCount} active
+            </div>
+          )}
+        </div>
         {loading && !stats ? (
           <div style={{ padding: '15px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '13px' }}>
             Connecting...

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Laptop, Smartphone, Server, Globe } from 'lucide-react';
-import { SiTailscale } from '@icons-pack/react-simple-icons';
 
 const TailscaleWidget = () => {
   const [devices, setDevices] = useState([]);
@@ -71,19 +70,19 @@ const TailscaleWidget = () => {
 
   return (
     <div className="widget" style={{ marginBottom: '0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 className="widget-title" style={{ margin: 0 }}>
-          <SiTailscale size={14} color="var(--text-primary)" /> tailscale network
-        </h3>
-        {!loading && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 8px', background: 'var(--bg-elevated)', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '11px', color: 'var(--text-subtle)' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: activeCount > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)', boxShadow: activeCount > 0 ? '0 0 8px var(--accent-dot)' : 'none' }} />
-            {activeCount} / {devices.length} active
-          </div>
-        )}
-      </div>
-
-      <div className="card" style={{ padding: '16px' }}>
+      <div className="card" style={{ padding: '14px 16px' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            tailscale network
+          </span>
+          {!loading && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-subtle)' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: activeCount > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)', boxShadow: activeCount > 0 ? '0 0 8px var(--accent-dot)' : 'none' }} />
+              {activeCount} / {devices.length} active
+            </div>
+          )}
+        </div>
         {loading ? (
           <div style={{ padding: '15px 0', textAlign: 'center', color: 'var(--text-subtle)', fontSize: '13px' }}>
             Loading network...

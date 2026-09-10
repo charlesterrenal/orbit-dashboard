@@ -510,37 +510,25 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(4, 1fr);
+  gap: 4px;
+  padding: 0 6px 8px 6px;
 }
 
 .overview-cells-grid > a {
-  border-bottom: 1px solid var(--border);
-  border-right: none;
+  border: none;
+  border-radius: 8px;
 }
 
-.overview-cells-grid > a:last-child {
-  border-bottom: none;
+.overview-cells-grid > a:hover {
+  background-color: rgba(255, 255, 255, 0.035);
 }
 
 @media (max-width: 768px) {
   .overview-cells-grid {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
-  }
-  .overview-cells-grid > a:nth-child(1) {
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .overview-cells-grid > a:nth-child(2) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .overview-cells-grid > a:nth-child(3) {
-    border-right: 1px solid var(--border);
-    border-bottom: none;
-  }
-  .overview-cells-grid > a:nth-child(4) {
-    border-right: none;
-    border-bottom: none;
+    gap: 6px;
+    padding: 0 8px 8px 8px;
   }
 }
 

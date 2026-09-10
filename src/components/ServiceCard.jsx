@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import * as Icons from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, ExternalLink, Link } from 'lucide-react';
 import CopyToClipboard from './CopyToClipboard';
-import ServiceIcon from './ServiceIcon';
 import { fetchUptimeStatuses } from '../api/uptime';
 
 // Global uptime state shared across all cards (avoid N fetches)
@@ -85,90 +83,32 @@ const ServiceCard = ({ service, expandedContent }) => {
       <div
         style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: 'inherit' }}
       >
-      {/* Top row: icon + actions */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px' }}>
-          <ServiceIcon id={service.id} iconName={service.icon} size={20} />
-        </div>
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-
-          {/* Expand Button */}
-          {expandedContent && (
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsExpanded(!isExpanded);
-              }}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: hasActiveProcess ? 'var(--accent-warning)' : 'var(--text-subtle)',
-                cursor: 'pointer',
-                padding: '2px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '4px',
-                transition: 'background-color 0.2s, color 0.2s',
-                filter: hasActiveProcess ? 'drop-shadow(0 0 4px color-mix(in srgb, var(--accent-warning) 50%, transparent))' : 'none',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                if (!hasActiveProcess) e.currentTarget.style.color = 'var(--text-primary)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                if (!hasActiveProcess) e.currentTarget.style.color = 'var(--text-subtle)';
-              }}
-            >
-              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
-          )}
-
-          {/* Status Dot */}
-          <div
-            title={liveStatus}
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: liveStatus === 'online' ? 'var(--accent-dot)' : liveStatus === 'offline' ? 'var(--accent-offline)' : 'var(--text-subtle)',
-              boxShadow: liveStatus === 'online' ? '0 0 8px var(--accent-dot)' : 'none',
-              flexShrink: 0
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Service name + description and Open App button */}
-      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '8px' }}>
+      {/* Top row: Title on left, actions & status dot on right */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {service.name}
+          <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', letterSpacing: '-0.01em', margin: 0 }}>
+            {service.name.toLowerCase()}
           </h3>
-          {service.description && (
-            <p style={{ fontSize: '11px', color: 'var(--text-subtle)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{service.description}</p>
-          )}
         </div>
         
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          {/* Copy URL */}
           <div 
             title="Copy URL"
             style={{
               backgroundColor: 'rgba(255, 255, 255, 0.03)',
               border: '1px solid var(--border)',
-              borderRadius: '6px',
+              borderRadius: '5px',
               display: 'flex',
               transition: 'background-color 0.2s',
             }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'}
           >
-            <CopyToClipboard text={service.url} customIcon={<Link size={12} />} />
+            <CopyToClipboard text={service.url} customIcon={<Link size={11} />} />
           </div>
-          
-          {/* External Link Button */}
+
+          {/* External Link */}
           <a
             href={service.url}
             target="_blank"
@@ -180,8 +120,8 @@ const ServiceCard = ({ service, expandedContent }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '4px',
-              borderRadius: '6px',
+              padding: '3px 4px',
+              borderRadius: '5px',
               transition: 'color 0.2s, background-color 0.2s',
               backgroundColor: 'rgba(255, 255, 255, 0.03)',
               border: '1px solid var(--border)'
@@ -195,10 +135,64 @@ const ServiceCard = ({ service, expandedContent }) => {
               e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
             }}
           >
-            <ExternalLink size={12} />
+            <ExternalLink size={11} />
           </a>
+
+          {/* Expand Button */}
+          {expandedContent && (
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid var(--border)',
+                color: hasActiveProcess ? 'var(--accent-warning)' : 'var(--text-subtle)',
+                cursor: 'pointer',
+                padding: '3px 4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '5px',
+                transition: 'background-color 0.2s, color 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                if (!hasActiveProcess) e.currentTarget.style.color = 'var(--text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
+                if (!hasActiveProcess) e.currentTarget.style.color = 'var(--text-subtle)';
+              }}
+            >
+              {isExpanded ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+            </button>
+          )}
+
+          {/* Status Dot */}
+          <div
+            title={liveStatus}
+            style={{
+              width: '7px',
+              height: '7px',
+              borderRadius: '50%',
+              backgroundColor: liveStatus === 'online' ? 'var(--accent-dot)' : liveStatus === 'offline' ? 'var(--accent-offline)' : 'var(--text-subtle)',
+              boxShadow: liveStatus === 'online' ? '0 0 8px var(--accent-dot)' : 'none',
+              flexShrink: 0,
+              marginLeft: '2px'
+            }}
+          />
         </div>
       </div>
+
+      {/* Description */}
+      {service.description && (
+        <p style={{ fontSize: '11px', color: 'var(--text-subtle)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '2px 0 0 0' }}>
+          {service.description}
+        </p>
+      )}
 
       {/* Live metrics row (only if Uptime Kuma data available) */}
       {uptimeData && (

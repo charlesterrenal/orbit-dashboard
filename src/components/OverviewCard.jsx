@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutGrid, HardDrive } from 'lucide-react';
-import { SiDocker, SiTailscale, SiHomeassistant } from '@icons-pack/react-simple-icons';
 import { fetchUptimeStatuses } from '../api/uptime';
 import servicesConfig from '../config/services.json';
 
@@ -167,7 +165,7 @@ const OverviewCard = () => {
   const masterStatusColor = anyOffline ? 'var(--accent-warning)' : 'var(--accent-dot)';
 
   const cellStyle = {
-    padding: '14px 16px',
+    padding: '12px 14px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -186,15 +184,11 @@ const OverviewCard = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '14px 16px',
-          borderBottom: '1px solid var(--border)'
+          padding: '14px 16px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SiHomeassistant size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              overview
-            </span>
-          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            overview
+          </span>
           <div style={{
             width: '6px',
             height: '6px',
@@ -213,12 +207,9 @@ const OverviewCard = () => {
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <LayoutGrid size={13} className="icon-mono" />
-                <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
-                  services
-                </span>
-              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+                services
+              </span>
               <div style={{
                 width: '5px',
                 height: '5px',
@@ -248,12 +239,9 @@ const OverviewCard = () => {
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <SiDocker size={13} className="icon-mono" />
-                <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
-                  docker
-                </span>
-              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+                docker
+              </span>
               <div style={{
                 width: '5px',
                 height: '5px',
@@ -283,12 +271,9 @@ const OverviewCard = () => {
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <SiTailscale size={13} className="icon-mono" />
-                <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
-                  tailscale
-                </span>
-              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+                tailscale
+              </span>
               <div style={{
                 width: '5px',
                 height: '5px',
@@ -318,12 +303,9 @@ const OverviewCard = () => {
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <HardDrive size={13} className="icon-mono" />
-                <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
-                  media
-                </span>
-              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+                media
+              </span>
               <div style={{
                 width: '5px',
                 height: '5px',

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { SiDocker } from '@icons-pack/react-simple-icons';
 
 const DockerWidget = () => {
   const [containers, setContainers] = useState([]);
@@ -91,9 +90,11 @@ const DockerWidget = () => {
   return (
     <div className="widget">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-        <div className="widget-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><SiDocker size={14} className="icon-mono" />docker containers</div>
-        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-elevated)', borderRadius: '6px', padding: '4px 8px', border: '1px solid var(--border)' }}>
-          <Search size={14} style={{ color: 'var(--text-subtle)', marginRight: '6px' }} />
+        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+          docker containers
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-elevated)', borderRadius: '6px', padding: '4px 10px', border: '1px solid var(--border)' }}>
+          <Search size={13} style={{ color: 'var(--text-subtle)', marginRight: '6px' }} />
           <input
             type="text"
             placeholder="search containers..."
@@ -116,37 +117,58 @@ const DockerWidget = () => {
           {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: '64px', borderRadius: '8px' }} />)}
         </div>
       ) : error ? (
-        <div>
-          <p style={{ fontSize: '11px', color: 'var(--accent-offline)', marginBottom: '8px' }}>{error}</p>
-          <p style={{ fontSize: '10px', color: 'var(--text-subtle)', lineHeight: '1.5' }}>
+        <div className="card" style={{ padding: '16px' }}>
+          <p style={{ fontSize: '12px', color: 'var(--accent-offline)', marginBottom: '8px' }}>{error}</p>
+          <p style={{ fontSize: '11px', color: 'var(--text-subtle)', lineHeight: '1.5' }}>
             Check VITE_PORTAINER_URL and API Key in .env.local
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {nodes.map(node => {
             const nodeContainers = filteredContainers.filter(c => c.nodeName === node);
             if (nodeContainers.length === 0) return null;
+            const runningCount = nodeContainers.filter(c => c.State === 'running').length;
             
             return (
-              <div key={node}>
-                <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'lowercase', letterSpacing: '0.05em', color: 'var(--text-subtle)', marginBottom: '12px' }}>
-                  {node}
+              <div key={node} className="card" style={{ padding: '14px 16px' }}>
+                {/* Node Card Header Inside */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                    {node}
+                  </span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>
+                    {runningCount} / {nodeContainers.length} running
+                  </span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '16px' }}>
-                  {nodeContainers.map((c, i) => {
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '10px' }}>
+                  {nodeContainers.map((c) => {
                     const name = (c.Names?.[0] || c.Id.slice(0, 12)).replace('/', '');
                     const isRunning = c.State === 'running';
                     return (
-                      <div key={c.Id} className={`card animate-enter stagger-${(i % 4) + 1}`} style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px', opacity: isRunning ? 1 : 0.6 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <span style={{ fontSize: '13px', fontWeight: isRunning ? 600 : 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</span>
-                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: statusColor(c.State), boxShadow: isRunning ? `0 0 6px ${statusColor(c.State)}80` : 'none', flexShrink: 0 }} />
+                      <div 
+                        key={c.Id} 
+                        style={{ 
+                          padding: '10px 12px', 
+                          backgroundColor: 'rgba(255, 255, 255, 0.02)', 
+                          border: '1px solid var(--border)', 
+                          borderRadius: '6px', 
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          gap: '6px', 
+                          opacity: isRunning ? 1 : 0.6 
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                          <span style={{ fontSize: '12px', fontWeight: isRunning ? 600 : 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {name}
+                          </span>
+                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: statusColor(c.State), boxShadow: isRunning ? `0 0 6px ${statusColor(c.State)}80` : 'none', flexShrink: 0 }} />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: 'var(--text-subtle)' }}>
-                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.Image.split('@')[0].split(':')[0]}</span>
-                          <span style={{ textTransform: 'capitalize', fontWeight: '500', color: isRunning ? 'var(--accent-online)' : 'var(--text-muted)' }}></span>
-                        </div>
+                        <span style={{ fontSize: '10px', color: 'var(--text-subtle)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {c.Image.split('@')[0].split(':')[0]}
+                        </span>
                       </div>
                     );
                   })}
@@ -156,9 +178,11 @@ const DockerWidget = () => {
           })}
 
           {filteredContainers.length === 0 && !loading && (
-            <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>
-              {searchQuery ? 'No containers match your search.' : 'No containers found.'}
-            </p>
+            <div className="card" style={{ padding: '16px' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-subtle)', margin: 0 }}>
+                {searchQuery ? 'No containers match your search.' : 'No containers found.'}
+              </p>
+            </div>
           )}
         </div>
       )}
