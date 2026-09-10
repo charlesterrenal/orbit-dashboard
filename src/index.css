@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-wrap: wrap;
   gap: var(--col-gap);
-  align-items: start;
+  align-items: stretch;
 }
 
 .home-grid > div {
@@ -494,6 +494,54 @@ h1, h2, h3, h4, h5, h6 {
 
 [data-theme='dark'] .overview-quad-cell:hover {
   background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Overview Card Responsive Vertical Spanning */
+.overview-card-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.overview-cells-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.overview-cells-grid > a {
+  border-bottom: 1px solid var(--border);
+  border-right: none;
+}
+
+.overview-cells-grid > a:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .overview-cells-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .overview-cells-grid > a:nth-child(1) {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .overview-cells-grid > a:nth-child(2) {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .overview-cells-grid > a:nth-child(3) {
+    border-right: 1px solid var(--border);
+    border-bottom: none;
+  }
+  .overview-cells-grid > a:nth-child(4) {
+    border-right: none;
+    border-bottom: none;
+  }
 }
 
 @media (max-width: 480px) {

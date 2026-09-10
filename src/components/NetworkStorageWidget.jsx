@@ -127,14 +127,16 @@ const NetworkStorageWidget = () => {
 
   return (
     <div className="widget">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <SiProxmox size={12} className="icon-mono" />
-          <div className="widget-title" style={{ margin: 0 }}>network & storage</div>
-        </div>
-      </div>
-
       <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SiProxmox size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              network & storage
+            </span>
+          </div>
+        </div>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div className="skeleton" style={{ height: '32px', borderRadius: '6px' }} />

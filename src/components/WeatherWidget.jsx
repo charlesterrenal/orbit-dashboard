@@ -68,8 +68,13 @@ const WeatherWidget = () => {
   if (loading) {
     return (
       <div className="widget">
-        <div className="widget-title"><CloudSun size={12} />weather</div>
-        <div className="skeleton" style={{ height: '100px', borderRadius: '10px' }} />
+        <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <CloudSun size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>weather</span>
+          </div>
+          <div className="skeleton" style={{ height: '80px', borderRadius: '10px' }} />
+        </div>
       </div>
     );
   }
@@ -77,8 +82,13 @@ const WeatherWidget = () => {
   if (error || !weather) {
     return (
       <div className="widget">
-        <div className="widget-title"><CloudSun size={12} />weather</div>
-        <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>{error}</p>
+        <div className="card" style={{ padding: '14px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <CloudSun size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>weather</span>
+          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>{error}</p>
+        </div>
       </div>
     );
   }
@@ -94,10 +104,16 @@ const WeatherWidget = () => {
 
   return (
     <div className="widget">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
-        <div className="widget-title" style={{ margin: 0 }}><CloudSun size={12} />weather</div>
-      </div>
-      <div className="card" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+      <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <CloudSun size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              weather
+            </span>
+          </div>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: '36px', fontWeight: '700', lineHeight: '1', color: 'var(--text-primary)' }}>{Math.round(temp)}°C</div>

@@ -49,22 +49,6 @@ const ActivityFeedWidget = () => {
   }, [fetchLogs]);
   return (
     <div className="widget" style={{ marginTop: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <SiProxmox size={12} className="icon-mono" />
-          <h3 className="widget-title" style={{ margin: 0 }}>system logs</h3>
-        </div>
-        <button
-          onClick={fetchLogs}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: '2px', display: 'flex', alignItems: 'center', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
-          onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
-          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
-          title="Refresh Logs"
-        >
-          <RefreshCcw size={12} className={loading ? "spin" : ""} />
-        </button>
-      </div>
-
       <div 
         className="card" 
         style={{ 
@@ -82,6 +66,24 @@ const ActivityFeedWidget = () => {
           opacity: 0.75
         }}
       >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SiProxmox size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em', fontFamily: 'inherit' }}>
+              system logs
+            </span>
+          </div>
+          <button
+            onClick={fetchLogs}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: '2px', display: 'flex', alignItems: 'center', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
+            title="Refresh Logs"
+          >
+            <RefreshCcw size={13} className={loading ? "spin" : ""} />
+          </button>
+        </div>
+
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '180px' }}>
           {loading && logs.length === 0 ? (
             <div style={{ color: 'var(--text-subtle)' }}>loading logs...</div>

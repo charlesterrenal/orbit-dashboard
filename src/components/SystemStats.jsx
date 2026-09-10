@@ -82,17 +82,19 @@ const SystemStats = () => {
 
   return (
     <div className="widget">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <SiProxmox size={14} className="icon-mono" />
-          <div className="widget-title" style={{ margin: 0 }}>proxmox · pve</div>
-        </div>
-        {!error && !loading && (
-          <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-dot)', animation: 'pulse 2s ease-in-out infinite' }} />
-        )}
-      </div>
-
       <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', overflow: 'visible' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SiProxmox size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              proxmox · pve
+            </span>
+          </div>
+          {!error && !loading && (
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-dot)', animation: 'pulse 2s ease-in-out infinite' }} />
+          )}
+        </div>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div className="skeleton" style={{ height: '24px', borderRadius: '6px' }} />

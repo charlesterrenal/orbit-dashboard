@@ -83,120 +83,125 @@ const TodoistWidget = () => {
 
   return (
     <div className="widget" style={{ gridColumn: 'span 1' }}>
-      <div className="widget-title" style={{ marginBottom: '4px', minHeight: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><SiTodoist size={12} className="icon-mono" />todoist</span>
+      <div className="card" style={{ padding: '14px 16px', minHeight: '160px', display: 'flex', flexDirection: 'column' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SiTodoist size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              todoist
+            </span>
+          </div>
         
-        {/* Actions Row */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {/* Refresh Button */}
-          <button 
-            onClick={fetchData}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              padding: '2px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'color 0.2s',
-            }}
-            title="Refresh Tasks"
-            onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-            onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-          >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          </button>
+          {/* Actions Row */}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {/* Refresh Button */}
+            <button 
+              onClick={fetchData}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                padding: '2px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'color 0.2s',
+              }}
+              title="Refresh Tasks"
+              onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+              onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+            >
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+            </button>
 
-          {/* Project Tabs Custom Dropdown */}
-          {projects.length > 0 && (
-            <div style={{ position: 'relative' }}>
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                style={{
-                  background: 'var(--bg-secondary)', 
-                  color: 'var(--text-secondary)',
+            {/* Project Tabs Custom Dropdown */}
+            {projects.length > 0 && (
+              <div style={{ position: 'relative' }}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  style={{
+                    background: 'var(--bg-secondary)', 
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '4px',
+                    padding: '2px 6px',
+                    fontSize: '11px',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '70px', display: 'inline-block' }}>
+                    {activeProjectId === 'all' ? 'all projects' : projects.find(p => p.id === activeProjectId)?.name.toLowerCase() || 'projects'}
+                  </span>
+                  <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease', flexShrink: 0 }} />
+                </button>
+
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '4px',
+                  background: 'var(--bg-elevated)',
                   border: '1px solid var(--border)',
                   borderRadius: '4px',
-                  padding: '2px 6px',
-                  fontSize: '11px',
-                  outline: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '70px', display: 'inline-block' }}>
-                  {activeProjectId === 'all' ? 'all projects' : projects.find(p => p.id === activeProjectId)?.name.toLowerCase() || 'projects'}
-                </span>
-                <ChevronDown size={12} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease', flexShrink: 0 }} />
-              </button>
-
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                right: 0,
-                marginTop: '4px',
-                background: 'var(--bg-elevated)',
-                border: '1px solid var(--border)',
-                borderRadius: '4px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-                zIndex: 50,
-                minWidth: '120px',
-                overflow: 'hidden',
-                opacity: isDropdownOpen ? 1 : 0,
-                visibility: isDropdownOpen ? 'visible' : 'hidden',
-                transform: isDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-              }}>
-                <button
-                  onClick={() => { setActiveProjectId('all'); setIsDropdownOpen(false); }}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '6px 12px',
-                    background: activeProjectId === 'all' ? 'var(--border)' : 'transparent',
-                    border: 'none',
-                    color: activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    fontSize: '11px',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = activeProjectId === 'all' ? 'var(--border)' : 'transparent'; e.currentTarget.style.color = activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)'; }}
-                >
-                  all projects
-                </button>
-                {projects.map(p => (
-                  <button 
-                    key={p.id}
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                  zIndex: 50,
+                  minWidth: '120px',
+                  overflow: 'hidden',
+                  opacity: isDropdownOpen ? 1 : 0,
+                  visibility: isDropdownOpen ? 'visible' : 'hidden',
+                  transform: isDropdownOpen ? 'translateY(0)' : 'translateY(-10px)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}>
+                  <button
+                    onClick={() => { setActiveProjectId('all'); setIsDropdownOpen(false); }}
                     style={{
                       display: 'block',
                       width: '100%',
                       textAlign: 'left',
                       padding: '6px 12px',
-                      background: activeProjectId === p.id ? 'var(--border)' : 'transparent',
+                      background: activeProjectId === 'all' ? 'var(--border)' : 'transparent',
                       border: 'none',
-                      color: activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      color: activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)',
                       fontSize: '11px',
                       cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = activeProjectId === p.id ? 'var(--border)' : 'transparent'; e.currentTarget.style.color = activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)'; }}
-                    onClick={() => { setActiveProjectId(p.id); setIsDropdownOpen(false); }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = activeProjectId === 'all' ? 'var(--border)' : 'transparent'; e.currentTarget.style.color = activeProjectId === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)'; }}
                   >
-                    {p.name.toLowerCase()}
+                    all projects
                   </button>
-                ))}
+                  {projects.map(p => (
+                    <button
+                      key={p.id}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '6px 12px',
+                        background: activeProjectId === p.id ? 'var(--border)' : 'transparent',
+                        border: 'none',
+                        color: activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+                        fontSize: '11px',
+                        cursor: 'pointer'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-elevated)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = activeProjectId === p.id ? 'var(--border)' : 'transparent'; e.currentTarget.style.color = activeProjectId === p.id ? 'var(--text-primary)' : 'var(--text-secondary)'; }}
+                      onClick={() => { setActiveProjectId(p.id); setIsDropdownOpen(false); }}
+                    >
+                      {p.name.toLowerCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-
-      <div className="card" style={{ padding: '12px', minHeight: '160px', display: 'flex', flexDirection: 'column' }}>
         
         {!TODOIST_TOKEN && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'var(--text-muted)' }}>

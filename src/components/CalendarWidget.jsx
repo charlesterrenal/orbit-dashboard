@@ -53,35 +53,40 @@ const CalendarWidget = () => {
 
   return (
     <div className="widget">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', minHeight: '18px' }}>
-        <div className="widget-title" style={{ margin: 0 }}><SiGooglecalendar size={12} className="icon-mono" />calendar</div>
-        <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <button
-            onClick={() => setOffset(o => o - 1)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: '2px', display: 'flex', alignItems: 'center', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
-          >
-            <ChevronLeft size={13} />
-          </button>
-          <button
-            onClick={() => setOffset(0)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: isCurrentMonth ? 'var(--accent-primary)' : 'var(--text-subtle)', fontSize: '9px', fontWeight: '600', padding: '2px 4px', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
-          >
-            today
-          </button>
-          <button
-            onClick={() => setOffset(o => o + 1)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: '2px', display: 'flex', alignItems: 'center', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
-          >
-            <ChevronRight size={13} />
-          </button>
+      <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', minHeight: '230px' }}>
+        {/* Card Header Inside */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SiGooglecalendar size={15} className="icon-mono" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+              calendar
+            </span>
+          </div>
+          <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <button
+              onClick={() => setOffset(o => o - 1)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: '2px', display: 'flex', alignItems: 'center', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
+            >
+              <ChevronLeft size={13} />
+            </button>
+            <button
+              onClick={() => setOffset(0)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: isCurrentMonth ? 'var(--accent-primary)' : 'var(--text-subtle)', fontSize: '10px', fontWeight: '600', padding: '2px 5px', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
+            >
+              today
+            </button>
+            <button
+              onClick={() => setOffset(o => o + 1)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-subtle)', padding: '2px', display: 'flex', alignItems: 'center', borderRadius: '4px', transition: 'color var(--transition-fast)' }}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-subtle)'}
+            >
+              <ChevronRight size={13} />
+            </button>
+          </div>
         </div>
-      </div>
-
-      <div className="card" style={{ padding: '12px', display: 'flex', flexDirection: 'column', minHeight: '230px' }}>
         <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)' }}>{monthName.toLowerCase()}</span>
