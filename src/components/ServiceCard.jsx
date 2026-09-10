@@ -75,8 +75,8 @@ const ServiceCard = ({ service, expandedContent }) => {
 
   return (
     <div
-      className="card service-card"
-      style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}
+      className="service-tile"
+      style={{ display: 'flex', flexDirection: 'column', position: 'relative', gridColumn: isExpanded ? '1 / -1' : 'auto' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

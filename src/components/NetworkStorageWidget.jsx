@@ -130,12 +130,9 @@ const NetworkStorageWidget = () => {
       <div className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {/* Card Header Inside */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SiProxmox size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              network & storage
-            </span>
-          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            network & storage
+          </span>
         </div>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

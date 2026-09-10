@@ -164,17 +164,6 @@ const OverviewCard = () => {
   const anyOffline = !servicesOk || (!dockerOk && dockerStats.running < dockerStats.total);
   const masterStatusColor = anyOffline ? 'var(--accent-warning)' : 'var(--accent-dot)';
 
-  const cellStyle = {
-    padding: '12px 14px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: '6px',
-    textDecoration: 'none',
-    color: 'inherit',
-    transition: 'background-color var(--transition-fast)'
-  };
-
   return (
     <div className="widget order-overview" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Single Unified Card */}
@@ -184,7 +173,7 @@ const OverviewCard = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '14px 16px'
+          marginBottom: '10px'
         }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
             overview
@@ -203,128 +192,132 @@ const OverviewCard = () => {
           {/* Cell 1: Services */}
           <Link 
             to="/services" 
-            style={cellStyle}
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
                 services
               </span>
               <div style={{
-                width: '5px',
-                height: '5px',
+                width: '6px',
+                height: '6px',
                 borderRadius: '50%',
-                backgroundColor: servicesOk ? 'var(--accent-dot)' : 'var(--accent-offline)'
+                backgroundColor: servicesOk ? 'var(--accent-dot)' : 'var(--accent-offline)',
+                boxShadow: servicesOk ? '0 0 6px var(--accent-dot)' : 'none'
               }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0' }}>
-              <span style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                {serviceStats.online}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  {serviceStats.online}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                  / {serviceStats.total} online
+                </span>
+              </div>
+              <span style={{ fontSize: '11px', color: servicesOk ? 'var(--text-subtle)' : 'var(--accent-offline)', fontWeight: 500 }}>
+                {servicesOk ? 'all systems ok' : `${serviceStats.total - serviceStats.online} failing`}
               </span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                / {serviceStats.total} online
-              </span>
-            </div>
-
-            <div style={{ fontSize: '11px', color: servicesOk ? 'var(--text-subtle)' : 'var(--accent-offline)', fontWeight: 500 }}>
-              {servicesOk ? 'all systems ok' : `${serviceStats.total - serviceStats.online} failing`}
             </div>
           </Link>
 
           {/* Cell 2: Docker */}
           <Link 
             to="/containers" 
-            style={cellStyle}
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
                 docker
               </span>
               <div style={{
-                width: '5px',
-                height: '5px',
+                width: '6px',
+                height: '6px',
                 borderRadius: '50%',
-                backgroundColor: dockerOk ? 'var(--accent-dot)' : 'var(--accent-warning)'
+                backgroundColor: dockerOk ? 'var(--accent-dot)' : 'var(--accent-warning)',
+                boxShadow: dockerOk ? '0 0 6px var(--accent-dot)' : 'none'
               }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0' }}>
-              <span style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                {dockerStats.running}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  {dockerStats.running}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                  / {dockerStats.total} active
+                </span>
+              </div>
+              <span style={{ fontSize: '11px', color: dockerOk ? 'var(--text-subtle)' : 'var(--accent-warning)', fontWeight: 500 }}>
+                {dockerOk ? '0 stopped' : `${dockerStats.total - dockerStats.running} stopped`}
               </span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                / {dockerStats.total} active
-              </span>
-            </div>
-
-            <div style={{ fontSize: '11px', color: dockerOk ? 'var(--text-subtle)' : 'var(--accent-warning)', fontWeight: 500 }}>
-              {dockerOk ? '0 stopped' : `${dockerStats.total - dockerStats.running} stopped`}
             </div>
           </Link>
 
           {/* Cell 3: Tailscale */}
           <Link 
             to="/services" 
-            style={cellStyle}
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
                 tailscale
               </span>
               <div style={{
-                width: '5px',
-                height: '5px',
+                width: '6px',
+                height: '6px',
                 borderRadius: '50%',
-                backgroundColor: tailscaleStats.active > 0 ? 'var(--accent-dot)' : 'var(--accent-offline)'
+                backgroundColor: tailscaleStats.active > 0 ? 'var(--accent-dot)' : 'var(--accent-offline)',
+                boxShadow: tailscaleStats.active > 0 ? '0 0 6px var(--accent-dot)' : 'none'
               }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0' }}>
-              <span style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                {tailscaleStats.active}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  {tailscaleStats.active}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                  / {tailscaleStats.total} peers
+                </span>
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 500 }}>
+                {tailscaleStats.total - tailscaleStats.active > 0 ? `${tailscaleStats.total - tailscaleStats.active} idle` : 'all connected'}
               </span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                / {tailscaleStats.total} peers
-              </span>
-            </div>
-
-            <div style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 500 }}>
-              {tailscaleStats.total - tailscaleStats.active > 0 ? `${tailscaleStats.total - tailscaleStats.active} idle` : 'all connected'}
             </div>
           </Link>
 
           {/* Cell 4: Media */}
           <Link 
             to="/services" 
-            style={cellStyle}
             className="overview-quad-cell"
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'lowercase' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
                 media
               </span>
               <div style={{
-                width: '5px',
-                height: '5px',
+                width: '6px',
+                height: '6px',
                 borderRadius: '50%',
-                backgroundColor: jellyfinStats.active > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)'
+                backgroundColor: jellyfinStats.active > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)',
+                boxShadow: jellyfinStats.active > 0 ? '0 0 6px var(--accent-dot)' : 'none'
               }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0' }}>
-              <span style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                {jellyfinStats.active}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  {jellyfinStats.active}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                  streams
+                </span>
+              </div>
+              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 500 }}>
+                {jellyfinStats.active > 0 ? `${jellyfinStats.active} active` : 'server idle'}
               </span>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                streams
-              </span>
-            </div>
-
-            <div style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 500 }}>
-              {jellyfinStats.active > 0 ? `${jellyfinStats.active} active` : 'server idle'}
             </div>
           </Link>
         </div>

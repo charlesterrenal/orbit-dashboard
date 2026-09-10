@@ -56,12 +56,9 @@ const CalendarWidget = () => {
       <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', minHeight: '230px' }}>
         {/* Card Header Inside */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SiGooglecalendar size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              calendar
-            </span>
-          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            calendar
+          </span>
           <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <button
               onClick={() => setOffset(o => o - 1)}

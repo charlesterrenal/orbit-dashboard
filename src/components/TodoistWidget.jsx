@@ -86,12 +86,9 @@ const TodoistWidget = () => {
       <div className="card" style={{ padding: '14px 16px', minHeight: '160px', display: 'flex', flexDirection: 'column' }}>
         {/* Card Header Inside */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SiTodoist size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              todoist
-            </span>
-          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            todoist
+          </span>
         
           {/* Actions Row */}
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

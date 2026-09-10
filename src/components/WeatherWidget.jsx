@@ -69,10 +69,7 @@ const WeatherWidget = () => {
     return (
       <div className="widget">
         <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <CloudSun size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>weather</span>
-          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>weather</span>
           <div className="skeleton" style={{ height: '80px', borderRadius: '10px' }} />
         </div>
       </div>
@@ -83,9 +80,8 @@ const WeatherWidget = () => {
     return (
       <div className="widget">
         <div className="card" style={{ padding: '14px 16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <CloudSun size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>weather</span>
+          <div style={{ marginBottom: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>weather</span>
           </div>
           <p style={{ fontSize: '12px', color: 'var(--text-subtle)' }}>{error}</p>
         </div>
@@ -107,12 +103,9 @@ const WeatherWidget = () => {
       <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
         {/* Card Header Inside */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <CloudSun size={15} className="icon-mono" />
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              weather
-            </span>
-          </div>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+            weather
+          </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>

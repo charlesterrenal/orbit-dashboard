@@ -25,20 +25,20 @@
 }
 
 [data-theme='dark'] {
-  /* Dark Mode - Clean, grounded, authentic homelab tones */
-  --bg: #0a0a0a;
-  --bg-surface: #1a1a1a;
-  --bg-elevated: rgba(36, 36, 36, 0.8);
-  --text-primary: #ededed;
-  --text-muted: rgba(255, 255, 255, 0.6);
-  --text-subtle: rgba(255, 255, 255, 0.4);
-  --border: rgba(255, 255, 255, 0.15);
+  /* Dark Mode - Clean, grounded neutral zinc tones (Cadence matched) */
+  --bg: #09090b;
+  --bg-surface: #141416;
+  --bg-elevated: rgba(255, 255, 255, 0.04);
+  --text-primary: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --text-subtle: #71717a;
+  --border: rgba(255, 255, 255, 0.08);
   --accent-online: #22c55e;
   --accent-dot: #22c55e;
   --accent-warning: #f59e0b;
   --accent-offline: #ef4444;
-  --accent-primary: #ededed;
-  --accent-blue: #ededed;
+  --accent-primary: #f4f4f5;
+  --accent-blue: #f4f4f5;
   --progress-fill: rgba(255, 255, 255, 0.38);
 }
 
@@ -59,10 +59,15 @@
 .stagger-3 { animation-delay: 0.15s; }
 .stagger-4 { animation-delay: 0.2s; }
 
-* {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body, button, input, select, textarea {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -70,7 +75,6 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: var(--bg);
   color: var(--text-primary);
   line-height: 1.625;
@@ -296,24 +300,51 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Service Card ─────────────────────────── */
 .card {
-  background-color: #201f1b;
+  background-color: #141416;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: none;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   transition: transform var(--transition-fast), background-color var(--transition-slow), border-color var(--transition-slow);
 }
 
 [data-theme="light"] .card {
-  background-color: #f0efe9;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .card:hover {
-  background-color: #252420;
+  background-color: #18181c;
 }
 
 [data-theme="light"] .card:hover {
-  background-color: #eae9e2;
+  background-color: #f7f7f8;
+}
+
+.service-tile {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.service-tile:hover {
+  background-color: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="light"] .service-tile {
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--border);
+}
+
+[data-theme="light"] .service-tile:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 /* ─── Animations ───────────────────────────── */
@@ -501,34 +532,41 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0;
+  padding: 14px 16px;
   overflow: hidden;
 }
 
 .overview-cells-grid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   flex: 1;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(4, 1fr);
-  gap: 4px;
-  padding: 0 6px 8px 6px;
 }
 
-.overview-cells-grid > a {
-  border: none;
+.overview-quad-cell {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
   border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  justifyContent: space-between;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.overview-cells-grid > a:hover {
-  background-color: rgba(255, 255, 255, 0.035);
+.overview-quad-cell:hover {
+  background-color: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 @media (max-width: 768px) {
   .overview-cells-grid {
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 6px;
-    padding: 0 8px 8px 8px;
+    gap: 8px;
   }
 }
 

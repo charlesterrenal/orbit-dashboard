@@ -4,18 +4,34 @@ import SonarrWidget from './SonarrWidget';
 import JellyseerrWidget from './JellyseerrWidget';
 import JellyfinWidget from './JellyfinWidget';
 
-const SectionLabel = ({ children }) => (
-  <h2 style={{
-    fontSize: '10px',
-    fontWeight: '600',
-    textTransform: 'lowercase',
-    letterSpacing: '0.08em',
-    color: 'var(--text-subtle)',
-    marginBottom: '12px',
-  }}>
-    {children}
-  </h2>
-);
+const ServiceGroup = ({ title, items, getWidget }) => {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <div className="card" style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {/* Group Card Header Inside */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+          {title}
+        </span>
+        <span style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>
+          {items.length} {items.length === 1 ? 'service' : 'services'}
+        </span>
+      </div>
+
+      {/* Grid of service tiles inside */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '10px' }}>
+        {items.map(service => (
+          <ServiceCard 
+            key={service.id} 
+            service={service} 
+            expandedContent={getWidget ? getWidget(service.id) : null} 
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const ServiceGrid = ({ services }) => {
   const homelab = services.filter(s => s.category === 'services');
@@ -33,43 +49,10 @@ const ServiceGrid = ({ services }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      {homelab.length > 0 && (
-        <div>
-          <SectionLabel>services</SectionLabel>
-          <div className="service-grid-layout" style={{ gap: '12px', alignItems: 'start' }}>
-            {homelab.map(service => (
-              <ServiceCard 
-                key={service.id} 
-                service={service} 
-                expandedContent={getWidget(service.id)} 
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      {websites.length > 0 && (
-        <div>
-          <SectionLabel>websites</SectionLabel>
-          <div className="service-grid-layout" style={{ gap: '12px', alignItems: 'start' }}>
-            {websites.map(service => <ServiceCard key={service.id} service={service} />)}
-          </div>
-        </div>
-      )}
-      {arrStack.length > 0 && (
-        <div>
-          <SectionLabel>arr-stack</SectionLabel>
-          <div className="service-grid-layout" style={{ gap: '12px', alignItems: 'start' }}>
-            {arrStack.map(service => (
-              <ServiceCard 
-                key={service.id} 
-                service={service} 
-                expandedContent={getWidget(service.id)} 
-              />
-            ))}
-          </div>
-        </div>
-      )}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <ServiceGroup title="services" items={homelab} getWidget={getWidget} />
+      <ServiceGroup title="websites" items={websites} />
+      <ServiceGroup title="arr-stack" items={arrStack} getWidget={getWidget} />
     </div>
   );
 };
