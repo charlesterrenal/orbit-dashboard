@@ -165,7 +165,7 @@ const OverviewCard = () => {
   const masterStatusColor = anyOffline ? 'var(--accent-warning)' : 'var(--accent-dot)';
 
   return (
-    <div className="widget order-overview" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div className="widget order-overview">
       {/* Single Unified Card */}
       <div className="card overview-card-container">
         {/* Unified Card Header Inside */}
@@ -173,7 +173,7 @@ const OverviewCard = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '10px'
+          marginBottom: '6px'
         }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
             overview
@@ -187,136 +187,86 @@ const OverviewCard = () => {
           }} />
         </div>
 
-        {/* Cells Grid (1-column vertical span on desktop, 2x2 on mobile) */}
-        <div className="overview-cells-grid">
-          {/* Cell 1: Services */}
-          <Link 
-            to="/services" 
-            className="overview-quad-cell"
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
-                services
-              </span>
-              <div style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: servicesOk ? 'var(--accent-dot)' : 'var(--accent-offline)',
-                boxShadow: servicesOk ? '0 0 6px var(--accent-dot)' : 'none'
-              }} />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {serviceStats.online}
-                </span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                  / {serviceStats.total} online
-                </span>
+        {/* Clean, Dense Telemetry Rows List */}
+        <div className="overview-rows-list">
+          {/* Row 1: Services */}
+          <Link to="/services" className="overview-telemetry-row">
+            <div className="overview-row-line1">
+              <div className="overview-row-identity">
+                <span className={`overview-row-dot ${servicesOk ? 'dot-online' : 'dot-offline'}`} />
+                <span className="overview-row-name">services</span>
               </div>
-              <span style={{ fontSize: '11px', color: servicesOk ? 'var(--text-subtle)' : 'var(--accent-offline)', fontWeight: 500 }}>
-                {servicesOk ? 'all systems ok' : `${serviceStats.total - serviceStats.online} failing`}
+              <div className="overview-row-metric">
+                <span className="overview-val">{serviceStats.online}</span>
+                <span className="overview-sep">/</span>
+                <span className="overview-total">{serviceStats.total}</span>
+                <span className="overview-unit">online</span>
+              </div>
+            </div>
+            <div className="overview-row-line2">
+              <span className={`overview-row-subtext ${servicesOk ? 'status-ok' : 'status-error'}`}>
+                {servicesOk ? 'all systems operational' : `${serviceStats.total - serviceStats.online} failing`}
               </span>
             </div>
           </Link>
 
-          {/* Cell 2: Docker */}
-          <Link 
-            to="/containers" 
-            className="overview-quad-cell"
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
-                docker
-              </span>
-              <div style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: dockerOk ? 'var(--accent-dot)' : 'var(--accent-warning)',
-                boxShadow: dockerOk ? '0 0 6px var(--accent-dot)' : 'none'
-              }} />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {dockerStats.running}
-                </span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                  / {dockerStats.total} active
-                </span>
+          {/* Row 2: Docker */}
+          <Link to="/containers" className="overview-telemetry-row">
+            <div className="overview-row-line1">
+              <div className="overview-row-identity">
+                <span className={`overview-row-dot ${dockerOk ? 'dot-online' : 'dot-warning'}`} />
+                <span className="overview-row-name">docker</span>
               </div>
-              <span style={{ fontSize: '11px', color: dockerOk ? 'var(--text-subtle)' : 'var(--accent-warning)', fontWeight: 500 }}>
-                {dockerOk ? '0 stopped' : `${dockerStats.total - dockerStats.running} stopped`}
+              <div className="overview-row-metric">
+                <span className="overview-val">{dockerStats.running}</span>
+                <span className="overview-sep">/</span>
+                <span className="overview-total">{dockerStats.total}</span>
+                <span className="overview-unit">active</span>
+              </div>
+            </div>
+            <div className="overview-row-line2">
+              <span className={`overview-row-subtext ${dockerOk ? 'status-ok' : 'status-alert'}`}>
+                {dockerOk ? '0 stopped containers' : `${dockerStats.total - dockerStats.running} stopped`}
               </span>
             </div>
           </Link>
 
-          {/* Cell 3: Tailscale */}
-          <Link 
-            to="/services" 
-            className="overview-quad-cell"
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
-                tailscale
-              </span>
-              <div style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: tailscaleStats.active > 0 ? 'var(--accent-dot)' : 'var(--accent-offline)',
-                boxShadow: tailscaleStats.active > 0 ? '0 0 6px var(--accent-dot)' : 'none'
-              }} />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {tailscaleStats.active}
-                </span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                  / {tailscaleStats.total} peers
-                </span>
+          {/* Row 3: Tailscale */}
+          <Link to="/services" className="overview-telemetry-row">
+            <div className="overview-row-line1">
+              <div className="overview-row-identity">
+                <span className={`overview-row-dot ${tailscaleStats.active > 0 ? 'dot-online' : 'dot-offline'}`} />
+                <span className="overview-row-name">tailscale</span>
               </div>
-              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 500 }}>
-                {tailscaleStats.total - tailscaleStats.active > 0 ? `${tailscaleStats.total - tailscaleStats.active} idle` : 'all connected'}
+              <div className="overview-row-metric">
+                <span className="overview-val">{tailscaleStats.active}</span>
+                <span className="overview-sep">/</span>
+                <span className="overview-total">{tailscaleStats.total}</span>
+                <span className="overview-unit">peers</span>
+              </div>
+            </div>
+            <div className="overview-row-line2">
+              <span className="overview-row-subtext status-ok">
+                {tailscaleStats.total - tailscaleStats.active > 0 ? `${tailscaleStats.total - tailscaleStats.active} idle node` : 'all connected'}
               </span>
             </div>
           </Link>
 
-          {/* Cell 4: Media */}
-          <Link 
-            to="/services" 
-            className="overview-quad-cell"
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600, letterSpacing: '-0.01em' }}>
-                media
-              </span>
-              <div style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: jellyfinStats.active > 0 ? 'var(--accent-dot)' : 'var(--text-subtle)',
-                boxShadow: jellyfinStats.active > 0 ? '0 0 6px var(--accent-dot)' : 'none'
-              }} />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
-                  {jellyfinStats.active}
-                </span>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                  streams
-                </span>
+          {/* Row 4: Media */}
+          <Link to="/services" className="overview-telemetry-row">
+            <div className="overview-row-line1">
+              <div className="overview-row-identity">
+                <span className={`overview-row-dot ${jellyfinStats.active > 0 ? 'dot-online' : 'dot-idle'}`} />
+                <span className="overview-row-name">media</span>
               </div>
-              <span style={{ fontSize: '11px', color: 'var(--text-subtle)', fontWeight: 500 }}>
-                {jellyfinStats.active > 0 ? `${jellyfinStats.active} active` : 'server idle'}
+              <div className="overview-row-metric">
+                <span className="overview-val">{jellyfinStats.active}</span>
+                <span className="overview-unit">streams</span>
+              </div>
+            </div>
+            <div className="overview-row-line2">
+              <span className="overview-row-subtext status-ok">
+                {jellyfinStats.active > 0 ? `${jellyfinStats.active} active sessions` : 'jellyfin · server idle'}
               </span>
             </div>
           </Link>

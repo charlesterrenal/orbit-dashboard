@@ -497,77 +497,158 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* ─── Overview Summary Grid Base ─── */
-.overview-summary-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.summary-widget-content {
-  aspect-ratio: 1 / 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important;
-  align-items: stretch !important;
-  padding: 14px !important;
-  box-sizing: border-box !important;
-  transition: transform var(--transition-fast), background-color var(--transition-slow), border-color var(--transition-slow);
-}
-
-.summary-widget-content:hover {
-  transform: translateY(-2px);
-}
-
-.overview-quad-cell:hover {
-  background-color: var(--bg-surface);
-}
-
-[data-theme='dark'] .overview-quad-cell:hover {
-  background-color: rgba(255, 255, 255, 0.04);
-}
-
-/* Overview Card Responsive Vertical Spanning */
+/* ─── Fleet Overview Card (Clean, Dense Telemetry Rows) ─── */
 .overview-card-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
   padding: 14px 16px;
   overflow: hidden;
 }
 
-.overview-cells-grid {
+.overview-rows-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  margin-top: 2px;
 }
 
-.overview-quad-cell {
-  flex: 1;
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
+.overview-telemetry-row {
   display: flex;
   flex-direction: column;
-  justifyContent: space-between;
+  gap: 3px;
+  padding: 9px 8px;
+  border-radius: 6px;
   text-decoration: none;
   color: inherit;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background-color var(--transition-fast);
 }
 
-.overview-quad-cell:hover {
-  background-color: rgba(255, 255, 255, 0.045);
-  border-color: rgba(255, 255, 255, 0.14);
+.overview-telemetry-row:last-child {
+  border-bottom: none;
 }
 
-@media (max-width: 768px) {
-  .overview-cells-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+.overview-telemetry-row:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='light'] .overview-telemetry-row {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .overview-telemetry-row:hover {
+  background-color: rgba(0, 0, 0, 0.035);
+}
+
+.overview-row-line1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overview-row-identity {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.overview-row-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.overview-row-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.overview-row-dot.dot-online {
+  background-color: var(--accent-dot);
+  box-shadow: 0 0 6px var(--accent-dot);
+}
+
+.overview-row-dot.dot-warning {
+  background-color: var(--accent-warning);
+  box-shadow: 0 0 6px var(--accent-warning);
+}
+
+.overview-row-dot.dot-offline {
+  background-color: var(--accent-offline);
+  box-shadow: 0 0 6px var(--accent-offline);
+}
+
+.overview-row-dot.dot-idle {
+  background-color: var(--text-subtle);
+}
+
+.overview-row-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.overview-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+[data-theme='light'] .overview-val {
+  color: #111827;
+}
+
+.overview-sep {
+  font-size: 11px;
+  color: var(--text-subtle);
+  font-weight: 400;
+  margin: 0 1px;
+}
+
+.overview-total {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.overview-unit {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.overview-row-line2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 13px;
+}
+
+.overview-row-subtext {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  transition: color var(--transition-fast);
+}
+
+.overview-row-subtext.status-alert {
+  color: var(--accent-warning);
+  font-weight: 600;
+}
+
+.overview-row-subtext.status-error {
+  color: var(--accent-offline);
+  font-weight: 600;
+}
+
+.overview-row-subtext.status-ok {
+  color: var(--text-secondary);
 }
 
 @media (max-width: 480px) {
