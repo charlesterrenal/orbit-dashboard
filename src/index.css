@@ -554,8 +554,9 @@ h1, h2, h3, h4, h5, h6 {
 .overview-row-name {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-muted);
   letter-spacing: -0.01em;
+  transition: color var(--transition-fast);
 }
 
 .overview-row-dot {
@@ -591,15 +592,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .overview-val {
-  font-size: 14px;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  transition: color var(--transition-fast);
 }
 
 [data-theme='light'] .overview-val {
-  color: #111827;
+  color: var(--text-muted);
 }
 
 .overview-sep {
@@ -611,16 +613,18 @@ h1, h2, h3, h4, h5, h6 {
 
 .overview-total {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text-subtle);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+  transition: color var(--transition-fast);
 }
 
 .overview-unit {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--text-subtle);
   font-weight: 500;
   margin-left: 2px;
+  transition: color var(--transition-fast);
 }
 
 .overview-row-line2 {
@@ -632,7 +636,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .overview-row-subtext {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--text-subtle);
   font-weight: 400;
   transition: color var(--transition-fast);
 }
@@ -648,7 +652,57 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .overview-row-subtext.status-ok {
-  color: var(--text-secondary);
+  color: var(--text-subtle);
+}
+
+/* Hover Illumination for Overview Rows */
+.overview-telemetry-row:hover .overview-row-name {
+  color: var(--text-primary);
+}
+
+.overview-telemetry-row:hover .overview-val {
+  color: var(--text-primary);
+}
+
+.overview-telemetry-row:hover .overview-total,
+.overview-telemetry-row:hover .overview-unit {
+  color: var(--text-muted);
+}
+
+.overview-telemetry-row:hover .overview-row-subtext.status-ok {
+  color: var(--text-muted);
+}
+
+/* ─── Todoist dark grey items with hover lift ─── */
+.todo-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin: -2px -6px;
+  border-radius: 6px;
+  transition: background-color var(--transition-fast);
+}
+
+.todo-item-row:hover {
+  background-color: rgba(255, 255, 255, 0.035);
+}
+
+[data-theme='light'] .todo-item-row:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.todo-item-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  word-break: break-word;
+  transition: color var(--transition-fast);
+}
+
+.todo-item-row:hover .todo-item-text {
+  color: var(--text-primary);
 }
 
 @media (max-width: 480px) {

@@ -86,7 +86,7 @@ const CalendarWidget = () => {
         </div>
         <div className="hide-on-mobile" style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)' }}>{monthName.toLowerCase()}</span>
+            <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-muted)' }}>{monthName.toLowerCase()}</span>
             <span style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>{year}</span>
           </div>
 

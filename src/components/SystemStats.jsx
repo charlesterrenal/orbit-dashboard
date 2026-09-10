@@ -88,9 +88,6 @@ const SystemStats = () => {
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
             proxmox · pve
           </span>
-          {!error && !loading && (
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-dot)', animation: 'pulse 2s ease-in-out infinite' }} />
-          )}
         </div>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

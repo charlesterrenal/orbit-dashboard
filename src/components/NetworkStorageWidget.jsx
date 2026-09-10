@@ -155,7 +155,7 @@ const NetworkStorageWidget = () => {
                 </div>
                 <div>
                   <div style={{ fontSize: '10px', color: 'var(--text-subtle)', textTransform: 'lowercase', letterSpacing: '0.04em', fontWeight: 600 }}>down</div>
-                  <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
                     {formatSpeed(netInSpeed)}
                   </div>
                 </div>
@@ -172,7 +172,7 @@ const NetworkStorageWidget = () => {
                 </div>
                 <div>
                   <div style={{ fontSize: '10px', color: 'var(--text-subtle)', textTransform: 'lowercase', letterSpacing: '0.04em', fontWeight: 600 }}>up</div>
-                  <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+                  <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-muted)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
                     {formatSpeed(netOutSpeed)}
                   </div>
                 </div>

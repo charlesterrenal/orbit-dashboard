@@ -226,14 +226,14 @@ const TodoistWidget = () => {
           </div>
         )}
 
-        <div className="hide-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto', flex: 1, minHeight: 0, paddingBottom: '8px' }}>
+        <div className="hide-scrollbar" style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', flex: 1, minHeight: 0, paddingBottom: '8px' }}>
           {displayTasks.map((task, index) => (
-            <div key={task.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', group: 'true' }} onClick={() => completeTask(task.id)}>
+            <div key={task.id} className="todo-item-row" onClick={() => completeTask(task.id)}>
               <button style={{ background: 'none', border: 'none', color: 'var(--text-subtle)', padding: 0, marginTop: '2px', cursor: 'pointer', transition: 'color 0.2s' }}>
-                <Square size={14} />
+                <Square size={13} />
               </button>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-primary)', lineHeight: '1.4', wordBreak: 'break-word' }}>
+                <span className="todo-item-text">
                   {task.content.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}
                 </span>
                 {task.due && task.due.date && (

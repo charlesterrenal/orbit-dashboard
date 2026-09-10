@@ -161,8 +161,6 @@ const OverviewCard = () => {
   // Compute status
   const servicesOk = serviceStats.total > 0 && serviceStats.online === serviceStats.total;
   const dockerOk = dockerStats.total > 0 && dockerStats.running === dockerStats.total;
-  const anyOffline = !servicesOk || (!dockerOk && dockerStats.running < dockerStats.total);
-  const masterStatusColor = anyOffline ? 'var(--accent-warning)' : 'var(--accent-dot)';
 
   return (
     <div className="widget order-overview">
@@ -178,13 +176,6 @@ const OverviewCard = () => {
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
             overview
           </span>
-          <div style={{
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            backgroundColor: masterStatusColor,
-            animation: masterStatusColor === 'var(--accent-dot)' ? 'pulse 2s ease-in-out infinite' : 'none'
-          }} />
         </div>
 
         {/* Clean, Dense Telemetry Rows List */}
