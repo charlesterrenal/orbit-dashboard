@@ -9,17 +9,17 @@
 
 A custom **React + Vite** personal homelab dashboard for Charlei's Proxmox server. It is not a generic tool like Homepage or Dashy — it is a hand-crafted, fully bespoke dashboard with live API integrations. It runs as a Docker container on the Proxmox host and is accessible via the local network.
 
-**Live URL (local):** `http://192.168.254.200` (or whichever port the dashboard container is mapped to)
+**Live URL (local):** `http://<proxmox-ip>` (or whichever port the dashboard container is mapped to)
 
 ---
 
 ## Server Infrastructure
 
-| Host | IP | Role |
-|------|-----|------|
-| Proxmox Host (`pve`) | `192.168.254.200` | Hypervisor, runs all LXCs |
-| Media LXC | `192.168.254.203` | Docker: Radarr, Sonarr, Jellyfin, qBittorrent, Prowlarr, Jellyseerr |
-| Monitoring LXC | `192.168.254.204` | Docker: Portainer, Uptime Kuma |
+| Host | IP / Subnet | Role |
+|------|-------------|------|
+| Proxmox Host (`pve`) | `192.168.1.100` (configurable) | Hypervisor, runs all LXCs |
+| Media LXC | `192.168.1.102` (configurable) | Docker: Radarr, Sonarr, Jellyfin, qBittorrent, Prowlarr, Jellyseerr |
+| Monitoring LXC | `192.168.1.101` (configurable) | Docker: Portainer, Uptime Kuma |
 
 **Proxmox Credentials:**
 - API Token ID: `dashboard@pve@pam!dashboard`
@@ -138,15 +138,15 @@ The project adheres to the **12-Factor App / API Gateway Pattern**:
 
 ```env
 # Backend Routing Targets (Proxy Gateway)
-PROXMOX_BACKEND_URL=https://192.168.254.200:8006
-PORTAINER_BACKEND_URL=https://192.168.254.204:9443
-UPTIME_KUMA_BACKEND_URL=http://192.168.254.204:3001
-JELLYFIN_BACKEND_URL=http://192.168.254.203:8096
-QBITTORRENT_BACKEND_URL=http://192.168.254.203:8080
-RADARR_BACKEND_URL=http://192.168.254.203:7878
-SONARR_BACKEND_URL=http://192.168.254.203:8989
-JELLYSEERR_BACKEND_URL=http://192.168.254.203:5055
-UPDATES_BACKEND_URL=http://192.168.254.200:8199
+PROXMOX_BACKEND_URL=https://192.168.1.100:8006
+PORTAINER_BACKEND_URL=https://192.168.1.101:9443
+UPTIME_KUMA_BACKEND_URL=http://192.168.1.101:3001
+JELLYFIN_BACKEND_URL=http://192.168.1.102:8096
+QBITTORRENT_BACKEND_URL=http://192.168.1.102:8080
+RADARR_BACKEND_URL=http://192.168.1.102:7878
+SONARR_BACKEND_URL=http://192.168.1.102:8989
+JELLYSEERR_BACKEND_URL=http://192.168.1.102:5055
+UPDATES_BACKEND_URL=http://192.168.1.100:8199
 TAILSCALE_BACKEND_URL=https://api.tailscale.com
 TODOIST_BACKEND_URL=https://api.todoist.com
 
@@ -181,17 +181,17 @@ The frontend is completely blind to network topology and only makes requests to 
 
 | Path | Environment Variable | Default / Example Target | Notes |
 |------|----------------------|--------------------------|-------|
-| `/api/proxmox/` | `PROXMOX_BACKEND_URL` | `https://192.168.254.200:8006` | Proxies to `/api2/json/` |
-| `/api/portainer/` | `PORTAINER_BACKEND_URL` | `https://192.168.254.204:9443` | SSL verify off |
-| `/api/uptime/` | `UPTIME_KUMA_BACKEND_URL` | `http://192.168.254.204:3001` | WebSocket upgrade support |
-| `/api/jellyfin/` | `JELLYFIN_BACKEND_URL` | `http://192.168.254.203:8096` | SSL SNI enabled |
-| `/api/qbit/` | `QBITTORRENT_BACKEND_URL` | `http://192.168.254.203:8080` | Origin/Referer header rewrite |
-| `/api/radarr/` | `RADARR_BACKEND_URL` | `http://192.168.254.203:7878` | Host header set |
-| `/api/sonarr/` | `SONARR_BACKEND_URL` | `http://192.168.254.203:8989` | Host header set |
-| `/api/jellyseerr/` | `JELLYSEERR_BACKEND_URL` | `http://192.168.254.203:5055` | Host header set |
+| `/api/proxmox/` | `PROXMOX_BACKEND_URL` | `https://192.168.1.100:8006` | Proxies to `/api2/json/` |
+| `/api/portainer/` | `PORTAINER_BACKEND_URL` | `https://192.168.1.101:9443` | SSL verify off |
+| `/api/uptime/` | `UPTIME_KUMA_BACKEND_URL` | `http://192.168.1.101:3001` | WebSocket upgrade support |
+| `/api/jellyfin/` | `JELLYFIN_BACKEND_URL` | `http://192.168.1.102:8096` | SSL SNI enabled |
+| `/api/qbit/` | `QBITTORRENT_BACKEND_URL` | `http://192.168.1.102:8080` | Origin/Referer header rewrite |
+| `/api/radarr/` | `RADARR_BACKEND_URL` | `http://192.168.1.102:7878` | Host header set |
+| `/api/sonarr/` | `SONARR_BACKEND_URL` | `http://192.168.1.102:8989` | Host header set |
+| `/api/jellyseerr/` | `JELLYSEERR_BACKEND_URL` | `http://192.168.1.102:5055` | Host header set |
 | `/api/tailscale/` | `TAILSCALE_BACKEND_URL` | `https://api.tailscale.com` | SSL SNI enabled |
 | `/api/todoist/` | `TODOIST_BACKEND_URL` | `https://api.todoist.com` | SSL SNI enabled |
-| `/api/updates/` | `UPDATES_BACKEND_URL` | `http://192.168.254.200:8199` | Serves status.json |
+| `/api/updates/` | `UPDATES_BACKEND_URL` | `http://192.168.1.100:8199` | Serves status.json |
 
 ---
 
@@ -213,7 +213,7 @@ systemctl enable update-status.service
 systemctl start update-status.service
 ```
 
-**Verify:** `curl http://192.168.254.200:8199/status.json`
+**Verify:** `curl http://<proxmox-ip>:8199/status.json`
 
 ---
 

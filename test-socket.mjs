@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://192.168.254.204:3001", { transports: ["websocket"] });
+const targetUrl = process.env.UPTIME_KUMA_BACKEND_URL || "http://localhost:3001";
+const socket = io(targetUrl, { transports: ["websocket"] });
 
 socket.on("connect", () => {
   socket.emit("subscribeStatusPage", "default");
