@@ -4,9 +4,20 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const proxmoxUrl = env.VITE_PROXMOX_URL || 'https://pve.local:8006/api2/json';
-  const dockerHost = env.VITE_DOCKER_HOST || 'http://192.168.254.200:2375';
-  const uptimeKumaUrl = env.VITE_UPTIME_KUMA_URL || 'http://192.168.254.201:3001';
+
+  const proxmoxUrl = env.PROXMOX_BACKEND_URL || 'https://pve.local:8006';
+  const portainerUrl = env.PORTAINER_BACKEND_URL || 'https://localhost:9443';
+  const uptimeKumaUrl = env.UPTIME_KUMA_BACKEND_URL || 'http://localhost:3001';
+  const jellyfinUrl = env.JELLYFIN_BACKEND_URL || 'http://localhost:8096';
+  const tailscaleUrl = env.TAILSCALE_BACKEND_URL || 'https://api.tailscale.com';
+  const todoistUrl = env.TODOIST_BACKEND_URL || 'https://api.todoist.com';
+  const qbitUrl = env.QBITTORRENT_BACKEND_URL || 'http://localhost:8080';
+  const radarrUrl = env.RADARR_BACKEND_URL || 'http://localhost:7878';
+  const sonarrUrl = env.SONARR_BACKEND_URL || 'http://localhost:8989';
+  const jellyseerrUrl = env.JELLYSEERR_BACKEND_URL || 'http://localhost:5055';
+  const updatesUrl = env.UPDATES_BACKEND_URL || 'http://localhost:8199';
+
+  const qbitHost = qbitUrl.replace(/^https?:\/\//, '');
 
   return {
     plugins: [react()],
@@ -16,10 +27,10 @@ export default defineConfig(({ mode }) => {
           target: proxmoxUrl,
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/api\/proxmox/, ''),
+          rewrite: (path) => path.replace(/^\/api\/proxmox/, '/api2/json'),
         },
         '/api/portainer': {
-          target: env.VITE_PORTAINER_URL || 'http://localhost:9000',
+          target: portainerUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/portainer/, ''),
@@ -32,53 +43,54 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api\/uptime/, ''),
         },
         '/api/jellyfin': {
-          target: 'http://192.168.254.203:8096',
+          target: jellyfinUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/jellyfin/, ''),
         },
         '/api/tailscale': {
-          target: 'https://api.tailscale.com',
+          target: tailscaleUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/tailscale/, ''),
         },
         '/api/todoist': {
-          target: 'https://api.todoist.com',
+          target: todoistUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/todoist/, ''),
         },
         '/api/qbit': {
-          target: 'http://192.168.254.203:8080',
+          target: qbitUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/qbit/, ''),
           headers: {
-            'Origin': 'http://192.168.254.203:8080',
-            'Referer': 'http://192.168.254.203:8080/'
+            'Origin': qbitUrl,
+            'Referer': `${qbitUrl}/`,
+            'Host': qbitHost,
           }
         },
         '/api/radarr': {
-          target: 'http://192.168.254.203:7878',
+          target: radarrUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/radarr/, ''),
         },
         '/api/sonarr': {
-          target: 'http://192.168.254.203:8989',
+          target: sonarrUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/sonarr/, ''),
         },
         '/api/jellyseerr': {
-          target: 'http://192.168.254.203:5055',
+          target: jellyseerrUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/jellyseerr/, ''),
         },
         '/api/updates': {
-          target: 'http://192.168.254.200:8199',
+          target: updatesUrl,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/updates/, ''),

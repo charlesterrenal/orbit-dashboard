@@ -2,8 +2,8 @@
 // In a real scenario, requests would be routed through Vite proxy to avoid CORS
 
 export const getClusterStatus = async () => {
-  // If no env variables are set, return mock data
-  if (!import.meta.env.VITE_PROXMOX_URL) {
+  // If no Proxmox credentials are set, return mock data
+  if (!import.meta.env.VITE_PROXMOX_SECRET) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -55,7 +55,7 @@ export const getClusterStatus = async () => {
 };
 
 export const getNodeGuests = async () => {
-  if (!import.meta.env.VITE_PROXMOX_URL) {
+  if (!import.meta.env.VITE_PROXMOX_SECRET) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -93,7 +93,7 @@ export const getNodeGuests = async () => {
 };
 
 export const getStorageStatus = async () => {
-  if (!import.meta.env.VITE_PROXMOX_URL) {
+  if (!import.meta.env.VITE_PROXMOX_SECRET) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
@@ -130,7 +130,7 @@ export const getStorageStatus = async () => {
 
 
 export const getSyslog = async (limit = 20) => {
-  if (!import.meta.env.VITE_PROXMOX_URL) {
+  if (!import.meta.env.VITE_PROXMOX_SECRET) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([

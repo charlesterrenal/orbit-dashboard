@@ -120,7 +120,7 @@ const DockerWidget = () => {
         <div className="card" style={{ padding: '16px' }}>
           <p style={{ fontSize: '12px', color: 'var(--accent-offline)', marginBottom: '8px' }}>{error}</p>
           <p style={{ fontSize: '11px', color: 'var(--text-subtle)', lineHeight: '1.5' }}>
-            Check VITE_PORTAINER_URL and API Key in .env.local
+            Check PORTAINER_BACKEND_URL and API Key in .env.local
           </p>
         </div>
       ) : (

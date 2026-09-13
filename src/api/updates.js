@@ -4,7 +4,7 @@
 //   2. The Proxmox API for real-time pending package counts
 
 export const getUpdateStatus = async () => {
-  if (!import.meta.env.VITE_PROXMOX_URL) {
+  if (!import.meta.env.VITE_PROXMOX_SECRET) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -32,7 +32,7 @@ export const getUpdateStatus = async () => {
 };
 
 export const getPendingUpdates = async () => {
-  if (!import.meta.env.VITE_PROXMOX_URL) {
+  if (!import.meta.env.VITE_PROXMOX_SECRET) {
     return new Promise((resolve) => {
       setTimeout(() => resolve({ count: 3, packages: [] }), 500);
     });

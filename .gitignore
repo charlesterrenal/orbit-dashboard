@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# User specific configuration
+src/config/services.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

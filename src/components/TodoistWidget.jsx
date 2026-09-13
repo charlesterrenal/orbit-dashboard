@@ -22,8 +22,8 @@ const TodoistWidget = () => {
       
       // Fetch both tasks and projects concurrently
       const [tasksRes, projectsRes] = await Promise.all([
-        fetch('https://api.todoist.com/api/v1/tasks', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('https://api.todoist.com/api/v1/projects', { headers: { Authorization: `Bearer ${token}` } })
+        fetch('/api/todoist/api/v1/tasks', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/todoist/api/v1/projects', { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       if (!tasksRes.ok || !projectsRes.ok) {
@@ -65,7 +65,7 @@ const TodoistWidget = () => {
     setTasks(prev => prev.filter(t => t.id !== id));
     try {
       const token = TODOIST_TOKEN.replace(/['"]/g, '').trim();
-      await fetch(`https://api.todoist.com/api/v1/tasks/${id}/close`, {
+      await fetch(`/api/todoist/api/v1/tasks/${id}/close`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });

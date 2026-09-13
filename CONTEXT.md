@@ -128,63 +128,70 @@ Design language: **Glassmorphism** with `backdrop-filter: blur()`, semi-transpar
 
 ---
 
-## Environment Variables (`.env.local`)
+## Environment Variables (`.env.local` and `.env.example`)
 
-> WARNING: This file is gitignored. Never commit it.
+> WARNING: `.env.local` is gitignored. Never commit it. Use `.env.example` as the clean template.
+
+The project adheres to the **12-Factor App / API Gateway Pattern**:
+- **Backend Routing Targets** (NO `VITE_` prefix, invisible to browser client code): Used dynamically by Vite dev proxy and Nginx production template (`envsubst`).
+- **Frontend Secrets & Config** (`VITE_` prefix): Passed to client bundle where needed for API tokens.
 
 ```env
-VITE_PROXMOX_URL=https://192.168.254.200:8006/api2/json
+# Backend Routing Targets (Proxy Gateway)
+PROXMOX_BACKEND_URL=https://192.168.254.200:8006
+PORTAINER_BACKEND_URL=https://192.168.254.204:9443
+UPTIME_KUMA_BACKEND_URL=http://192.168.254.204:3001
+JELLYFIN_BACKEND_URL=http://192.168.254.203:8096
+QBITTORRENT_BACKEND_URL=http://192.168.254.203:8080
+RADARR_BACKEND_URL=http://192.168.254.203:7878
+SONARR_BACKEND_URL=http://192.168.254.203:8989
+JELLYSEERR_BACKEND_URL=http://192.168.254.203:5055
+UPDATES_BACKEND_URL=http://192.168.254.200:8199
+TAILSCALE_BACKEND_URL=https://api.tailscale.com
+TODOIST_BACKEND_URL=https://api.todoist.com
+
+# Frontend Application Secrets & Settings (VITE_ prefixed)
 VITE_PROXMOX_TOKEN_ID=dashboard@pve@pam!dashboard
 VITE_PROXMOX_SECRET=<secret>
 VITE_PROXMOX_NODE=pve
-
-VITE_PORTAINER_URL=https://192.168.254.204:9443
 VITE_PORTAINER_API_KEY=<key>
-
-VITE_UPTIME_KUMA_URL=http://192.168.254.204:3001
-
 VITE_JELLYFIN_API_KEY=<key>
-# Jellyfin is proxied to http://192.168.254.203:8096 in vite.config.js
-
 VITE_TAILSCALE_API_KEY=<key>
 VITE_TAILNET=<tailnet_name>
-
 VITE_RADARR_API_KEY=<key>
 VITE_SONARR_API_KEY=<key>
 VITE_JELLYSEERR_API_KEY=<key>
-
 VITE_WEATHER_LAT=14.3864
 VITE_WEATHER_LON=120.8810
-
-VITE_TODOIST_TOKEN=<token>
 VITE_CALENDAR_URL=<google_ics_url>
+VITE_TODOIST_TOKEN=<token>
 VITE_GITHUB_USERNAME=charlesterrenal
 ```
 
 ---
 
-## Proxy Configuration
+## Proxy Configuration (API Gateway Pattern)
 
-All external API calls are proxied to avoid CORS errors. Two proxy configs exist:
+The frontend is completely blind to network topology and only makes requests to relative paths (e.g., `/api/proxmox/nodes/...`, `/api/jellyfin/Sessions`, etc.). Two dynamic proxy configurations exist:
 
-1. **`vite.config.js`** — Dev server proxy (used when running `npm run dev`)
-2. **`nginx.conf.template`** — Production proxy (used inside the Docker container)
+1. **`vite.config.js`** — Dev server proxy using `loadEnv(mode, process.cwd(), '')` to load `*_BACKEND_URL` variables.
+2. **`nginx.conf.template`** — Production proxy using Nginx environment variables (e.g., `proxy_pass ${PROXMOX_BACKEND_URL}/api2/json/;`) substituted via `envsubst` at container boot.
 
 ### Proxy Routes
 
-| Path | Target |
-|------|--------|
-| `/api/proxmox/` | `https://192.168.254.200:8006/api2/json` |
-| `/api/portainer/` | `https://192.168.254.204:9443` |
-| `/api/uptime/` | `http://192.168.254.204:3001` (WebSocket) |
-| `/api/jellyfin/` | `http://192.168.254.203:8096` |
-| `/api/qbit/` | `http://192.168.254.203:8080` |
-| `/api/radarr/` | `http://192.168.254.203:7878` |
-| `/api/sonarr/` | `http://192.168.254.203:8989` |
-| `/api/jellyseerr/` | `http://192.168.254.203:5055` |
-| `/api/tailscale/` | `https://api.tailscale.com` |
-| `/api/todoist/` | `https://api.todoist.com` |
-| `/api/updates/` | `http://192.168.254.200:8199` |
+| Path | Environment Variable | Default / Example Target | Notes |
+|------|----------------------|--------------------------|-------|
+| `/api/proxmox/` | `PROXMOX_BACKEND_URL` | `https://192.168.254.200:8006` | Proxies to `/api2/json/` |
+| `/api/portainer/` | `PORTAINER_BACKEND_URL` | `https://192.168.254.204:9443` | SSL verify off |
+| `/api/uptime/` | `UPTIME_KUMA_BACKEND_URL` | `http://192.168.254.204:3001` | WebSocket upgrade support |
+| `/api/jellyfin/` | `JELLYFIN_BACKEND_URL` | `http://192.168.254.203:8096` | SSL SNI enabled |
+| `/api/qbit/` | `QBITTORRENT_BACKEND_URL` | `http://192.168.254.203:8080` | Origin/Referer header rewrite |
+| `/api/radarr/` | `RADARR_BACKEND_URL` | `http://192.168.254.203:7878` | Host header set |
+| `/api/sonarr/` | `SONARR_BACKEND_URL` | `http://192.168.254.203:8989` | Host header set |
+| `/api/jellyseerr/` | `JELLYSEERR_BACKEND_URL` | `http://192.168.254.203:5055` | Host header set |
+| `/api/tailscale/` | `TAILSCALE_BACKEND_URL` | `https://api.tailscale.com` | SSL SNI enabled |
+| `/api/todoist/` | `TODOIST_BACKEND_URL` | `https://api.todoist.com` | SSL SNI enabled |
+| `/api/updates/` | `UPDATES_BACKEND_URL` | `http://192.168.254.200:8199` | Serves status.json |
 
 ---
 

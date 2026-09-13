@@ -10,19 +10,19 @@ server {
 
     location /api/proxmox/ {
         # proxy_ssl_verify off is needed if your proxmox uses a self-signed cert
-        proxy_pass ${VITE_PROXMOX_URL}/;
+        proxy_pass ${PROXMOX_BACKEND_URL}/api2/json/;
         proxy_ssl_verify off;
         proxy_set_header Host $host;
     }
 
     location /api/portainer/ {
-        proxy_pass ${VITE_PORTAINER_URL}/;
+        proxy_pass ${PORTAINER_BACKEND_URL}/;
         proxy_ssl_verify off;
         proxy_set_header Host $host;
     }
 
     location /api/uptime/ {
-        proxy_pass ${VITE_UPTIME_KUMA_URL}/;
+        proxy_pass ${UPTIME_KUMA_BACKEND_URL}/;
         proxy_set_header Host $host;
         # Support websockets for uptime kuma
         proxy_set_header Upgrade $http_upgrade;
@@ -30,44 +30,44 @@ server {
     }
 
     location /api/jellyfin/ {
-        proxy_pass https://jellyfin.charlesterrenal.com/;
+        proxy_pass ${JELLYFIN_BACKEND_URL}/;
         proxy_ssl_server_name on;
     }
 
     location /api/tailscale/ {
-        proxy_pass https://api.tailscale.com/;
+        proxy_pass ${TAILSCALE_BACKEND_URL}/;
         proxy_ssl_server_name on;
     }
 
     location /api/todoist/ {
-        proxy_pass https://api.todoist.com/;
+        proxy_pass ${TODOIST_BACKEND_URL}/;
         proxy_ssl_server_name on;
     }
 
     location /api/qbit/ {
-        proxy_pass http://192.168.254.203:8080/;
-        proxy_set_header Host 192.168.254.203:8080;
-        proxy_set_header Origin http://192.168.254.203:8080;
-        proxy_set_header Referer http://192.168.254.203:8080/;
+        proxy_pass ${QBITTORRENT_BACKEND_URL}/;
+        proxy_set_header Host $host;
+        proxy_set_header Origin ${QBITTORRENT_BACKEND_URL};
+        proxy_set_header Referer ${QBITTORRENT_BACKEND_URL}/;
     }
 
     location /api/radarr/ {
-        proxy_pass http://192.168.254.203:7878/;
-        proxy_set_header Host 192.168.254.203:7878;
+        proxy_pass ${RADARR_BACKEND_URL}/;
+        proxy_set_header Host $host;
     }
 
     location /api/sonarr/ {
-        proxy_pass http://192.168.254.203:8989/;
-        proxy_set_header Host 192.168.254.203:8989;
+        proxy_pass ${SONARR_BACKEND_URL}/;
+        proxy_set_header Host $host;
     }
 
     location /api/jellyseerr/ {
-        proxy_pass http://192.168.254.203:5055/;
-        proxy_set_header Host 192.168.254.203:5055;
+        proxy_pass ${JELLYSEERR_BACKEND_URL}/;
+        proxy_set_header Host $host;
     }
 
     location /api/updates/ {
-        proxy_pass http://192.168.254.200:8199/;
+        proxy_pass ${UPDATES_BACKEND_URL}/;
         proxy_set_header Host $host;
     }
 }

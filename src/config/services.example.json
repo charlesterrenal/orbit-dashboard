@@ -2,7 +2,7 @@
   {
     "id": "jellyfin",
     "name": "Jellyfin",
-    "url": "http://192.168.254.203:8096",
+    "url": "http://jellyfin.local:8096",
     "icon": "Tv2",
     "status": "online",
     "category": "services",
@@ -12,7 +12,7 @@
   {
     "id": "n8n",
     "name": "n8n",
-    "url": "https://n8n.charlesterrenal.com",
+    "url": "https://n8n.example.com",
     "icon": "Workflow",
     "status": "online",
     "category": "services",
@@ -22,7 +22,7 @@
   {
     "id": "vaultwarden",
     "name": "Vaultwarden",
-    "url": "https://vault.charlesterrenal.com",
+    "url": "https://vault.example.com",
     "icon": "KeyRound",
     "status": "online",
     "category": "services",
@@ -30,29 +30,29 @@
     "monitorName": "vaultwarden"
   },
   {
-    "id": "charlesterrenal",
-    "name": "charlesterrenal.com",
-    "url": "https://charlesterrenal.com",
+    "id": "portfolio",
+    "name": "Personal Site",
+    "url": "https://example.com",
     "icon": "Globe",
     "status": "online",
     "category": "websites",
-    "description": "Personal portfolio",
-    "monitorName": "portfolio site"
+    "description": "Personal website",
+    "monitorName": "personal-site"
   },
   {
-    "id": "smarth2wo",
-    "name": "smarth2wo.tech",
-    "url": "https://smarth2wo.tech",
+    "id": "docs",
+    "name": "Homelab Docs",
+    "url": "https://docs.example.com",
     "icon": "Droplets",
     "status": "online",
     "category": "websites",
-    "description": "Landing page",
-    "monitorName": "smarth2wo-landing"
+    "description": "Documentation",
+    "monitorName": "homelab-docs"
   },
   {
     "id": "radarr",
     "name": "Radarr",
-    "url": "http://192.168.254.203:7878",
+    "url": "http://radarr.local:7878",
     "icon": "Film",
     "status": "online",
     "category": "arr-stack",
@@ -62,7 +62,7 @@
   {
     "id": "sonarr",
     "name": "Sonarr",
-    "url": "http://192.168.254.203:8989",
+    "url": "http://sonarr.local:8989",
     "icon": "Tv",
     "status": "online",
     "category": "arr-stack",
@@ -72,7 +72,7 @@
   {
     "id": "jellyseerr",
     "name": "Jellyseerr",
-    "url": "https://requests.charlesterrenal.com",
+    "url": "http://jellyseerr.local:5055",
     "icon": "GitPullRequest",
     "status": "online",
     "category": "arr-stack",
