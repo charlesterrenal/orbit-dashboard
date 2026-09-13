@@ -66,6 +66,8 @@ const GreetingClock = ({ onOpenCmd }) => {
     ? 'drop-shadow(0 0 4px rgba(239, 68, 68, 0.5))'
     : 'drop-shadow(0 0 4px rgba(34, 197, 94, 0.5))';
 
+  const userName = import.meta.env.VITE_DASHBOARD_USER || 'admin';
+
   return (
     <div style={{ marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
@@ -77,7 +79,7 @@ const GreetingClock = ({ onOpenCmd }) => {
           margin: 0,
           textShadow: '0 2px 24px rgba(255, 255, 255, 0.06), 0 1px 4px rgba(0,0,0,0.08)'
         }}>
-          {greeting}, charles.
+          {greeting}, {userName}.
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {onOpenCmd && (

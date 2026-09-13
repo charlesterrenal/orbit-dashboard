@@ -40,14 +40,14 @@
     "monitorName": "personal-site"
   },
   {
-    "id": "docs",
-    "name": "Homelab Docs",
-    "url": "https://docs.example.com",
-    "icon": "Droplets",
+    "id": "blog",
+    "name": "Tech Blog",
+    "url": "https://blog.example.com",
+    "icon": "Rss",
     "status": "online",
     "category": "websites",
-    "description": "Documentation",
-    "monitorName": "homelab-docs"
+    "description": "Tech & Projects",
+    "monitorName": "tech-blog"
   },
   {
     "id": "radarr",

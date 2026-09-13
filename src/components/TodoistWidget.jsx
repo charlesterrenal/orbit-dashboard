@@ -144,6 +144,8 @@ const TodoistWidget = () => {
                   right: 0,
                   marginTop: '4px',
                   background: 'var(--bg-elevated)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
                   border: '1px solid var(--border)',
                   borderRadius: '4px',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
