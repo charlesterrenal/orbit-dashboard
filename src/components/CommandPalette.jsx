@@ -17,6 +17,8 @@ import {
   Layers
 } from 'lucide-react';
 
+import servicesConfig from '../config/services.json';
+
 const CommandPalette = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -24,19 +26,25 @@ const CommandPalette = ({ isOpen, onClose }) => {
   const selectedItemRef = useRef(null);
   const navigate = useNavigate();
 
+  const serviceCommands = servicesConfig.map(svc => ({
+    id: `svc-${svc.id}`,
+    title: `open ${svc.name.toLowerCase()}`,
+    category: 'services',
+    icon: ExternalLink,
+    action: () => {
+      if (svc.url) window.open(svc.url, '_blank');
+      onClose();
+    }
+  }));
+
   const commands = [
     // navigation
     { id: 'nav-home', title: 'go to home', category: 'navigation', icon: Home, action: () => { navigate('/'); onClose(); } },
     { id: 'nav-services', title: 'go to services', category: 'navigation', icon: LayoutGrid, action: () => { navigate('/services'); onClose(); } },
     { id: 'nav-containers', title: 'go to containers', category: 'navigation', icon: Server, action: () => { navigate('/containers'); onClose(); } },
 
-    // infrastructure & services
-    { id: 'svc-pve', title: 'open proxmox ve webui', category: 'services', icon: Cpu, action: () => { window.open('https://192.168.254.200:8006', '_blank'); onClose(); } },
-    { id: 'svc-portainer', title: 'open portainer', category: 'services', icon: Layers, action: () => { window.open('https://192.168.254.204:9443', '_blank'); onClose(); } },
-    { id: 'svc-uptime', title: 'open uptime kuma', category: 'services', icon: Radio, action: () => { window.open('http://192.168.254.204:3001', '_blank'); onClose(); } },
-    { id: 'svc-jellyfin', title: 'open jellyfin', category: 'services', icon: Tv, action: () => { window.open('http://192.168.254.203:8096', '_blank'); onClose(); } },
-    { id: 'svc-jellyseerr', title: 'open jellyseerr', category: 'services', icon: Film, action: () => { window.open('http://192.168.254.203:5055', '_blank'); onClose(); } },
-    { id: 'svc-qbit', title: 'open qbittorrent', category: 'services', icon: DownloadCloud, action: () => { window.open('http://192.168.254.203:8080', '_blank'); onClose(); } },
+    // dynamically loaded services from services.json
+    ...serviceCommands,
 
     // quick actions
     {

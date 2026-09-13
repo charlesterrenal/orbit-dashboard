@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Download, Upload, Activity, ExternalLink } from 'lucide-react';
+import servicesConfig from '../config/services.json';
 
 const QbittorrentWidget = () => {
+  const qbitService = servicesConfig.find(s => s.id === 'qbittorrent' || s.id === 'qbit');
+  const qbitUrl = qbitService?.url || '#';
   const [stats, setStats] = useState(null);
   const [activeCount, setActiveCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -53,7 +56,7 @@ const QbittorrentWidget = () => {
               qbittorrent
             </span>
             <a 
-              href="http://192.168.254.203:8080" 
+              href={qbitUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
               style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}

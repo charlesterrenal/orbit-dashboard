@@ -78,5 +78,15 @@
     "category": "arr-stack",
     "description": "Media requests",
     "monitorName": "jellyseerr"
+  },
+  {
+    "id": "qbittorrent",
+    "name": "qBittorrent",
+    "url": "http://qbittorrent.local:8080",
+    "icon": "DownloadCloud",
+    "status": "online",
+    "category": "services",
+    "description": "Torrent client",
+    "monitorName": "qbittorrent"
   }
 ]
