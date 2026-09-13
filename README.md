@@ -1,4 +1,4 @@
-# Homelab Dashboard
+# Orbit Dashboard
 
 A sleek, responsive, personal homelab dashboard built with **React + Vite** following the **12-Factor App / API Gateway Pattern**. Features live widgets for Proxmox VE, Portainer, Uptime Kuma, Jellyfin, Tailscale, qBittorrent, Sonarr, Radarr, Jellyseerr, Weather, Todoist, and System Updates.
 
@@ -35,8 +35,8 @@ The frontend is completely decoupled from your home network topology:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/pve-dashboard.git
-cd pve-dashboard
+git clone https://github.com/your-username/orbit-dashboard.git
+cd orbit-dashboard
 ```
 
 ### 2. Configure Environment Variables
