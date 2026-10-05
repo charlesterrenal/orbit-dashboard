@@ -4,7 +4,7 @@ const ICAL = ICAL_mod.default || ICAL_mod;
 export const fetchCalendarEvents = async (url) => {
   if (!url) return [];
   try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`;
     const res = await fetch(proxyUrl);
     if (!res.ok) throw new Error('Failed to fetch calendar');
     const text = await res.text();

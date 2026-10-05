@@ -19,6 +19,9 @@ const CalendarWidget = () => {
       now.setHours(0, 0, 0, 0); // start of today
       const upcoming = fetchedEvents.filter(e => e.end ? e.end >= now : e.start >= now);
       setEvents(upcoming.slice(0, 3)); // show next 3
+    }).catch(error => {
+      console.error("CalendarWidget error:", error);
+    }).finally(() => {
       setLoading(false);
     });
   }, []);
