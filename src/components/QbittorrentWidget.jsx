@@ -4,7 +4,7 @@ import servicesConfig from '../config/services.json';
 
 const QbittorrentWidget = () => {
   const qbitService = servicesConfig.find(s => s.id === 'qbittorrent' || s.id === 'qbit');
-  const qbitUrl = qbitService?.url || '#';
+  const qbitUrl = qbitService?.url || 'http://192.168.254.203:8080/';
   const [stats, setStats] = useState(null);
   const [activeCount, setActiveCount] = useState(0);
   const [loading, setLoading] = useState(true);
