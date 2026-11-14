@@ -145,6 +145,7 @@ tr.crit td, td.crit { color: var(--red); }
   .cols2 { grid-template-columns: 1fr; gap: 0; }
   .mon .row { grid-template-columns: 16px minmax(0, 1fr) 70px 76px; }
   .mon .row > :last-child { grid-column: 2 / -1; }
+  .mon .row > span:last-child:empty { display: none; }
   .foot .r { margin-left: 0; }
 }
 
