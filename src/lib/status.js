@@ -107,3 +107,22 @@ export function fmtBytes(n) {
 }
 
 export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > 3 * intervalMs
+
+export function uptimeSummary(services, monitors) {
+  const { found } = splitMonitored(services, monitors)
+  return { up: found.filter((f) => f.monitor.state === 'up').length, total: found.length }
+}
+
+export function statusText({ state, ping, since }, now) {
+  switch (state) {
+    case 'up': return ping == null ? 'OK' : `OK · ${ping}ms`
+    case 'down': return `DOWN · ${fmtAgo(now - since)}`
+    case 'pending': return 'PENDING'
+    case 'maintenance': return 'MAINTENANCE'
+    case 'none': return 'NO MONITOR'
+    default: return 'NO DATA'
+  }
+}
+
+export const pollDown = (poll, intervalMs, now) =>
+  poll.error != null || (poll.updatedAt != null && isStale(poll.updatedAt, intervalMs, now))

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { getConfig, getKuma, getPve, getUpdates } from './lib/api.js'
-import { isStale, verdict as computeVerdict } from './lib/status.js'
+import { isStale, uptimeSummary, verdict as computeVerdict } from './lib/status.js'
 import { KUMA_MS, PVE_MS, UPDATES_MS } from './lib/intervals.js'
 import { usePoll } from './lib/usePoll.js'
 import Directory from './components/Directory.jsx'
 import Header from './components/Header.jsx'
+import Issues from './components/Issues.jsx'
 import Monitoring from './components/Monitoring.jsx'
 import Panel from './components/Panel.jsx'
 import Rail from './components/Rail.jsx'
@@ -36,10 +37,18 @@ function Dashboard({ config, tab, now }) {
 
   return (
     <>
-      <Header verdict={verdict} updatedAt={kuma.updatedAt} tab={tab} />
+      <Header
+        verdict={verdict}
+        updatedAt={kuma.updatedAt}
+        tab={tab}
+        now={now}
+        pve={pve}
+        updates={updates}
+        summary={kumaDown ? { up: 0, total: 0 } : uptimeSummary(config.groups.flatMap((g) => g.services), kuma.data)}
+      />
       <div className="layout">
-        <Rail node={config.node} pve={pve} updates={updates} now={now} />
         <main>
+          <Issues verdict={verdict} />
           {tab === 'directory' && (
             <Directory
               groups={config.groups}
@@ -60,6 +69,7 @@ function Dashboard({ config, tab, now }) {
             />
           )}
         </main>
+        {tab === 'directory' && <Rail node={config.node} pve={pve} updates={updates} now={now} />}
       </div>
     </>
   )
@@ -101,7 +111,7 @@ export default function App() {
   }
   return (
     <div className="page">
-      <Header verdict={{ state: 'unknown', issues: [], unknown: ['config'] }} updatedAt={null} tab={tab} />
+      <Header verdict={{ state: 'unknown', issues: [], unknown: ['config'] }} updatedAt={null} tab={tab} now={now} />
       <div className="layout layout-one">
         <main>
           {configError && (

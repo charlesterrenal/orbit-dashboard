@@ -1,22 +1,11 @@
 import { useState } from 'react'
-import { fmtAgo } from '../lib/status.js'
+import { statusText } from '../lib/status.js'
 
 const MARK = { up: '✓', down: '!', pending: '…', maintenance: '–', none: '–', nodata: '–' }
 
-function statusText({ state, ping, since }, now) {
-  switch (state) {
-    case 'up': return ping == null ? 'OK' : `OK · ${ping}ms`
-    case 'down': return `DOWN · ${fmtAgo(now - since)}`
-    case 'pending': return 'PENDING'
-    case 'maintenance': return 'MAINTENANCE'
-    case 'none': return 'NO MONITOR'
-    default: return 'NO DATA'
-  }
-}
-
 const tone = (name) => [...name].reduce((n, c) => n + c.charCodeAt(0), 0) % 6
 
-function Icon({ service }) {
+export function Icon({ service }) {
   const [broken, setBroken] = useState(false)
   if (service.icon && !broken) {
     return <img className="ic" src={`/icons/${service.icon}`} alt="" onError={() => setBroken(true)} />

@@ -19,22 +19,6 @@ function Seg({ pct, n, cls = 'f' }) {
 const unavailable = (poll, ms, now) =>
   poll.error != null || (poll.updatedAt != null && isStale(poll.updatedAt, ms, now))
 
-function Clock({ now }) {
-  const d = new Date(now)
-  return (
-    <Panel label="Clock">
-      <div className="kv">
-        <span className="big">{d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</span>
-        <span className="big">{d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-      </div>
-      <div className="kv">
-        <span className="s">{d.getFullYear()}</span>
-        <span className="s">{d.toLocaleDateString('en-GB', { weekday: 'long' })}</span>
-      </div>
-    </Panel>
-  )
-}
-
 function Server({ node, poll, now }) {
   const p = poll.data
   const bad = unavailable(poll, PVE_MS, now)
@@ -110,7 +94,6 @@ function Updates({ poll, now }) {
 export default function Rail({ node, pve, updates, now }) {
   return (
     <aside className="rail">
-      <ErrorBoundary label="Clock"><Clock now={now} /></ErrorBoundary>
       <ErrorBoundary label="Server"><Server node={node} poll={pve} now={now} /></ErrorBoundary>
       <ErrorBoundary label="Storage"><Storage poll={pve} now={now} /></ErrorBoundary>
       <ErrorBoundary label="Updates"><Updates poll={updates} now={now} /></ErrorBoundary>

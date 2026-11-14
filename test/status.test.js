@@ -133,3 +133,14 @@ test('splitMonitored: null monitors claims nothing; otherwise partitions', async
   assert.deepEqual(r.found.map((f) => f.service.id), ['a'])
   assert.deepEqual(r.missing.map((s) => s.id), ['b'])
 })
+
+test('uptimeSummary counts only services with a known monitor', async () => {
+  const { uptimeSummary } = await import('../src/lib/status.js')
+  const services = [{ id: 'a', monitor: 'a' }, { id: 'b', monitor: 'b' }, { id: 'c' }, { id: 'd', monitor: 'ghost' }]
+  assert.deepEqual(uptimeSummary(services, null), { up: 0, total: 0 })
+  const map = parseKuma(
+    page({ id: 1, name: 'a' }, { id: 2, name: 'b' }),
+    { heartbeatList: { 1: [{ status: 1, time: '2026-11-14 09:00:00.000' }], 2: [{ status: 0, time: '2026-11-14 09:00:00.000' }] }, uptimeList: {} },
+  )
+  assert.deepEqual(uptimeSummary(services, map), { up: 1, total: 2 })
+})
