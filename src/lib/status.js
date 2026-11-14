@@ -82,8 +82,6 @@ export function fmtAgo(ms) {
   return h < 24 ? `${h}h` : `${Math.floor(h / 24)}d`
 }
 
-export const fmtUptime = (sec) => `${Math.floor(sec / 86400)}d ${Math.floor((sec % 86400) / 3600)}h`
-
 export function fmtBytes(n) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB']
   let i = 0

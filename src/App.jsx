@@ -6,7 +6,7 @@ import { usePoll } from './lib/usePoll.js'
 import Directory from './components/Directory.jsx'
 import Header from './components/Header.jsx'
 import Monitoring from './components/Monitoring.jsx'
-import Rail from './components/Rail.jsx'
+import Footer from './components/Footer.jsx'
 import Section from './components/Section.jsx'
 import Strip from './components/Strip.jsx'
 
@@ -33,30 +33,15 @@ function Dashboard({ config, tab, now }) {
     <>
       <Header tab={tab} now={now} />
       <Strip services={config.groups.flatMap((g) => g.services)} kuma={kuma} pve={pve} now={now} />
-      <div className="layout">
-        <main>
-          {tab === 'directory' && (
-            <Directory
-              groups={config.groups}
-              monitors={kuma.data}
-              unavailable={kumaDown}
-              updatedAt={kuma.updatedAt}
-              now={now}
-            />
-          )}
-          {tab === 'monitoring' && (
-            <Monitoring
-              groups={config.groups}
-              monitors={kuma.data}
-              kuma={kuma}
-              pve={pve}
-              updates={updates}
-              now={now}
-            />
-          )}
-        </main>
-        {tab === 'directory' && <Rail node={config.node} pve={pve} updates={updates} now={now} />}
-      </div>
+      {tab === 'directory' && (
+        <>
+          <Directory groups={config.groups} monitors={kuma.data} unavailable={kumaDown} now={now} />
+          <Footer pve={pve} updates={updates} now={now} />
+        </>
+      )}
+      {tab === 'monitoring' && (
+        <Monitoring groups={config.groups} monitors={kuma.data} kuma={kuma} pve={pve} updates={updates} now={now} />
+      )}
     </>
   )
 }

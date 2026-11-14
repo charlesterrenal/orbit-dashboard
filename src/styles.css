@@ -82,10 +82,51 @@ h3.alert { color: var(--amber); }
 .tick { animation: tick-in 0.2s ease-out; }
 @keyframes tick-in { from { transform: translateY(40%); opacity: 0; } }
 
+/* directory: groups flow into two columns */
+.dir { columns: 2; column-gap: 44px; margin-top: 6px; }
+.grp { break-inside: avoid; padding: 18px 0 2px; }
+.grp h3 { margin-top: 0; }
+.row {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr) 70px 76px 110px;
+  align-items: center; gap: 12px; padding: 5px 0;
+}
+.row, .row * { transition: color 0.4s; }
+.row .nm { color: var(--hi); text-transform: lowercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row:hover .nm { text-decoration: underline; text-decoration-color: var(--dim); text-underline-offset: 3px; }
+.row .lat, .row .up { text-align: right; color: var(--dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row.down .nm, .row.down .lat, .row.down .up { color: var(--red); }
+.row.none .nm { color: var(--mid); }
+.ic { display: block; width: 16px; height: 16px; }
+.mg {
+  display: block; width: 16px; height: 16px; border-radius: 3px;
+  background: #26262a; color: var(--mid); font-size: 8px; font-weight: 600; line-height: 16px; text-align: center;
+}
+
+/* heartbeat bars */
+.beats { display: flex; gap: 1px; height: 10px; overflow: hidden; }
+.beats i { flex: 1; background: var(--bar); }
+.beats i.d { background: var(--red); }
+.beats i.p { background: #4a4a50; }
+.beats.shift i { animation: beat-in 0.4s ease-out; }
+@keyframes beat-in { from { transform: translateX(calc(100% + 1px)); } }
+
+/* footer: cells split by thin vertical rules */
+.foot { display: flex; flex-wrap: wrap; margin-top: 20px; border-top: 1px solid var(--rule-2); color: var(--dim); }
+.fi { display: flex; gap: 10px; align-items: baseline; padding: 11px 22px 0; border-left: 1px solid var(--rule-2); }
+.fi:first-child { padding-left: 0; border-left: 0; }
+.fi em { font-style: normal; color: var(--dim); }
+.fi b { font-weight: 400; }
+.fi b.na { color: var(--dim); }
+.fi.warn em, .fi.warn b { color: var(--amber); }
+.fi.crit em, .fi.crit b, .fi b.bad { color: var(--red); }
+.foot .r { margin-left: auto; }
+
 @media (max-width: 900px) {
   .page { padding: 18px 16px 32px; }
   .strip { flex-wrap: wrap; gap: 0 40px; }
   .strip .fs { grid-auto-columns: minmax(88px, 1fr); }
+  .dir { columns: 1; }
+  .foot .r { margin-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

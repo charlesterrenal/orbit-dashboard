@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtUptime, fmtBytes, isStale,
+  kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
   summarize, downFirst, unavailableLabel,
 } from '../src/lib/status.js'
@@ -90,7 +90,6 @@ test('formatters', () => {
   assert.equal(fmtAgo(12 * 60e3), '12m')
   assert.equal(fmtAgo(3 * 3600e3), '3h')
   assert.equal(fmtAgo(2 * 86400e3), '2d')
-  assert.equal(fmtUptime(14 * 86400 + 5 * 3600), '14d 5h')
   assert.equal(fmtBytes(5.1 * 1024 ** 3), '5.1 GB')
 })
 
