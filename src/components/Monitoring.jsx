@@ -18,7 +18,7 @@ function Monitors({ groups, kuma, now }) {
   const monitorOf = new Map(found.map((f) => [f.service.id, f.monitor]))
   return (
     <Section
-      title={failed ? unavailableLabel('monitors', kuma.updatedAt) : 'monitors, last 50 checks'}
+      title={failed ? unavailableLabel('monitors', kuma.updatedAt) : 'monitors, last 50 checks, bar height is response time'}
       alert={failed}
       className="mon"
     >
@@ -58,12 +58,12 @@ function LastRun({ updates, now }) {
   const failed = pollDown(updates, UPDATES_MS, now)
   const u = failed ? null : updates.data
   const rows = u && [
-    ['status', u.status, !fine(u.status)],
+    ['status', u.status, fine(u.status) ? 'ok' : 'crit'],
     ['started', when(u.started_at)],
     ['completed', when(u.completed_at)],
-    ['host', u.host_status ?? 'n/a', u.host_status !== 'success'],
+    ['host', u.host_status ?? 'n/a', u.host_status === 'success' ? '' : 'crit'],
     ['containers', `${u.containers_ok} of ${u.containers_total} updated`],
-    ['errors', u.errors || 'none', !!u.errors],
+    ['errors', u.errors || 'none', u.errors ? 'crit' : ''],
     ['next run', u.next_run ?? 'n/a'],
   ]
   return (
@@ -71,8 +71,8 @@ function LastRun({ updates, now }) {
       {rows && (
         <table className="kvt">
           <tbody>
-            {rows.map(([k, v, bad]) => (
-              <tr key={k}><th>{k}</th><td className={bad ? 'crit' : undefined}>{v}</td></tr>
+            {rows.map(([k, v, cls]) => (
+              <tr key={k}><th>{k}</th><td className={cls || undefined}>{v}</td></tr>
             ))}
           </tbody>
         </table>
