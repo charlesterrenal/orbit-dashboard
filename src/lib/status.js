@@ -129,14 +129,26 @@ export const fmtDate = (ms) => `${fmtToday(ms)} ${hhmm(ms)}`
 
 const isDown = (service, monitors) => serviceStatus(service, monitors).state === 'down'
 
-// Strip numbers. Counts cover only services listed in services.json; null means "not known".
-export function summarize({ services, monitors, pools, failed }) {
+// Top-line numbers. Counts cover only services listed in services.json; null means "not known".
+export function summarize({ groups, monitors, pools, failed }) {
   const known = monitors && !failed.kuma
-  const downs = known ? services.filter((s) => isDown(s, monitors)) : []
+  const services = groups.flatMap((g) => g.services)
+  const state = (s) => serviceStatus(s, monitors).state
+  const downs = known ? services.filter((s) => state(s) === 'down') : []
+  const perGroup = known
+    ? groups.map((g) => {
+      const found = splitMonitored(g.services, monitors).found.map((f) => f.service)
+      return { name: g.name, up: found.filter((s) => state(s) === 'up').length, down: found.filter((s) => state(s) === 'down').length, total: found.length }
+    }).filter((g) => g.total > 0)
+    : []
+  const total = known ? splitMonitored(services, monitors).found.length : null
   return {
-    up: known ? services.filter((s) => serviceStatus(s, monitors).state === 'up').length : null,
+    up: known ? services.filter((s) => state(s) === 'up').length : null,
     down: known ? downs.length : null,
     downNames: downs.map((s) => s.name),
+    total,
+    groups: perGroup,
+    unmonitored: known ? services.length - total : null,
     fullestPool: (!failed.pve && pools?.[0]) || null,
     unavailable: ['kuma', 'pve', 'updates'].filter((k) => failed[k]),
   }

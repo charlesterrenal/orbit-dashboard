@@ -16,9 +16,9 @@ function Field({ label, value, unit, level }) {
 
 const LEVEL = { ok: undefined, warn: 'warn', crit: 'crit' }
 
-export default function Strip({ services, kuma, pve, now }) {
+export default function Strip({ groups, kuma, pve, now }) {
   const failed = { kuma: pollDown(kuma, KUMA_MS, now), pve: pollDown(pve, PVE_MS, now), updates: false }
-  const s = summarize({ services, monitors: kuma.data, pools: pve.data?.pools ?? null, failed })
+  const s = summarize({ groups, monitors: kuma.data, pools: pve.data?.pools ?? null, failed })
   const p = failed.pve ? null : pve.data
   const up = p && uptimeParts(p.uptimeSec)
   const pool = s.fullestPool

@@ -152,7 +152,7 @@ const ok = { kuma: false, pve: false, updates: false }
 
 test('summarize ignores monitors not listed in services.json', () => {
   const services = [{ name: 'A', monitor: 'm1' }, { name: 'B', monitor: 'm2' }, { name: 'C' }]
-  const r = summarize({ services, monitors: kumaOf(1, 0, 0), pools: [], failed: ok })
+  const r = summarize({ groups: [{ name: 'g', services }], monitors: kumaOf(1, 0, 0), pools: [], failed: ok })
   assert.equal(r.up, 1)
   assert.equal(r.down, 1)
   assert.deepEqual(r.downNames, ['B'])
@@ -160,20 +160,20 @@ test('summarize ignores monitors not listed in services.json', () => {
 
 test('summarize: kuma failed or not loaded gives null counts', () => {
   const services = [{ name: 'A', monitor: 'm1' }]
-  assert.equal(summarize({ services, monitors: kumaOf(1), pools: [], failed: { ...ok, kuma: true } }).up, null)
-  assert.equal(summarize({ services, monitors: null, pools: [], failed: ok }).down, null)
+  assert.equal(summarize({ groups: [{ name: 'g', services }], monitors: kumaOf(1), pools: [], failed: { ...ok, kuma: true } }).up, null)
+  assert.equal(summarize({ groups: [{ name: 'g', services }], monitors: null, pools: [], failed: ok }).down, null)
 })
 
 test('summarize: no pools gives null fullestPool', () => {
   const pool = { name: 'local-lvm', usedPct: 96, level: 'crit' }
-  assert.equal(summarize({ services: [], monitors: null, pools: [], failed: ok }).fullestPool, null)
-  assert.equal(summarize({ services: [], monitors: null, pools: null, failed: ok }).fullestPool, null)
-  assert.equal(summarize({ services: [], monitors: null, pools: [pool], failed: { ...ok, pve: true } }).fullestPool, null)
-  assert.equal(summarize({ services: [], monitors: null, pools: [pool], failed: ok }).fullestPool, pool)
+  assert.equal(summarize({ groups: [], monitors: null, pools: [], failed: ok }).fullestPool, null)
+  assert.equal(summarize({ groups: [], monitors: null, pools: null, failed: ok }).fullestPool, null)
+  assert.equal(summarize({ groups: [], monitors: null, pools: [pool], failed: { ...ok, pve: true } }).fullestPool, null)
+  assert.equal(summarize({ groups: [], monitors: null, pools: [pool], failed: ok }).fullestPool, pool)
 })
 
 test('summarize: unavailable lists failed sources in fixed order', () => {
-  const r = summarize({ services: [], monitors: null, pools: null, failed: { kuma: true, pve: false, updates: true } })
+  const r = summarize({ groups: [], monitors: null, pools: null, failed: { kuma: true, pve: false, updates: true } })
   assert.deepEqual(r.unavailable, ['kuma', 'updates'])
 })
 
@@ -212,4 +212,29 @@ test('barHeights: down, pending and maintenance are full height', () => {
 
 test('barHeights: no pings gives the floor', () => {
   assert.deepEqual(barHeights([1, 1], [null, null]), [25, 25])
+})
+
+test('summarize: per-group counts in config order', () => {
+  const groups = [
+    { name: 'media', services: [{ name: 'A', monitor: 'm1' }, { name: 'B', monitor: 'm2' }] },
+    { name: 'infra', services: [{ name: 'C' }] },
+    { name: 'web', services: [{ name: 'D', monitor: 'm3' }, { name: 'E', monitor: 'ghost' }] },
+  ]
+  const r = summarize({ groups, monitors: kumaOf(1, 0, 1), pools: [], failed: ok })
+  assert.deepEqual(r.groups, [{ name: 'media', up: 1, down: 1, total: 2 }, { name: 'web', up: 1, down: 0, total: 1 }])
+  assert.equal(r.total, 3)
+  assert.equal(r.unmonitored, 2)
+})
+
+test('summarize: groups without monitored services are left out', () => {
+  const r = summarize({ groups: [{ name: 'infra', services: [{ name: 'C' }] }], monitors: kumaOf(1), pools: [], failed: ok })
+  assert.deepEqual(r.groups, [])
+  assert.equal(r.unmonitored, 1)
+})
+
+test('summarize: kuma failed gives no groups', () => {
+  const r = summarize({ groups: [{ name: 'g', services: [{ name: 'A', monitor: 'm1' }] }], monitors: kumaOf(1), pools: [], failed: { ...ok, kuma: true } })
+  assert.deepEqual(r.groups, [])
+  assert.equal(r.total, null)
+  assert.equal(r.unmonitored, null)
 })

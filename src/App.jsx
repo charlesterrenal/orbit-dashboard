@@ -32,7 +32,7 @@ function Dashboard({ config, tab, now }) {
   return (
     <>
       <Header tab={tab} now={now} />
-      <Strip services={config.groups.flatMap((g) => g.services)} kuma={kuma} pve={pve} now={now} />
+      <Strip groups={config.groups} kuma={kuma} pve={pve} now={now} />
       {tab === 'directory' && (
         <>
           <Directory groups={config.groups} monitors={kuma.data} unavailable={kumaDown} now={now} />
