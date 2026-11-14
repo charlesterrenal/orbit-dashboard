@@ -5,6 +5,7 @@ import { KUMA_MS, PVE_MS, UPDATES_MS } from './lib/intervals.js'
 import { usePoll } from './lib/usePoll.js'
 import Directory from './components/Directory.jsx'
 import Header from './components/Header.jsx'
+import Monitoring from './components/Monitoring.jsx'
 import Panel from './components/Panel.jsx'
 import Rail from './components/Rail.jsx'
 
@@ -45,6 +46,16 @@ function Dashboard({ config, tab, now }) {
               monitors={kuma.data}
               unavailable={kumaDown}
               updatedAt={kuma.updatedAt}
+              now={now}
+            />
+          )}
+          {tab === 'monitoring' && (
+            <Monitoring
+              groups={config.groups}
+              monitors={kuma.data}
+              kuma={kuma}
+              pve={pve}
+              updates={updates}
               now={now}
             />
           )}
