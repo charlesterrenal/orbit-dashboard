@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { getConfig, getKuma, getPve, getUpdates } from './lib/api.js'
-import { isStale, uptimeSummary, verdict as computeVerdict } from './lib/status.js'
+import { pollDown } from './lib/status.js'
 import { KUMA_MS, PVE_MS, UPDATES_MS } from './lib/intervals.js'
 import { usePoll } from './lib/usePoll.js'
 import Directory from './components/Directory.jsx'
 import Header from './components/Header.jsx'
-import Issues from './components/Issues.jsx'
 import Monitoring from './components/Monitoring.jsx'
-import Panel from './components/Panel.jsx'
 import Rail from './components/Rail.jsx'
+import Section from './components/Section.jsx'
+import Strip from './components/Strip.jsx'
 
 const tabFromHash = () => (location.hash === '#/monitoring' ? 'monitoring' : 'directory')
 
@@ -27,28 +27,14 @@ function Dashboard({ config, tab, now }) {
   const pve = usePoll(() => getPve(config.node), PVE_MS)
   const updates = usePoll(getUpdates, UPDATES_MS)
 
-  const verdict = computeVerdict({
-    monitors: kuma.data,
-    pve: pve.data,
-    updates: updates.data,
-    errors: { kuma: kuma.error, pve: pve.error, updates: updates.error },
-  })
-  const kumaDown = kuma.error != null || (kuma.updatedAt != null && isStale(kuma.updatedAt, KUMA_MS, now))
+  const kumaDown = pollDown(kuma, KUMA_MS, now)
 
   return (
     <>
-      <Header
-        verdict={verdict}
-        updatedAt={kuma.updatedAt}
-        tab={tab}
-        now={now}
-        pve={pve}
-        updates={updates}
-        summary={kumaDown ? { up: 0, total: 0 } : uptimeSummary(config.groups.flatMap((g) => g.services), kuma.data)}
-      />
+      <Header tab={tab} now={now} />
+      <Strip services={config.groups.flatMap((g) => g.services)} kuma={kuma} pve={pve} now={now} />
       <div className="layout">
         <main>
-          <Issues verdict={verdict} />
           {tab === 'directory' && (
             <Directory
               groups={config.groups}
@@ -111,18 +97,14 @@ export default function App() {
   }
   return (
     <div className="page">
-      <Header verdict={{ state: 'unknown', issues: [], unknown: ['config'] }} updatedAt={null} tab={tab} now={now} />
-      <div className="layout layout-one">
-        <main>
-          {configError && (
-            <Panel label="Config">
-              <p className="note bad">
-                {configError.startsWith('invalid services.json') ? configError : `could not load services.json: ${configError}`}
-              </p>
-            </Panel>
-          )}
-        </main>
-      </div>
+      <Header tab={tab} now={now} />
+      {configError && (
+        <Section title="config" alert>
+          <p className="note">
+            {configError.startsWith('invalid services.json') ? configError : `could not load services.json: ${configError}`}
+          </p>
+        </Section>
+      )}
     </div>
   )
 }

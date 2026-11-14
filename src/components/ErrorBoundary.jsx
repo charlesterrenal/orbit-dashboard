@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import Panel from './Panel.jsx'
+import Section from './Section.jsx'
 
 export default class ErrorBoundary extends Component {
   state = { failed: false }
@@ -9,6 +9,6 @@ export default class ErrorBoundary extends Component {
   }
 
   render() {
-    return this.state.failed ? <Panel label={this.props.label} unavailable /> : this.props.children
+    return this.state.failed ? <Section title={`${this.props.label} unavailable`} alert /> : this.props.children
   }
 }

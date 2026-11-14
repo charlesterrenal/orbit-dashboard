@@ -1,8 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, verdict,
-  verdictLabel, fmtAgo, fmtUptime, fmtBytes, isStale,
+  kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtUptime, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
   summarize, downFirst, unavailableLabel,
 } from '../src/lib/status.js'
@@ -86,32 +85,6 @@ test('parsePve excludes inactive/zero pools, sorts desc, computes levels', () =>
   assert.equal(pve.uptimeSec, 100)
 })
 
-test('verdict: issues ordered, display name used', () => {
-  const monitors = parseKuma(page({ id: 5, name: 'Sonarr' }), hb(5, [{ status: 0, time: '2026-11-14 09:00:00.000' }]))
-  const pve = { pools: [{ name: 'local-lvm', usedPct: 96 }] }
-  const v = verdict({ monitors, pve, updates: { status: 'success' }, errors: {} })
-  assert.deepEqual(v.issues, ['Sonarr down', 'local-lvm 96%'])
-  assert.equal(v.state, 'issues')
-})
-
-test('verdict: unknown when only errors', () => {
-  const v = verdict({ monitors: new Map(), pve: null, updates: null, errors: { kuma: new Error('x') } })
-  assert.equal(v.state, 'unknown')
-  assert.deepEqual(v.unknown, ['kuma'])
-})
-
-test('verdict: failed update is an issue; running is not', () => {
-  assert.deepEqual(verdict({ monitors: new Map(), pve: null, updates: { status: 'failed' }, errors: {} }).issues, ['updates failed'])
-  assert.equal(verdict({ monitors: new Map(), pve: null, updates: { status: 'running' }, errors: {} }).state, 'ok')
-})
-
-test('verdictLabel copy', () => {
-  assert.equal(verdictLabel({ state: 'ok', issues: [] }), 'all good')
-  assert.equal(verdictLabel({ state: 'issues', issues: ['a'] }), '1 issue')
-  assert.equal(verdictLabel({ state: 'issues', issues: ['a', 'b'] }), '2 issues')
-  assert.equal(verdictLabel({ state: 'unknown', issues: [] }), 'status unknown')
-})
-
 test('formatters', () => {
   assert.equal(fmtAgo(30e3), 'just now')
   assert.equal(fmtAgo(12 * 60e3), '12m')
@@ -136,17 +109,6 @@ test('splitMonitored: null monitors claims nothing; otherwise partitions', async
   const r = splitMonitored(services, map)
   assert.deepEqual(r.found.map((f) => f.service.id), ['a'])
   assert.deepEqual(r.missing.map((s) => s.id), ['b'])
-})
-
-test('uptimeSummary counts only services with a known monitor', async () => {
-  const { uptimeSummary } = await import('../src/lib/status.js')
-  const services = [{ id: 'a', monitor: 'a' }, { id: 'b', monitor: 'b' }, { id: 'c' }, { id: 'd', monitor: 'ghost' }]
-  assert.deepEqual(uptimeSummary(services, null), { up: 0, total: 0 })
-  const map = parseKuma(
-    page({ id: 1, name: 'a' }, { id: 2, name: 'b' }),
-    { heartbeatList: { 1: [{ status: 1, time: '2026-11-14 09:00:00.000' }], 2: [{ status: 0, time: '2026-11-14 09:00:00.000' }] }, uptimeList: {} },
-  )
-  assert.deepEqual(uptimeSummary(services, map), { up: 1, total: 2 })
 })
 
 test('statusText copy', () => {

@@ -74,22 +74,6 @@ export function parsePve({ status, storage, lxc }) {
   }
 }
 
-export function verdict({ monitors, pve, updates, errors }) {
-  const issues = []
-  for (const m of monitors?.values() ?? []) if (m.state === 'down') issues.push(`${m.name} down`)
-  for (const p of pve?.pools ?? []) if (p.usedPct >= WARN_PCT) issues.push(`${p.name} ${p.usedPct}%`)
-  if (updates && updates.status !== 'success' && updates.status !== 'running') issues.push(`updates ${updates.status}`)
-  const unknown = Object.keys(errors ?? {}).filter((k) => errors[k])
-  const state = issues.length ? 'issues' : unknown.length ? 'unknown' : 'ok'
-  return { state, issues, unknown }
-}
-
-export function verdictLabel(v) {
-  if (v.state === 'unknown') return 'status unknown'
-  if (v.state === 'ok') return 'all good'
-  return v.issues.length === 1 ? '1 issue' : `${v.issues.length} issues`
-}
-
 export function fmtAgo(ms) {
   if (ms < 60e3) return 'just now'
   const m = Math.floor(ms / 60e3)
@@ -108,11 +92,6 @@ export function fmtBytes(n) {
 }
 
 export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > 3 * intervalMs
-
-export function uptimeSummary(services, monitors) {
-  const { found } = splitMonitored(services, monitors)
-  return { up: found.filter((f) => f.monitor.state === 'up').length, total: found.length }
-}
 
 export function statusText({ state, ping, since }, now) {
   switch (state) {
