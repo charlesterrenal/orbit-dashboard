@@ -7,7 +7,7 @@ services:
       - "80:80"
     env_file: .env
     volumes:
-      - ./config/services.json:/usr/share/nginx/html/config/services.json:ro
+      - ./config:/usr/share/nginx/html/config:ro
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null"]
       interval: 30s

@@ -11,7 +11,7 @@ export default function Header({ verdict, updatedAt, tab }) {
         <a href="#/directory" className={tab === 'directory' ? 'on' : ''} aria-current={tab === 'directory' ? 'page' : undefined}>DIRECTORY</a>
         <a href="#/monitoring" className={tab === 'monitoring' ? 'on' : ''} aria-current={tab === 'monitoring' ? 'page' : undefined}>MONITORING</a>
       </nav>
-      <span className={`verdict verdict-${verdict.state}`}>
+      <span className={`verdict verdict-${verdict.state}`} title={[...verdict.issues, ...verdict.unknown.map((u) => `${u} unavailable`)].join(", ")}>
         {verdictLabel(verdict)} · checked {updatedAt ? hhmm(updatedAt) : '--:--'}
       </span>
     </header>

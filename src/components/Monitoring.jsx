@@ -1,5 +1,5 @@
-import { PVE_MS, UPDATES_MS } from '../lib/intervals.js'
-import { fmtBytes, isStale, serviceStatus } from '../lib/status.js'
+import { KUMA_MS, PVE_MS, UPDATES_MS } from '../lib/intervals.js'
+import { fmtBytes, isStale, splitMonitored } from '../lib/status.js'
 import ErrorBoundary from './ErrorBoundary.jsx'
 import Panel from './Panel.jsx'
 
@@ -21,19 +21,12 @@ function Row({ k, v, cls }) {
 }
 
 function Monitors({ groups, monitors, kuma, now }) {
-  const bad = kuma.error != null || (kuma.updatedAt != null && isStale(kuma.updatedAt, 60000, now))
-  const services = groups.flatMap((g) => g.services)
-  const found = []
-  const missing = []
-  for (const s of services) {
-    const m = monitors && serviceStatus(s, monitors).state !== 'none' && monitors.get(s.monitor.trim().toLowerCase())
-    if (m) found.push({ s, m })
-    else missing.push(s)
-  }
+  const bad = kuma.error != null || (kuma.updatedAt != null && isStale(kuma.updatedAt, KUMA_MS, now))
+  const { found, missing } = splitMonitored(groups.flatMap((g) => g.services), monitors)
   return (
     <>
       <Panel label="Monitors" unavailable={bad} updatedAt={kuma.updatedAt} now={now}>
-        {found.map(({ s, m }) => (
+        {found.map(({ service: s, monitor: m }) => (
           <div key={s.id} className="mon">
             <span className="nm">{s.name}</span>
             <span className="s">{m.uptime24 == null ? '—' : `${m.uptime24.toFixed(1)}%`}</span>

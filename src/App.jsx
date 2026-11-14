@@ -77,14 +77,23 @@ export default function App() {
     return () => removeEventListener('hashchange', onHash)
   }, [])
 
+  // Retry until loaded: a restored tab may start before the network is up.
   useEffect(() => {
-    getConfig().then(
+    let timer
+    let dead = false
+    const load = () => getConfig().then(
       (c) => {
         c.warnings.forEach((w) => console.warn(`services.json: ${w}`))
-        setConfig(c)
+        if (!dead) { setConfigError(null); setConfig(c) }
       },
-      (e) => setConfigError(e.message),
+      (e) => {
+        if (dead) return
+        setConfigError(e.message)
+        if (!e.message.startsWith('invalid services.json')) timer = setTimeout(load, 10000)
+      },
     )
+    load()
+    return () => { dead = true; clearTimeout(timer) }
   }, [])
 
   if (config) {
@@ -98,7 +107,7 @@ export default function App() {
           {configError && (
             <Panel label="Config">
               <p className="note bad">
-                {configError.startsWith('invalid services.json') ? configError : `invalid services.json: ${configError}`}
+                {configError.startsWith('invalid services.json') ? configError : `could not load services.json: ${configError}`}
               </p>
             </Panel>
           )}

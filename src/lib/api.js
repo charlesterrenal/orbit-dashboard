@@ -2,6 +2,7 @@ import { parseKuma, parsePve } from './status.js'
 import { parseServicesConfig } from './config.js'
 
 export async function fetchJson(url, { timeoutMs = 8000, fetchImpl = fetch, ...init } = {}) {
+  init = { cache: 'no-store', ...init }
   const ctl = new AbortController()
   let timedOut = false
   const timer = setTimeout(() => { timedOut = true; ctl.abort() }, timeoutMs)

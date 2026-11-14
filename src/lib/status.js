@@ -39,6 +39,19 @@ export function serviceStatus(service, monitors) {
   return m ? { state: m.state, ping: m.ping, since: m.since } : { state: 'none', ping: null, since: null }
 }
 
+// Services split by whether Kuma knows their monitor. Before Kuma loads (monitors null) neither list claims anything.
+export function splitMonitored(services, monitors) {
+  const found = []
+  const missing = []
+  if (!monitors) return { found, missing }
+  for (const service of services) {
+    const monitor = service.monitor && monitors.get(key(service.monitor))
+    if (monitor) found.push({ service, monitor })
+    else missing.push(service)
+  }
+  return { found, missing }
+}
+
 export const storageLevel = (pct) => (pct >= CRIT_PCT ? 'crit' : pct >= WARN_PCT ? 'warn' : 'ok')
 
 export function parsePve({ status, storage, lxc }) {

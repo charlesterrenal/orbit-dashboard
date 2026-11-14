@@ -123,3 +123,13 @@ test('isStale', () => {
   assert.equal(isStale(t, 60e3, t + 181e3), true)
   assert.equal(isStale(t, 60e3, t + 179e3), false)
 })
+
+test('splitMonitored: null monitors claims nothing; otherwise partitions', async () => {
+  const { splitMonitored } = await import('../src/lib/status.js')
+  const services = [{ id: 'a', name: 'A', monitor: ' SONARR ' }, { id: 'b', name: 'B' }]
+  assert.deepEqual(splitMonitored(services, null), { found: [], missing: [] })
+  const map = parseKuma(page({ id: 5, name: 'Sonarr' }), hb(5, [{ status: 1, time: '2026-11-14 09:00:00.000', ping: 7 }]))
+  const r = splitMonitored(services, map)
+  assert.deepEqual(r.found.map((f) => f.service.id), ['a'])
+  assert.deepEqual(r.missing.map((s) => s.id), ['b'])
+})

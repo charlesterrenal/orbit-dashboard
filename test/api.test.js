@@ -17,3 +17,10 @@ test('200 resolves to body', async () => {
   const fetchImpl = async () => ({ ok: true, status: 200, json: async () => ({ a: 1 }) })
   assert.deepEqual(await fetchJson('/x', { fetchImpl }), { a: 1 })
 })
+
+test('requests are never served from the browser cache by default', async () => {
+  let init
+  const fetchImpl = async (_u, i) => { init = i; return { ok: true, status: 200, json: async () => ({}) } }
+  await fetchJson('/x', { fetchImpl })
+  assert.equal(init.cache, 'no-store')
+})
