@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "test:gateway": "bash scripts/test-gateway.sh",
     "docs:screenshots": "node scripts/generate-screenshots.js"
   },
   "dependencies": {

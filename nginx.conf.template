@@ -1,6 +1,20 @@
 server {
     listen 80;
     server_name localhost;
+    server_tokens off;
+
+    # Security headers (server level; inherited by every location below because none sets its own add_header).
+    # 'unsafe-inline' styles: React inline style attributes. Fonts/Open-Meteo/codetabs: current direct browser calls (removed in S2).
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://api.codetabs.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "no-referrer" always;
+
+    proxy_connect_timeout 5s;
+    proxy_read_timeout 15s;
+    proxy_send_timeout 15s;
+    # No integration needs upstream cookies under the dashboard origin.
+    proxy_hide_header Set-Cookie;
 
     location / {
         root /usr/share/nginx/html;
@@ -8,66 +22,133 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    location /api/proxmox/ {
-        # proxy_ssl_verify off is needed if your proxmox uses a self-signed cert
-        proxy_pass ${PROXMOX_BACKEND_URL}/api2/json/;
+    # Every /api/ path not explicitly allowed below. Exact (=) and regex locations take precedence over this prefix.
+    location /api/ {
+        default_type application/json;
+        return 404 '{"error":"not found"}';
+    }
+
+    # Allowlist: exactly the requests the current frontend makes (see docs/REVAMP_PLAN.md, S1).
+    # Regex locations cannot carry a URI in proxy_pass, so they rewrite and proxy_pass the bare *_BACKEND_URL
+    # (which therefore must not end in "/"). limit_except GET also permits HEAD.
+
+    # --- Proxmox VE ---
+    location ~ ^/api/proxmox/nodes/[A-Za-z0-9-]+/(status|qemu|lxc|storage|journal|apt/update)$ {
+        limit_except GET { deny all; }
+        rewrite ^/api/proxmox/(.*)$ /api2/json/$1 break;
+        proxy_pass ${PROXMOX_BACKEND_URL};
         proxy_ssl_verify off;
         proxy_set_header Host $host;
     }
 
-    location /api/portainer/ {
-        proxy_pass ${PORTAINER_BACKEND_URL}/;
+    # --- Portainer ---
+    location = /api/portainer/api/endpoints {
+        limit_except GET { deny all; }
+        proxy_pass ${PORTAINER_BACKEND_URL}/api/endpoints;
+        proxy_ssl_verify off;
+        proxy_set_header Host $host;
+    }
+    location ~ ^/api/portainer/api/endpoints/[0-9]+/docker/containers/json$ {
+        limit_except GET { deny all; }
+        rewrite ^/api/portainer/(.*)$ /$1 break;
+        proxy_pass ${PORTAINER_BACKEND_URL};
         proxy_ssl_verify off;
         proxy_set_header Host $host;
     }
 
-    location /api/uptime/ {
-        proxy_pass ${UPTIME_KUMA_BACKEND_URL}/;
+    # --- Uptime Kuma (public status page only) ---
+    location = /api/uptime/api/status-page/default {
+        limit_except GET { deny all; }
+        proxy_pass ${UPTIME_KUMA_BACKEND_URL}/api/status-page/default;
         proxy_set_header Host $host;
-        # Support websockets for uptime kuma
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+    }
+    location = /api/uptime/api/status-page/heartbeat/default {
+        limit_except GET { deny all; }
+        proxy_pass ${UPTIME_KUMA_BACKEND_URL}/api/status-page/heartbeat/default;
+        proxy_set_header Host $host;
     }
 
-    location /api/jellyfin/ {
-        proxy_pass ${JELLYFIN_BACKEND_URL}/;
+    # --- Jellyfin ---
+    location = /api/jellyfin/Sessions {
+        limit_except GET { deny all; }
+        proxy_pass ${JELLYFIN_BACKEND_URL}/Sessions;
+        proxy_ssl_server_name on;
+    }
+    location ~ ^/api/jellyfin/Items/[A-Za-z0-9-]+/Images/Primary$ {
+        limit_except GET { deny all; }
+        rewrite ^/api/jellyfin/(.*)$ /$1 break;
+        proxy_pass ${JELLYFIN_BACKEND_URL};
         proxy_ssl_server_name on;
     }
 
-    location /api/tailscale/ {
-        proxy_pass ${TAILSCALE_BACKEND_URL}/;
+    # --- Tailscale ---
+    location = /api/tailscale/api/v2/tailnet/-/devices {
+        limit_except GET { deny all; }
+        proxy_pass ${TAILSCALE_BACKEND_URL}/api/v2/tailnet/-/devices;
         proxy_ssl_server_name on;
     }
 
-    location /api/todoist/ {
-        proxy_pass ${TODOIST_BACKEND_URL}/;
+    # --- Todoist ---
+    location = /api/todoist/api/v1/tasks {
+        limit_except GET { deny all; }
+        proxy_pass ${TODOIST_BACKEND_URL}/api/v1/tasks;
+        proxy_ssl_server_name on;
+    }
+    location = /api/todoist/api/v1/projects {
+        limit_except GET { deny all; }
+        proxy_pass ${TODOIST_BACKEND_URL}/api/v1/projects;
+        proxy_ssl_server_name on;
+    }
+    # The only write the app makes: "complete task" (decision D3 pending).
+    location ~ ^/api/todoist/api/v1/tasks/[A-Za-z0-9_-]+/close$ {
+        limit_except POST { deny all; }
+        rewrite ^/api/todoist/(.*)$ /$1 break;
+        proxy_pass ${TODOIST_BACKEND_URL};
         proxy_ssl_server_name on;
     }
 
-    location /api/qbit/ {
-        proxy_pass ${QBITTORRENT_BACKEND_URL}/;
+    # --- qBittorrent ---
+    location = /api/qbit/api/v2/transfer/info {
+        limit_except GET { deny all; }
+        proxy_pass ${QBITTORRENT_BACKEND_URL}/api/v2/transfer/info;
+        proxy_set_header Host $host;
+        proxy_set_header Origin ${QBITTORRENT_BACKEND_URL};
+        proxy_set_header Referer ${QBITTORRENT_BACKEND_URL}/;
+    }
+    location = /api/qbit/api/v2/torrents/info {
+        limit_except GET { deny all; }
+        proxy_pass ${QBITTORRENT_BACKEND_URL}/api/v2/torrents/info;
         proxy_set_header Host $host;
         proxy_set_header Origin ${QBITTORRENT_BACKEND_URL};
         proxy_set_header Referer ${QBITTORRENT_BACKEND_URL}/;
     }
 
-    location /api/radarr/ {
-        proxy_pass ${RADARR_BACKEND_URL}/;
+    # --- Radarr / Sonarr / Jellyseerr ---
+    location = /api/radarr/api/v3/movie {
+        limit_except GET { deny all; }
+        proxy_pass ${RADARR_BACKEND_URL}/api/v3/movie;
+        proxy_set_header Host $host;
+    }
+    location = /api/radarr/api/v3/queue {
+        limit_except GET { deny all; }
+        proxy_pass ${RADARR_BACKEND_URL}/api/v3/queue;
+        proxy_set_header Host $host;
+    }
+    location = /api/sonarr/api/v3/calendar {
+        limit_except GET { deny all; }
+        proxy_pass ${SONARR_BACKEND_URL}/api/v3/calendar;
+        proxy_set_header Host $host;
+    }
+    location = /api/jellyseerr/api/v1/request {
+        limit_except GET { deny all; }
+        proxy_pass ${JELLYSEERR_BACKEND_URL}/api/v1/request;
         proxy_set_header Host $host;
     }
 
-    location /api/sonarr/ {
-        proxy_pass ${SONARR_BACKEND_URL}/;
-        proxy_set_header Host $host;
-    }
-
-    location /api/jellyseerr/ {
-        proxy_pass ${JELLYSEERR_BACKEND_URL}/;
-        proxy_set_header Host $host;
-    }
-
-    location /api/updates/ {
-        proxy_pass ${UPDATES_BACKEND_URL}/;
+    # --- Update status (Proxmox host, port 8199) ---
+    location = /api/updates/status.json {
+        limit_except GET { deny all; }
+        proxy_pass ${UPDATES_BACKEND_URL}/status.json;
         proxy_set_header Host $host;
     }
 }
