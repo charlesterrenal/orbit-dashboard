@@ -1,83 +1,94 @@
 import { KUMA_MS, PVE_MS, UPDATES_MS } from '../lib/intervals.js'
-import { fmtBytes, isStale, splitMonitored } from '../lib/status.js'
+import { downFirst, fmtBytes, fmtDate, pollDown, serviceStatus, splitMonitored, unavailableLabel } from '../lib/status.js'
 import ErrorBoundary from './ErrorBoundary.jsx'
-import Panel from './Panel.jsx'
+import Section from './Section.jsx'
+import ServiceRow from './ServiceRow.jsx'
 
-const BEAT = ['down', 'up', 'pending', 'maintenance']
-const when = (iso) => (iso ? new Date(iso).toLocaleString([], { hour12: false }) : '—')
-const down = (poll, ms, now) =>
-  poll.error != null || (poll.updatedAt != null && isStale(poll.updatedAt, ms, now))
-
-function Beats({ beats }) {
-  return (
-    <span className="beats" aria-hidden="true">
-      {beats.map((b, i) => <i key={i} className={`beat beat-${BEAT[b] ?? 'pending'}`} />)}
-    </span>
-  )
+const NONE = { state: 'none', ping: null, since: null }
+const fine = (status) => status === 'success' || status === 'running'
+const when = (iso) => {
+  const t = iso ? Date.parse(iso) : NaN
+  return Number.isNaN(t) ? 'n/a' : fmtDate(t)
 }
 
-function Row({ k, v, cls }) {
-  return <div className="kv"><span className="s">{k}</span><span className={cls}>{v}</span></div>
-}
-
-function Monitors({ groups, monitors, kuma, now }) {
-  const bad = kuma.error != null || (kuma.updatedAt != null && isStale(kuma.updatedAt, KUMA_MS, now))
-  const { found, missing } = splitMonitored(groups.flatMap((g) => g.services), monitors)
+function Monitors({ groups, kuma, now }) {
+  const failed = pollDown(kuma, KUMA_MS, now)
+  const live = failed ? null : kuma.data
+  const { found, missing } = splitMonitored(groups.flatMap((g) => g.services), live)
+  const monitorOf = new Map(found.map((f) => [f.service.id, f.monitor]))
   return (
-    <>
-      <Panel label="Monitors" unavailable={bad} updatedAt={kuma.updatedAt} now={now}>
-        {found.map(({ service: s, monitor: m }) => (
-          <div key={s.id} className="mon">
-            <span className="nm">{s.name}</span>
-            <span className="s">{m.uptime24 == null ? '—' : `${m.uptime24.toFixed(1)}%`}</span>
-            <Beats beats={m.beats} />
-          </div>
-        ))}
-      </Panel>
-      <Panel label="No monitor">
-        {missing.map((s) => <div key={s.id} className="nm">{s.name}</div>)}
-      </Panel>
-    </>
-  )
-}
-
-function Pools({ poll, now }) {
-  const bad = down(poll, PVE_MS, now)
-  return (
-    <Panel label="Storage" unavailable={bad} updatedAt={poll.updatedAt} now={now}>
-      {poll.data && !bad && poll.data.pools.map((p) => (
-        <Row key={p.name} k={p.name} v={`${fmtBytes(p.used)} / ${fmtBytes(p.total)} · ${p.usedPct}%`} cls={p.level === 'ok' ? '' : 'alert'} />
+    <Section
+      title={failed ? unavailableLabel('monitors', kuma.updatedAt) : 'monitors, last 50 checks'}
+      alert={failed}
+      className="mon"
+    >
+      {downFirst(found.map((f) => f.service), live).map((s) => (
+        <ServiceRow key={s.id} service={s} status={serviceStatus(s, live)} monitor={monitorOf.get(s.id)} count={50} now={now} />
       ))}
-    </Panel>
+      {missing.map((s) => <ServiceRow key={s.id} service={s} status={NONE} count={50} now={now} />)}
+    </Section>
   )
 }
 
-function LastRun({ poll, now }) {
-  const u = poll.data
-  const bad = down(poll, UPDATES_MS, now)
+function Pools({ pve, now }) {
+  const failed = pollDown(pve, PVE_MS, now)
+  const pools = failed ? null : pve.data?.pools
   return (
-    <Panel label="Last update run" unavailable={bad} updatedAt={poll.updatedAt} now={now}>
-      {u && !bad && (
-        <>
-          <Row k="status" v={u.status} cls={u.status === 'success' ? 'good' : 'alert'} />
-          <Row k="started" v={when(u.started_at)} />
-          <Row k="completed" v={when(u.completed_at)} />
-          <Row k="host" v={u.host_status ?? '—'} cls={u.host_status === 'success' ? '' : 'alert'} />
-          <Row k="containers" v={`${u.containers_ok}/${u.containers_total}`} />
-          <Row k="next run" v={u.next_run ?? '—'} />
-          {u.errors && <p className="s alert sub">{u.errors}</p>}
-        </>
+    <Section title={failed ? unavailableLabel('storage', pve.updatedAt) : 'storage'} alert={failed}>
+      {pools && (
+        <table>
+          <thead><tr><th>pool</th><th className="n">used</th><th className="n">total</th><th /></tr></thead>
+          <tbody>
+            {pools.map((p) => (
+              <tr key={p.name} className={p.level}>
+                <td>{p.name}</td>
+                <td className="n">{fmtBytes(p.used)}</td>
+                <td className="n">{fmtBytes(p.total)}</td>
+                <td><span className={`meter ${p.level}`}><i style={{ width: `${p.usedPct}%` }} /></span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
-    </Panel>
+    </Section>
   )
 }
 
-export default function Monitoring({ groups, monitors, kuma, pve, updates, now }) {
+function LastRun({ updates, now }) {
+  const failed = pollDown(updates, UPDATES_MS, now)
+  const u = failed ? null : updates.data
+  const rows = u && [
+    ['status', u.status, !fine(u.status)],
+    ['started', when(u.started_at)],
+    ['completed', when(u.completed_at)],
+    ['host', u.host_status ?? 'n/a', u.host_status !== 'success'],
+    ['containers', `${u.containers_ok} of ${u.containers_total} updated`],
+    ['errors', u.errors || 'none', !!u.errors],
+    ['next run', u.next_run ?? 'n/a'],
+  ]
+  return (
+    <Section title={failed ? unavailableLabel('last update run', updates.updatedAt) : 'last update run'} alert={failed}>
+      {rows && (
+        <table className="kvt">
+          <tbody>
+            {rows.map(([k, v, bad]) => (
+              <tr key={k}><th>{k}</th><td className={bad ? 'crit' : undefined}>{v}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </Section>
+  )
+}
+
+export default function Monitoring({ groups, kuma, pve, updates, now }) {
   return (
     <>
-      <ErrorBoundary label="Monitors"><Monitors groups={groups} monitors={monitors} kuma={kuma} now={now} /></ErrorBoundary>
-      <ErrorBoundary label="Storage"><Pools poll={pve} now={now} /></ErrorBoundary>
-      <ErrorBoundary label="Last update run"><LastRun poll={updates} now={now} /></ErrorBoundary>
+      <ErrorBoundary label="monitors"><Monitors groups={groups} kuma={kuma} now={now} /></ErrorBoundary>
+      <div className="cols2">
+        <ErrorBoundary label="storage"><Pools pve={pve} now={now} /></ErrorBoundary>
+        <ErrorBoundary label="last update run"><LastRun updates={updates} now={now} /></ErrorBoundary>
+      </div>
     </>
   )
 }

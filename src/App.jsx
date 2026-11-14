@@ -40,7 +40,7 @@ function Dashboard({ config, tab, now }) {
         </>
       )}
       {tab === 'monitoring' && (
-        <Monitoring groups={config.groups} monitors={kuma.data} kuma={kuma} pve={pve} updates={updates} now={now} />
+        <Monitoring groups={config.groups} kuma={kuma} pve={pve} updates={updates} now={now} />
       )}
     </>
   )
