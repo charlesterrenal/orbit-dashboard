@@ -19,7 +19,7 @@ export default function Footer({ pve, updates, now }) {
         : <Cell label="storage"><b className="na">n/a</b></Cell>}
       <Cell label="last update" cls=" r">
         {u
-          ? <><b>{Number.isNaN(started) ? 'n/a' : fmtDay(started)}</b><b className={fine(u.status) ? 'ok' : 'bad'}>{u.status}</b></>
+          ? <><b>{Number.isNaN(started) ? 'n/a' : fmtDay(started)}</b><b className={u.status === 'success' ? 'ok' : fine(u.status) ? undefined : 'bad'}>{u.status}</b></>
           : <b className="na">n/a</b>}
       </Cell>
     </footer>

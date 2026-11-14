@@ -58,7 +58,7 @@ function LastRun({ updates, now }) {
   const failed = pollDown(updates, UPDATES_MS, now)
   const u = failed ? null : updates.data
   const rows = u && [
-    ['status', u.status, fine(u.status) ? 'ok' : 'crit'],
+    ['status', u.status, u.status === 'success' ? 'ok' : fine(u.status) ? '' : 'crit'],
     ['started', when(u.started_at)],
     ['completed', when(u.completed_at)],
     ['host', u.host_status ?? 'n/a', u.host_status === 'success' ? '' : 'crit'],

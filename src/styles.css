@@ -74,10 +74,10 @@ h3.alert { color: var(--amber); }
 .big.ok { color: var(--teal); }
 .big.bad { color: var(--red); }
 .big.na { font-size: 18px; font-weight: 400; color: var(--dim); }
-.gls { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 28px; margin-top: 14px; }
+.gls { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 4px 28px; margin-top: 14px; }
 .gl { display: flex; justify-content: space-between; gap: 12px; }
 .gl span { color: var(--dim); text-transform: lowercase; }
-.gl b { font-weight: 400; color: var(--text); font-variant-numeric: tabular-nums; }
+.gl b { font-weight: 400; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .gl.bad span, .gl.bad b { color: var(--red); }
 .gl.dim b { color: var(--dim); }
 .mt { display: grid; grid-template-columns: 110px 1fr 64px; align-items: center; gap: 14px; padding: 4px 0; }
@@ -120,7 +120,7 @@ h3.alert { color: var(--amber); }
 /* heartbeat bars */
 .beats { display: flex; align-items: flex-end; gap: 1px; height: 16px; overflow: hidden; }
 .mon .beats { height: 22px; }
-.beats i { flex: 1; background: var(--teal); opacity: 0.75; }
+.beats i { flex: 1; height: var(--h); background: var(--teal); opacity: 0.75; }
 .beats i.d { background: var(--red); opacity: 1; }
 .beats i.p { background: #4a4a50; opacity: 1; }
 .beats.shift i { animation: beat-in 0.4s ease-out; }

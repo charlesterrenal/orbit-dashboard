@@ -12,7 +12,7 @@ export default function Beats({ beats, pings, count, lastBeat }) {
   const shown = beats.slice(-count)
   return (
     <span key={lastBeat} className={moved.current ? 'beats shift' : 'beats'} aria-hidden="true">
-      {barHeights(shown, pings.slice(-count)).map((h, i) => <i key={i} className={CLS[shown[i]]} style={{ height: `${h}%` }} />)}
+      {barHeights(shown, pings.slice(-count)).map((h, i) => <i key={i} className={CLS[shown[i]]} style={{ '--h': `${h}%` }} />)}
     </span>
   )
 }
