@@ -1,54 +1,95 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import Containers from './pages/Containers';
-import ParticleBackground from './components/ParticleBackground';
-import CommandPalette from './components/CommandPalette';
+import { useEffect, useState } from 'react'
+import { getConfig, getKuma, getPve, getUpdates } from './lib/api.js'
+import { pollDown } from './lib/status.js'
+import { KUMA_MS, PVE_MS, UPDATES_MS } from './lib/intervals.js'
+import { usePoll } from './lib/usePoll.js'
+import Directory from './components/Directory.jsx'
+import Header from './components/Header.jsx'
+import Monitoring from './components/Monitoring.jsx'
+import Footer from './components/Footer.jsx'
+import Section from './components/Section.jsx'
+import Strip from './components/Strip.jsx'
 
-function App() {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
-  const [isCmdOpen, setIsCmdOpen] = useState(false);
+const tabFromHash = () => (location.hash === '#/monitoring' ? 'monitoring' : 'directory')
 
-  // Global Ctrl+K / Cmd+K listener
+function useNow(ms) {
+  const [now, setNow] = useState(Date.now())
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setIsCmdOpen(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Sync when Sidebar changes theme via localStorage + data-theme attribute
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const current = document.documentElement.getAttribute('data-theme');
-      if (current) setTheme(current);
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    // Apply initial theme
-    document.documentElement.setAttribute('data-theme', theme);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div className="app-layout">
-      <ParticleBackground color={theme === 'dark' ? '#333333' : '#cbd5e1'} />
-      <Sidebar onOpenCmd={() => setIsCmdOpen(true)} />
-      <CommandPalette isOpen={isCmdOpen} onClose={() => setIsCmdOpen(false)} />
-      <div className="app-content">
-        <Routes>
-          <Route path="/" element={<Home onOpenCmd={() => setIsCmdOpen(true)} />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/containers" element={<Containers />} />
-        </Routes>
-      </div>
-    </div>
-  );
+    const t = setInterval(() => setNow(Date.now()), ms)
+    return () => clearInterval(t)
+  }, [ms])
+  return now
 }
 
-export default App;
+// Owns all three polls; stays mounted across tab switches so polling never restarts.
+function Dashboard({ config, tab, now }) {
+  const kuma = usePoll(getKuma, KUMA_MS)
+  const pve = usePoll(() => getPve(config.node), PVE_MS)
+  const updates = usePoll(getUpdates, UPDATES_MS)
+
+  const kumaDown = pollDown(kuma, KUMA_MS, now)
+
+  return (
+    <>
+      <Header tab={tab} now={now} />
+      <Strip groups={config.groups} kuma={kuma} pve={pve} now={now} />
+      {tab === 'directory' && (
+        <>
+          <Directory groups={config.groups} monitors={kuma.data} unavailable={kumaDown} now={now} />
+          <Footer pve={pve} updates={updates} now={now} />
+        </>
+      )}
+      {tab === 'monitoring' && (
+        <Monitoring groups={config.groups} kuma={kuma} pve={pve} updates={updates} now={now} />
+      )}
+    </>
+  )
+}
+
+export default function App() {
+  const [tab, setTab] = useState(tabFromHash)
+  const [config, setConfig] = useState(null)
+  const [configError, setConfigError] = useState(null)
+  const now = useNow(30000)
+
+  useEffect(() => {
+    const onHash = () => setTab(tabFromHash())
+    addEventListener('hashchange', onHash)
+    return () => removeEventListener('hashchange', onHash)
+  }, [])
+
+  // Retry until loaded: a restored tab may start before the network is up.
+  useEffect(() => {
+    let timer
+    let dead = false
+    const load = () => getConfig().then(
+      (c) => {
+        c.warnings.forEach((w) => console.warn(`services.json: ${w}`))
+        if (!dead) { setConfigError(null); setConfig(c) }
+      },
+      (e) => {
+        if (dead) return
+        setConfigError(e.message)
+        if (!e.message.startsWith('invalid services.json')) timer = setTimeout(load, 10000)
+      },
+    )
+    load()
+    return () => { dead = true; clearTimeout(timer) }
+  }, [])
+
+  if (config) {
+    return <div className="page"><Dashboard config={config} tab={tab} now={now} /></div>
+  }
+  return (
+    <div className="page">
+      <Header tab={tab} now={now} />
+      {configError && (
+        <Section title="config" alert>
+          <p className="note">
+            {configError.startsWith('invalid services.json') ? configError : `could not load services.json: ${configError}`}
+          </p>
+        </Section>
+      )}
+    </div>
+  )
+}

@@ -1,21 +1,16 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-# Production server stage
-FROM nginx:alpine
-# Copy the built assets from the builder stage
+# Production server stage (pinned; bump deliberately)
+FROM nginx:1.30.6-alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Copy the nginx template so envsubst can replace the proxy URLs at runtime
+COPY --chmod=755 docker/15-validate-env.sh /docker-entrypoint.d/
+# envsubst fills the proxy URLs and PVE token from env at start
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
-
-# Start Nginx
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

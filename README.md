@@ -1,75 +1,60 @@
-# Orbit Dashboard
+# Orbit
 
-A sleek, responsive, personal homelab dashboard built with **React + Vite** following the **12-Factor App / API Gateway Pattern**. Features live widgets for Proxmox VE, Portainer, Uptime Kuma, Jellyfin, Tailscale, qBittorrent, Sonarr, Radarr, Jellyseerr, Weather, Todoist, and System Updates.
+An always-open homelab home base: a directory of every service with live status, plus a glanceable health rail (server, storage, last update run). One page, dark, monospace, no external requests at runtime.
 
-## Previews
+<!-- screenshot: add docs/orbit.png and link it here once the look is signed off -->
 
-<div align="center">
-  <img src="public/screenshot-dark.png" alt="Dashboard Dark Mode" width="100%">
-  <br>
-  <p><em>Dashboard Overview - Dark Mode</em></p>
-  <br>
-  <img src="public/screenshot-light.png" alt="Dashboard Light Mode" width="100%">
-  <br>
-  <p><em>Dashboard Overview - Light Mode</em></p>
-  <br>
-  <img src="public/screenshot-services.png" alt="Services Page" width="100%">
-  <br>
-  <p><em>Services Directory</em></p>
-  <br>
-  <img src="public/screenshot-containers.png" alt="Containers Page" width="100%">
-  <br>
-  <p><em>Docker Containers Overview</em></p>
-</div>
+## Security model
 
-## Architecture: 12-Factor API Gateway Pattern
+- **One credential:** a read-only Proxmox API token, injected by nginx on the server. It never reaches the browser, the bundle, image layers or git.
+- **Gateway allowlist:** nginx exposes exactly these GET paths and returns `404` for everything else under `/api/`:
+  - `/api/proxmox/nodes/<node>/{status,storage,lxc}`
+  - `/api/uptime/api/status-page/default` and `/api/uptime/api/status-page/heartbeat/default`
+  - `/api/updates/status.json`
+  - `/config/services.json` (static)
+- **Startup validation:** the container refuses to start if the five env vars are missing or malformed, and never prints their values.
 
-The frontend is completely decoupled from your home network topology:
-- **Frontend Blindness**: All browser HTTP and WebSocket requests hit relative paths (e.g. `/api/proxmox/`, `/api/portainer/`, `/api/uptime/`).
-- **Dynamic Gateway**: In development, Vite's dev server proxies these paths. In production, an Nginx container handles routing using `envsubst` to dynamically populate backend URLs from environment variables at startup.
-- **Portability**: No IP addresses or hostnames are hardcoded into the frontend bundle or Nginx configuration.
+## Setup
 
----
+1. **Create the token** on the Proxmox host (the secret is shown once; put it straight into `.env`):
+   ```
+   pveum role add DashboardRO -privs "Sys.Audit VM.Audit Datastore.Audit"
+   pveum user add dashboard@pve --comment "orbit read-only"
+   pveum acl modify / -user dashboard@pve -role DashboardRO
+   pveum user token add dashboard@pve orbit --privsep 1
+   pveum acl modify / -token 'dashboard@pve!orbit' -role DashboardRO
+   ```
+2. **Env:** `cp .env.example .env` and fill in the three backend URLs plus `PVE_TOKEN_ID` / `PVE_TOKEN_SECRET`.
+3. **Services:** `cp config/services.example.json config/services.json` and edit it.
+4. **Run:** `docker compose up -d --build`.
 
-## Quick Start & Installation
+Editing `config/services.json` needs no rebuild; refresh the browser.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/orbit-dashboard.git
-cd orbit-dashboard
+### Add a service
+
+Add an entry to a group in `config/services.json`:
+
+```json
+{ "id": "sonarr", "name": "Sonarr", "url": "http://sonarr.lan:8989", "icon": "sonarr.svg", "monitor": "sonarr" }
 ```
 
-### 2. Configure Environment Variables
-Copy `.env.example` to `.env.local`:
-```bash
-cp .env.example .env.local
-```
-Edit `.env.local` to fill in:
-- **Backend Routing Targets**: Your specific homelab backend URLs (e.g., `PROXMOX_BACKEND_URL`, `PORTAINER_BACKEND_URL`, `JELLYFIN_BACKEND_URL`).
-- **Frontend Secrets & Config**: Your API keys and tokens (e.g., `VITE_PROXMOX_SECRET`, `VITE_PORTAINER_API_KEY`).
+`icon` is a file in `public/icons/` (omit it for a monogram tile). `monitor` is the Uptime Kuma monitor name (case and surrounding spaces ignored); without it the row reads `NO MONITOR`. Services whose `url` is not `http(s)` are dropped with a console warning.
 
-### 3. Configure Dashboard Services
-Copy `src/config/services.example.json` to `src/config/services.json`:
-```bash
-cp src/config/services.example.json src/config/services.json
-```
-Customize `src/config/services.json` with your personal homelab services, icons, categories, and direct links. (This file is gitignored to protect your local network setup).
+### Add a Kuma monitor
 
-### 4. Run Locally (Development)
-```bash
-npm install
+Create the monitor in Uptime Kuma, add it to the status page with slug `default`, and name it to match `monitor` in `services.json`.
+
+## Development
+
+```
+cp .env.example .env        # real backend values
+mkdir -p public/config && cp config/services.json public/config/services.json
 npm run dev
+npm test                    # unit tests (node --test)
+npm run lint
+npm run test:gateway        # needs Docker
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### 5. Run with Docker Compose (Production)
-```bash
-docker compose up -d --build
-```
-Access the dashboard on port `80` (e.g., [http://localhost](http://localhost) or your host IP).
+## Icon attribution
 
----
-
-## Security
-- All sensitive tokens and internal routing IPs are kept in `.env.local` and `services.json`, which are excluded via `.gitignore`.
-- Variables without `VITE_` prefix remain server-side only and are never exposed in the client-side JavaScript bundle.
+Service icons are from [homarr-labs/dashboard-icons](https://github.com/homarr-labs/dashboard-icons) (Apache-2.0). Logos are trademarks of their respective owners. Font: JetBrains Mono (SIL OFL 1.1, `public/fonts/OFL.txt`).

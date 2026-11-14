@@ -1,0 +1,168 @@
+export const WARN_PCT = 85
+export const CRIT_PCT = 95
+
+const STATES = ['down', 'up', 'pending', 'maintenance']
+const key = (s) => String(s).trim().toLowerCase()
+
+// Kuma times are UTC with no zone suffix.
+export const kumaTime = (s) => Date.parse(`${s.replace(' ', 'T')}Z`)
+
+export function parseKuma(page, heartbeat) {
+  const map = new Map()
+  const lists = heartbeat?.heartbeatList ?? {}
+  const uptimes = heartbeat?.uptimeList ?? {}
+  for (const group of page?.publicGroupList ?? []) {
+    for (const { id, name } of group.monitorList ?? []) {
+      const all = lists[id] ?? []
+      const last = all.at(-1)
+      const state = STATES[last?.status] ?? 'pending'
+      let since = null
+      if (state === 'down') {
+        const lastUp = all.findLastIndex((b) => b.status === 1)
+        const first = lastUp === -1 ? all[0] : all.slice(lastUp + 1).find((b) => b.status === 0)
+        since = kumaTime(first.time)
+      }
+      const u = uptimes[`${id}_24`]
+      map.set(key(name), {
+        name, state, since,
+        ping: last?.ping ?? null,
+        uptime24: typeof u === 'number' ? u * 100 : null,
+        beats: all.slice(-50).map((b) => b.status),
+        pings: all.slice(-50).map((b) => b.ping ?? null),
+        lastBeat: last ? kumaTime(last.time) : null,
+      })
+    }
+  }
+  return map
+}
+
+export function serviceStatus(service, monitors) {
+  const m = service.monitor ? monitors.get(key(service.monitor)) : undefined
+  return m ? { state: m.state, ping: m.ping, since: m.since } : { state: 'none', ping: null, since: null }
+}
+
+// Services split by whether Kuma knows their monitor. Before Kuma loads (monitors null) neither list claims anything.
+export function splitMonitored(services, monitors) {
+  const found = []
+  const missing = []
+  if (!monitors) return { found, missing }
+  for (const service of services) {
+    const monitor = service.monitor && monitors.get(key(service.monitor))
+    if (monitor) found.push({ service, monitor })
+    else missing.push(service)
+  }
+  return { found, missing }
+}
+
+export const storageLevel = (pct) => (pct >= CRIT_PCT ? 'crit' : pct >= WARN_PCT ? 'warn' : 'ok')
+
+export function parsePve({ status, storage, lxc }) {
+  const pools = storage
+    .filter((s) => s.active && s.total > 0)
+    .map((s) => {
+      const usedPct = Math.round((s.used / s.total) * 100)
+      return { name: s.storage, used: s.used, total: s.total, usedPct, level: storageLevel(usedPct) }
+    })
+    .sort((a, b) => b.usedPct - a.usedPct)
+  return {
+    cpuPct: Math.round(status.cpu * 100),
+    memUsed: status.memory.used,
+    memTotal: status.memory.total,
+    uptimeSec: status.uptime,
+    lxcRunning: lxc.filter((c) => c.status === 'running').length,
+    lxcTotal: lxc.length,
+    pools,
+  }
+}
+
+export function fmtAgo(ms) {
+  if (ms < 60e3) return 'just now'
+  const m = Math.floor(ms / 60e3)
+  if (m < 60) return `${m}m`
+  const h = Math.floor(m / 60)
+  return h < 24 ? `${h}h` : `${Math.floor(h / 24)}d`
+}
+
+export function fmtBytes(n) {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  let i = 0
+  while (n >= 1024 && i < units.length - 1) { n /= 1024; i++ }
+  return `${n.toFixed(1)} ${units[i]}`
+}
+
+export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > 3 * intervalMs
+
+export function statusText({ state, ping, since }, now) {
+  switch (state) {
+    case 'up': return ping == null ? '' : `${ping}ms`
+    case 'down': return `down ${fmtAgo(now - since)}`
+    case 'pending':
+    case 'maintenance': return state
+    case 'none': return ''
+    default: return 'n/a'
+  }
+}
+
+// Staleness counts from the later of the last data and the tab becoming visible again:
+// a hidden tab doesn't poll, so time away is not evidence of a dead backend.
+export const pollDown = (poll, intervalMs, now) =>
+  poll.error != null ||
+  (poll.updatedAt != null && isStale(Math.max(poll.updatedAt, poll.resumedAt ?? 0), intervalMs, now))
+
+export const fmtPct = (n) => (n == null ? 'n/a' : `${+n.toFixed(1)}%`)
+
+export function uptimeParts(sec) {
+  const [value, unit] = sec >= 86400 ? [Math.floor(sec / 86400), 'day']
+    : sec >= 3600 ? [Math.floor(sec / 3600), 'hour']
+    : [Math.floor(sec / 60), 'min']
+  return { value, unit: unit === 'min' || value === 1 ? unit : `${unit}s` }
+}
+
+// Fixed English copy, local time; no Intl so output never depends on the browser locale.
+const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+const pad = (n) => String(n).padStart(2, '0')
+export const hhmm = (ms) => { const d = new Date(ms); return `${pad(d.getHours())}:${pad(d.getMinutes())}` }
+export const fmtToday = (ms) => { const d = new Date(ms); return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}` }
+export const fmtDay = (ms) => `${DAYS[new Date(ms).getDay()]} ${hhmm(ms)}`
+export const fmtDate = (ms) => `${fmtToday(ms)} ${hhmm(ms)}`
+
+const isDown = (service, monitors) => serviceStatus(service, monitors).state === 'down'
+
+// Top-line numbers. Counts cover only services listed in services.json; null means "not known".
+export function summarize({ groups, monitors, pools, failed }) {
+  const known = monitors && !failed.kuma
+  const services = groups.flatMap((g) => g.services)
+  const state = (s) => serviceStatus(s, monitors).state
+  const downs = known ? services.filter((s) => state(s) === 'down') : []
+  const perGroup = known
+    ? groups.map((g) => {
+      const found = splitMonitored(g.services, monitors).found.map((f) => f.service)
+      return { name: g.name, up: found.filter((s) => state(s) === 'up').length, down: found.filter((s) => state(s) === 'down').length, total: found.length }
+    }).filter((g) => g.total > 0)
+    : []
+  const total = known ? splitMonitored(services, monitors).found.length : null
+  return {
+    up: known ? services.filter((s) => state(s) === 'up').length : null,
+    down: known ? downs.length : null,
+    downNames: downs.map((s) => s.name),
+    total,
+    groups: perGroup,
+    unmonitored: known ? services.length - total : null,
+    fullestPool: (!failed.pve && pools?.[0]) || null,
+    unavailable: ['kuma', 'pve', 'updates'].filter((k) => failed[k]),
+  }
+}
+
+export const downFirst = (services, monitors) =>
+  monitors ? [...services].sort((a, b) => isDown(b, monitors) - isDown(a, monitors)) : [...services]
+
+export const unavailableLabel = (name, updatedAt) =>
+  updatedAt == null ? `${name} unavailable` : `${name} unavailable, last seen ${hhmm(updatedAt)}`
+
+// Bar height (%) per check: response time scaled to the slowest in the row (at least 100ms);
+// anything not up is full height so it can't be missed.
+export function barHeights(beats, pings) {
+  const max = Math.max(100, ...pings.filter((p, i) => beats[i] === 1 && p != null))
+  return beats.map((b, i) => (b !== 1 ? 100 : pings[i] == null ? 25 : Math.round(25 + (75 * pings[i]) / max)))
+}

@@ -6,29 +6,19 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "oxlint",
     "preview": "vite preview",
-    "test:gateway": "bash scripts/test-gateway.sh",
-    "docs:screenshots": "node scripts/generate-screenshots.js"
+    "lint": "oxlint src test",
+    "test": "node --test \"test/*.test.js\"",
+    "test:gateway": "bash scripts/test-gateway.sh"
   },
   "dependencies": {
-    "@icons-pack/react-simple-icons": "^13.13.0",
-    "@tsparticles/engine": "^3.9.1",
-    "@tsparticles/react": "^3.0.0",
-    "@tsparticles/slim": "^3.9.1",
-    "ical.js": "^2.2.1",
     "lucide-react": "^1.28.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2",
-    "socket.io-client": "^4.8.3"
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
-    "puppeteer": "^25.10.0",
     "vite": "^8.2.0"
   }
 }

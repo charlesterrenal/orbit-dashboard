@@ -11,9 +11,6 @@ permissions:
 jobs:
   build-and-gateway:
     runs-on: ubuntu-latest
-    env:
-      # puppeteer is only for docs screenshots; skip its Chromium download.
-      PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
       - uses: actions/checkout@v4
 
@@ -24,20 +21,17 @@ jobs:
 
       - run: npm ci
 
-      - name: Lint (src only; root app.js is a stray portfolio bundle)
-        run: npx oxlint src
+      - run: npm run lint
+
+      - run: npm test
 
       - name: Build (no .env files, example services config)
         run: |
-          cp src/config/services.example.json src/config/services.json
+          mkdir -p public/config && cp config/services.example.json public/config/services.json
           npm run build
 
       - name: No credential-like strings in the bundle
-        run: |
-          if grep -rlP 'PVEAPIToken=(?!undefined|\$\{)[A-Za-z0-9@]|tskey-[a-z]+-[A-Za-z0-9]{10,}' dist; then
-            echo "::error::credential-like string found in dist/"
-            exit 1
-          fi
+        run: grep -rlE 'PVEAPIToken|tskey-|X-Api-Key|apikey=' dist && exit 1 || true
 
       - name: Gateway policy tests
         run: bash scripts/test-gateway.sh

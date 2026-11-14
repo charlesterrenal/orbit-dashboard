@@ -1,5 +1,7 @@
 # Orbit Dashboard: Revamp Plan
 
+> **Note:** S2 and S3 of this plan are superseded by the Orbit unslop rewrite (fresh frontend, one read-only PVE token). S0 and S1 stand.
+
 Companion to `docs/AUDIT.md` (finding IDs F01-F29). Date: 2026-11-14, revision 2 after external review.
 
 ## 1. Recommendation: refactor in place, do not rewrite
