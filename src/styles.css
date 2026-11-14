@@ -151,11 +151,20 @@ tr.crit td, td.crit { color: var(--red); }
   .foot .r { margin-left: 0; }
 }
 
-/* phones: bars move under the name so the name keeps its width */
+/* phones: one line per row in the directory (bars live on the monitoring tab);
+   monitoring keeps bars on a tight second line so every monitored row matches */
 @media (max-width: 560px) {
-  .row, .mon .row { grid-template-columns: 16px minmax(0, 1fr) 64px 64px; }
-  .row > :last-child { grid-column: 2 / -1; }
-  .row > span:last-child:empty { display: none; }
+  .head { flex-wrap: nowrap; }
+  .brand { gap: 14px; }
+  .brand b { margin-right: 4px; }
+  .strip .fs { grid-template-columns: repeat(3, 1fr); }
+  .row { grid-template-columns: 16px minmax(0, 1fr) 56px 76px; }
+  .dir .row > :last-child { display: none; }
+  .mon .row { grid-template-columns: 16px minmax(0, 1fr) 56px 76px; row-gap: 4px; }
+  .mon .row > :last-child { grid-column: 2 / -1; }
+  .mon .row > span:last-child:empty { display: none; }
+  .foot { flex-direction: column; padding-top: 4px; }
+  .fi, .fi:first-child { padding: 7px 0 0; border-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
