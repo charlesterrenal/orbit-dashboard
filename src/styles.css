@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/jetbrains-mono-400.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 600;
+  font-display: swap;
+  src: url(/fonts/jetbrains-mono-600.woff2) format('woff2');
+}
+
+:root {
+  --bg: #111113;
+  --panel: #18181b;
+  --line: rgba(255, 255, 255, 0.06);
+  --text: #e7e5e4;
+  --muted: #8a8a8f;
+  --subtle: #5f5f66;
+  --accent: #d6b25e;
+  --bad: #ef6b6b;
+  --warn: #e0a84a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 13px/1.5 'JetBrains Mono', ui-monospace, monospace;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+}

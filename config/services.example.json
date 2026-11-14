@@ -1,0 +1,33 @@
+{
+  "node": "pve",
+  "groups": [
+    {
+      "name": "Media",
+      "services": [
+        { "id": "jellyfin", "name": "Jellyfin", "url": "http://jellyfin.lan:8096", "icon": "jellyfin.svg", "monitor": "jellyfin" },
+        { "id": "radarr", "name": "Radarr", "url": "http://radarr.lan:7878", "icon": "radarr.svg", "monitor": "radarr" }
+      ]
+    },
+    {
+      "name": "Apps",
+      "services": [
+        { "id": "n8n", "name": "n8n", "url": "http://n8n.lan:5678", "icon": "n8n.svg", "monitor": "n8n" },
+        { "id": "vaultwarden", "name": "Vaultwarden", "url": "http://vault.lan:8000", "icon": "vaultwarden.svg", "monitor": "vaultwarden" }
+      ]
+    },
+    {
+      "name": "Infrastructure",
+      "services": [
+        { "id": "proxmox", "name": "Proxmox", "url": "https://pve.lan:8006", "icon": "proxmox.svg" },
+        { "id": "portainer", "name": "Portainer", "url": "https://portainer.lan:9443", "icon": "portainer.svg" }
+      ]
+    },
+    {
+      "name": "Websites",
+      "services": [
+        { "id": "portfolio", "name": "Portfolio", "url": "https://portfolio.example.com", "monitor": "portfolio site" },
+        { "id": "landing", "name": "Landing", "url": "https://landing.example.com", "monitor": "smarth2wo-landing" }
+      ]
+    }
+  ]
+}

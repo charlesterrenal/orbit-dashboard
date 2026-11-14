@@ -12,8 +12,6 @@ dist
 dist-ssr
 *.local
 
-# User specific configuration
-src/config/services.json
 
 # Editor directories and files
 .vscode/*
@@ -25,3 +23,11 @@ src/config/services.json
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+config/services.json
+config/services.legacy.json
+public/config/services.json
