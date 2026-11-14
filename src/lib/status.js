@@ -27,7 +27,8 @@ export function parseKuma(page, heartbeat) {
         name, state, since,
         ping: last?.ping ?? null,
         uptime24: typeof u === 'number' ? u * 100 : null,
-        beats: all.slice(-30).map((b) => b.status),
+        beats: all.slice(-50).map((b) => b.status),
+        lastBeat: last ? kumaTime(last.time) : null,
       })
     }
   }
@@ -115,14 +116,32 @@ export function uptimeSummary(services, monitors) {
 
 export function statusText({ state, ping, since }, now) {
   switch (state) {
-    case 'up': return ping == null ? 'OK' : `OK · ${ping}ms`
-    case 'down': return `DOWN · ${fmtAgo(now - since)}`
-    case 'pending': return 'PENDING'
-    case 'maintenance': return 'MAINTENANCE'
-    case 'none': return 'NO MONITOR'
-    default: return 'NO DATA'
+    case 'up': return ping == null ? '' : `${ping}ms`
+    case 'down': return `down ${fmtAgo(now - since)}`
+    case 'pending':
+    case 'maintenance': return state
+    case 'none': return ''
+    default: return 'n/a'
   }
 }
 
 export const pollDown = (poll, intervalMs, now) =>
   poll.error != null || (poll.updatedAt != null && isStale(poll.updatedAt, intervalMs, now))
+
+export const fmtPct = (n) => (n == null ? 'n/a' : `${+n.toFixed(1)}%`)
+
+export function uptimeParts(sec) {
+  const [value, unit] = sec >= 86400 ? [Math.floor(sec / 86400), 'day']
+    : sec >= 3600 ? [Math.floor(sec / 3600), 'hour']
+    : [Math.floor(sec / 60), 'min']
+  return { value, unit: unit === 'min' || value === 1 ? unit : `${unit}s` }
+}
+
+// Fixed English copy, local time; no Intl so output never depends on the browser locale.
+const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+const pad = (n) => String(n).padStart(2, '0')
+export const hhmm = (ms) => { const d = new Date(ms); return `${pad(d.getHours())}:${pad(d.getMinutes())}` }
+export const fmtToday = (ms) => { const d = new Date(ms); return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}` }
+export const fmtDay = (ms) => `${DAYS[new Date(ms).getDay()]} ${hhmm(ms)}`
+export const fmtDate = (ms) => `${fmtToday(ms)} ${hhmm(ms)}`

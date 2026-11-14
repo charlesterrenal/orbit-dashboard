@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, verdict,
   verdictLabel, fmtAgo, fmtUptime, fmtBytes, isStale,
+  statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -32,20 +33,22 @@ test('parseKuma: down with no up beat uses earliest beat', () => {
   assert.equal(m.since, kumaTime('2026-11-14 09:10:00.000'))
 })
 
-test('parseKuma: up with ping, uptime24, beats capped at 30', () => {
-  const beats = Array.from({ length: 40 }, (_, i) => ({ status: 1, time: '2026-11-14 09:00:00.000', ping: i === 39 ? 18 : 1 }))
+test('parseKuma: up with ping, uptime24, beats capped at 50, lastBeat', () => {
+  const beats = Array.from({ length: 60 }, (_, i) => ({ status: 1, time: '2026-11-14 09:00:00.000', ping: i === 59 ? 18 : 1 }))
   const heartbeat = { heartbeatList: { 5: beats }, uptimeList: { '5_24': 0.995 } }
   const m = parseKuma(page({ id: 5, name: 'Sonarr' }), heartbeat).get('sonarr')
   assert.equal(m.state, 'up')
   assert.equal(m.ping, 18)
   assert.equal(m.uptime24, 99.5)
-  assert.equal(m.beats.length, 30)
+  assert.equal(m.beats.length, 50)
+  assert.equal(m.lastBeat, kumaTime('2026-11-14 09:00:00.000'))
 })
 
 test('parseKuma: monitor without beats is pending-free and null-safe', () => {
   const m = parseKuma(page({ id: 9, name: 'x' }), { heartbeatList: {}, uptimeList: {} }).get('x')
   assert.equal(m.state, 'pending')
   assert.equal(m.uptime24, null)
+  assert.equal(m.lastBeat, null)
 })
 
 test('serviceStatus matches case-insensitively, none when missing', () => {
@@ -143,4 +146,38 @@ test('uptimeSummary counts only services with a known monitor', async () => {
     { heartbeatList: { 1: [{ status: 1, time: '2026-11-14 09:00:00.000' }], 2: [{ status: 0, time: '2026-11-14 09:00:00.000' }] }, uptimeList: {} },
   )
   assert.deepEqual(uptimeSummary(services, map), { up: 1, total: 2 })
+})
+
+test('statusText copy', () => {
+  const now = 1e9
+  assert.equal(statusText({ state: 'up', ping: 18 }, now), '18ms')
+  assert.equal(statusText({ state: 'up', ping: null }, now), '')
+  assert.equal(statusText({ state: 'down', since: now - 12 * 60e3 }, now), 'down 12m')
+  assert.equal(statusText({ state: 'pending' }, now), 'pending')
+  assert.equal(statusText({ state: 'maintenance' }, now), 'maintenance')
+  assert.equal(statusText({ state: 'none' }, now), '')
+  assert.equal(statusText({ state: 'nodata' }, now), 'n/a')
+})
+
+test('fmtPct', () => {
+  assert.equal(fmtPct(100), '100%')
+  assert.equal(fmtPct(99.83), '99.8%')
+  assert.equal(fmtPct(99.96), '100%')
+  assert.equal(fmtPct(null), 'n/a')
+})
+
+test('uptimeParts', () => {
+  assert.deepEqual(uptimeParts(14 * 86400 + 5 * 3600), { value: 14, unit: 'days' })
+  assert.deepEqual(uptimeParts(86400), { value: 1, unit: 'day' })
+  assert.deepEqual(uptimeParts(5 * 3600), { value: 5, unit: 'hours' })
+  assert.deepEqual(uptimeParts(3600), { value: 1, unit: 'hour' })
+  assert.deepEqual(uptimeParts(600), { value: 10, unit: 'min' })
+})
+
+test('date and time copy', () => {
+  const t = new Date(2026, 10, 8, 4, 0).getTime() // sunday
+  assert.equal(hhmm(new Date(2026, 10, 14, 9, 5).getTime()), '09:05')
+  assert.equal(fmtDay(t), 'sun 04:00')
+  assert.equal(fmtDate(t), 'sun 8 nov 04:00')
+  assert.equal(fmtToday(new Date(2026, 10, 14, 14, 2).getTime()), 'sat 14 nov')
 })
