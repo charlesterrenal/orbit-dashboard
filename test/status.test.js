@@ -4,6 +4,7 @@ import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, verdict,
   verdictLabel, fmtAgo, fmtUptime, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
+  summarize, downFirst, unavailableLabel,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -180,4 +181,48 @@ test('date and time copy', () => {
   assert.equal(fmtDay(t), 'sun 04:00')
   assert.equal(fmtDate(t), 'sun 8 nov 04:00')
   assert.equal(fmtToday(new Date(2026, 10, 14, 14, 2).getTime()), 'sat 14 nov')
+})
+
+const kumaOf = (...states) => parseKuma(
+  page(...states.map((_, i) => ({ id: i + 1, name: `m${i + 1}` }))),
+  { heartbeatList: Object.fromEntries(states.map((s, i) => [i + 1, [{ status: s, time: '2026-11-14 09:00:00.000' }]])), uptimeList: {} },
+)
+const ok = { kuma: false, pve: false, updates: false }
+
+test('summarize ignores monitors not listed in services.json', () => {
+  const services = [{ name: 'A', monitor: 'm1' }, { name: 'B', monitor: 'm2' }, { name: 'C' }]
+  const r = summarize({ services, monitors: kumaOf(1, 0, 0), pools: [], failed: ok })
+  assert.equal(r.up, 1)
+  assert.equal(r.down, 1)
+  assert.deepEqual(r.downNames, ['B'])
+})
+
+test('summarize: kuma failed or not loaded gives null counts', () => {
+  const services = [{ name: 'A', monitor: 'm1' }]
+  assert.equal(summarize({ services, monitors: kumaOf(1), pools: [], failed: { ...ok, kuma: true } }).up, null)
+  assert.equal(summarize({ services, monitors: null, pools: [], failed: ok }).down, null)
+})
+
+test('summarize: no pools gives null fullestPool', () => {
+  const pool = { name: 'local-lvm', usedPct: 96, level: 'crit' }
+  assert.equal(summarize({ services: [], monitors: null, pools: [], failed: ok }).fullestPool, null)
+  assert.equal(summarize({ services: [], monitors: null, pools: null, failed: ok }).fullestPool, null)
+  assert.equal(summarize({ services: [], monitors: null, pools: [pool], failed: { ...ok, pve: true } }).fullestPool, null)
+  assert.equal(summarize({ services: [], monitors: null, pools: [pool], failed: ok }).fullestPool, pool)
+})
+
+test('summarize: unavailable lists failed sources in fixed order', () => {
+  const r = summarize({ services: [], monitors: null, pools: null, failed: { kuma: true, pve: false, updates: true } })
+  assert.deepEqual(r.unavailable, ['kuma', 'updates'])
+})
+
+test('downFirst moves down services first and keeps order otherwise', () => {
+  const s = [{ name: 'A', monitor: 'm1' }, { name: 'B', monitor: 'm2' }, { name: 'C' }, { name: 'D', monitor: 'm3' }]
+  assert.deepEqual(downFirst(s, kumaOf(1, 0, 0)).map((x) => x.name), ['B', 'D', 'A', 'C'])
+  assert.deepEqual(downFirst(s, null).map((x) => x.name), ['A', 'B', 'C', 'D'])
+})
+
+test('unavailableLabel', () => {
+  assert.equal(unavailableLabel('server', new Date(2026, 10, 14, 13, 40).getTime()), 'server unavailable, last seen 13:40')
+  assert.equal(unavailableLabel('server', null), 'server unavailable')
 })

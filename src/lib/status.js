@@ -145,3 +145,24 @@ export const hhmm = (ms) => { const d = new Date(ms); return `${pad(d.getHours()
 export const fmtToday = (ms) => { const d = new Date(ms); return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}` }
 export const fmtDay = (ms) => `${DAYS[new Date(ms).getDay()]} ${hhmm(ms)}`
 export const fmtDate = (ms) => `${fmtToday(ms)} ${hhmm(ms)}`
+
+const isDown = (service, monitors) => serviceStatus(service, monitors).state === 'down'
+
+// Strip numbers. Counts cover only services listed in services.json; null means "not known".
+export function summarize({ services, monitors, pools, failed }) {
+  const known = monitors && !failed.kuma
+  const downs = known ? services.filter((s) => isDown(s, monitors)) : []
+  return {
+    up: known ? services.filter((s) => serviceStatus(s, monitors).state === 'up').length : null,
+    down: known ? downs.length : null,
+    downNames: downs.map((s) => s.name),
+    fullestPool: (!failed.pve && pools?.[0]) || null,
+    unavailable: ['kuma', 'pve', 'updates'].filter((k) => failed[k]),
+  }
+}
+
+export const downFirst = (services, monitors) =>
+  monitors ? [...services].sort((a, b) => isDown(b, monitors) - isDown(a, monitors)) : [...services]
+
+export const unavailableLabel = (name, updatedAt) =>
+  updatedAt == null ? `${name} unavailable` : `${name} unavailable, last seen ${hhmm(updatedAt)}`
