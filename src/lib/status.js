@@ -28,6 +28,7 @@ export function parseKuma(page, heartbeat) {
         ping: last?.ping ?? null,
         uptime24: typeof u === 'number' ? u * 100 : null,
         beats: all.slice(-50).map((b) => b.status),
+        pings: all.slice(-50).map((b) => b.ping ?? null),
         lastBeat: last ? kumaTime(last.time) : null,
       })
     }
@@ -146,3 +147,10 @@ export const downFirst = (services, monitors) =>
 
 export const unavailableLabel = (name, updatedAt) =>
   updatedAt == null ? `${name} unavailable` : `${name} unavailable, last seen ${hhmm(updatedAt)}`
+
+// Bar height (%) per check: response time scaled to the slowest in the row (at least 100ms);
+// anything not up is full height so it can't be missed.
+export function barHeights(beats, pings) {
+  const max = Math.max(100, ...pings.filter((p, i) => beats[i] === 1 && p != null))
+  return beats.map((b, i) => (b !== 1 ? 100 : pings[i] == null ? 25 : Math.round(25 + (75 * pings[i]) / max)))
+}

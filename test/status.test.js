@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
-  summarize, downFirst, unavailableLabel, pollDown,
+  summarize, downFirst, unavailableLabel, pollDown, barHeights,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -193,4 +193,23 @@ test('pollDown: time spent hidden does not count as stale', () => {
   assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: null }, 60e3, t + 600e3), true)
   assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), false)
   assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), true)
+})
+
+test('parseKuma keeps pings aligned with beats', () => {
+  const beats = [{ status: 1, time: '2026-11-14 09:00:00.000', ping: 7 }, { status: 0, time: '2026-11-14 09:01:00.000', ping: null }]
+  const m = parseKuma(page({ id: 1, name: 'a' }), hb(1, beats)).get('a')
+  assert.deepEqual(m.pings, [7, null])
+})
+
+test('barHeights scales per row', () => {
+  assert.deepEqual(barHeights([1, 1, 1], [5, 50, 100]), [29, 63, 100])
+  assert.deepEqual(barHeights([1, 1], [1000, 250]), [100, 44])
+})
+
+test('barHeights: down, pending and maintenance are full height', () => {
+  assert.deepEqual(barHeights([0, 2, 3, 1], [null, null, 9, 10]), [100, 100, 100, 33])
+})
+
+test('barHeights: no pings gives the floor', () => {
+  assert.deepEqual(barHeights([1, 1], [null, null]), [25, 25])
 })

@@ -23,6 +23,7 @@
   --amber: #e0a84a;
   --gold: #d6b25e;
   --bar: #2c2c31;
+  --teal: #5fc4a8;
   color-scheme: dark;
 }
 
@@ -103,10 +104,11 @@ h3.alert { color: var(--amber); }
 }
 
 /* heartbeat bars */
-.beats { display: flex; gap: 1px; height: 10px; overflow: hidden; }
-.beats i { flex: 1; background: var(--bar); }
-.beats i.d { background: var(--red); }
-.beats i.p { background: #4a4a50; }
+.beats { display: flex; align-items: flex-end; gap: 1px; height: 16px; overflow: hidden; }
+.mon .beats { height: 22px; }
+.beats i { flex: 1; background: var(--teal); opacity: 0.75; }
+.beats i.d { background: var(--red); opacity: 1; }
+.beats i.p { background: #4a4a50; opacity: 1; }
 .beats.shift i { animation: beat-in 0.4s ease-out; }
 @keyframes beat-in { from { transform: translateX(calc(100% + 1px)); } }
 

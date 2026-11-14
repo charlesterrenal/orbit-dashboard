@@ -20,7 +20,7 @@ export default function ServiceRow({ service, status, monitor, count, now }) {
       <span className="nm">{service.name}</span>
       <span className="lat">{statusText(status, now)}</span>
       <span className="up">{status.state === 'none' ? 'no monitor' : fmtPct(live ? monitor.uptime24 : null)}</span>
-      {live ? <Beats beats={monitor.beats} count={count} lastBeat={monitor.lastBeat} /> : <span />}
+      {live ? <Beats beats={monitor.beats} pings={monitor.pings} count={count} lastBeat={monitor.lastBeat} /> : <span />}
     </a>
   )
 }
