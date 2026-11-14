@@ -140,13 +140,22 @@ tr.crit td, td.crit { color: var(--red); }
 @media (max-width: 900px) {
   .page { padding: 18px 16px 32px; }
   .strip { flex-wrap: wrap; gap: 0 40px; }
-  .strip .fs { grid-auto-columns: minmax(88px, 1fr); }
+  .head { flex-wrap: wrap; gap: 8px 16px; }
+  .strip section { flex: 1 1 280px; min-width: 0; }
+  .strip .fs { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); row-gap: 14px; }
   .dir { columns: 1; }
   .cols2 { grid-template-columns: 1fr; gap: 0; }
   .mon .row { grid-template-columns: 16px minmax(0, 1fr) 70px 76px; }
   .mon .row > :last-child { grid-column: 2 / -1; }
   .mon .row > span:last-child:empty { display: none; }
   .foot .r { margin-left: 0; }
+}
+
+/* phones: bars move under the name so the name keeps its width */
+@media (max-width: 560px) {
+  .row, .mon .row { grid-template-columns: 16px minmax(0, 1fr) 64px 64px; }
+  .row > :last-child { grid-column: 2 / -1; }
+  .row > span:last-child:empty { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

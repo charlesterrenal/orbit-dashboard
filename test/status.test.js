@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
-  summarize, downFirst, unavailableLabel,
+  summarize, downFirst, unavailableLabel, pollDown,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -186,4 +186,11 @@ test('downFirst moves down services first and keeps order otherwise', () => {
 test('unavailableLabel', () => {
   assert.equal(unavailableLabel('server', new Date(2026, 10, 14, 13, 40).getTime()), 'server unavailable, last seen 13:40')
   assert.equal(unavailableLabel('server', null), 'server unavailable')
+})
+
+test('pollDown: time spent hidden does not count as stale', () => {
+  const t = 1e9
+  assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: null }, 60e3, t + 600e3), true)
+  assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), false)
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), true)
 })
