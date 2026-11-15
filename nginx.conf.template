@@ -69,4 +69,10 @@ server {
         proxy_set_header Host $host;
         proxy_set_header Authorization "";
     }
+    location = /api/updates/containers.json {
+        limit_except GET { deny all; }
+        proxy_pass ${UPDATES_BACKEND_URL}/containers.json;
+        proxy_set_header Host $host;
+        proxy_set_header Authorization "";
+    }
 }

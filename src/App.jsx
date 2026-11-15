@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getConfig, getKuma, getPve, getUpdates } from './lib/api.js'
+import { getConfig, getContainers, getKuma, getPve, getUpdates } from './lib/api.js'
 import { pollDown } from './lib/status.js'
 import { KUMA_MS, PVE_MS, UPDATES_MS } from './lib/intervals.js'
 import { usePoll } from './lib/usePoll.js'
@@ -21,11 +21,12 @@ function useNow(ms) {
   return now
 }
 
-// Owns all three polls; stays mounted across tab switches so polling never restarts.
+// Owns all the polls; stays mounted across tab switches so polling never restarts.
 function Dashboard({ config, tab, now }) {
   const kuma = usePoll(getKuma, KUMA_MS)
   const pve = usePoll(() => getPve(config.node), PVE_MS)
   const updates = usePoll(getUpdates, UPDATES_MS)
+  const containers = usePoll(getContainers, UPDATES_MS)
 
   const kumaDown = pollDown(kuma, KUMA_MS, now)
 
@@ -40,7 +41,7 @@ function Dashboard({ config, tab, now }) {
         </>
       )}
       {tab === 'monitoring' && (
-        <Monitoring groups={config.groups} kuma={kuma} pve={pve} updates={updates} now={now} />
+        <Monitoring groups={config.groups} kuma={kuma} pve={pve} updates={updates} containers={containers} now={now} />
       )}
     </>
   )

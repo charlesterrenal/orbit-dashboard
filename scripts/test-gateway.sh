@@ -89,6 +89,7 @@ ALLOWED_GET=(
   "/api/uptime/api/status-page/default|/api/status-page/default|"
   "/api/uptime/api/status-page/heartbeat/default|/api/status-page/heartbeat/default|"
   "/api/updates/status.json|/status.json|"
+  "/api/updates/containers.json|/containers.json|"
 )
 for entry in "${ALLOWED_GET[@]}"; do
   IFS='|' read -r p up auth <<<"$entry"
@@ -133,6 +134,7 @@ DENIED=(
   "GET /api/uptime/api/status-page/other"
   "GET /api/updates/"
   "GET /api/updates/../etc/passwd"
+  "GET /api/updates/containers.json.tmp"
   "GET /api/unknown"
   "GET /api/"
 )

@@ -1,4 +1,4 @@
-import { parseKuma, parsePve } from './status.js'
+import { parseContainers, parseKuma, parsePve } from './status.js'
 import { parseServicesConfig } from './config.js'
 
 export async function fetchJson(url, { timeoutMs = 8000, fetchImpl = fetch, ...init } = {}) {
@@ -38,3 +38,4 @@ export async function getPve(node) {
 }
 
 export const getUpdates = () => fetchJson('/api/updates/status.json')
+export const getContainers = async () => parseContainers(await fetchJson('/api/updates/containers.json'))
