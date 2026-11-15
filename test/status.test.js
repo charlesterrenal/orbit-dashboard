@@ -93,6 +93,12 @@ test('formatters', () => {
   assert.equal(fmtBytes(5.1 * 1024 ** 3), '5.1 GB')
 })
 
+test('isStale: short intervals still allow 60s', () => {
+  const t = 1e9
+  assert.equal(isStale(t, 5e3, t + 59e3), false)
+  assert.equal(isStale(t, 5e3, t + 61e3), true)
+})
+
 test('isStale', () => {
   const t = 1e9
   assert.equal(isStale(null, 60e3, t), true)

@@ -90,7 +90,7 @@ export function fmtBytes(n) {
   return `${n.toFixed(1)} ${units[i]}`
 }
 
-export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > 3 * intervalMs
+export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > Math.max(3 * intervalMs, 60e3)
 
 export function statusText({ state, ping, since }, now) {
   switch (state) {
