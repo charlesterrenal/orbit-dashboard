@@ -225,6 +225,7 @@ td.ok { color: var(--teal); }
 .row, .mt, .gl, .cu-kid, .cu-ct, tbody tr { transition: color 0.4s, background-color 0.15s, opacity 0.1s; }
 .row:hover, .mt:hover, .gl:hover, .cu-kid:hover, tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
 .cu-ct:hover { background: rgba(255, 255, 255, 0.045); }
+.cu-ct.crit:hover { background: rgba(239, 107, 107, 0.12); } /* keep the failed cue under the cursor */
 .row:active, .cu summary:active, .brand a:active { opacity: 0.6; }
 .brand a { transition: color 0.2s, border-color 0.25s; }
 .cu details[open] > .cu-kid { animation: fade-in 0.25s ease-out; }
