@@ -166,3 +166,19 @@ export function barHeights(beats, pings) {
   const max = Math.max(100, ...pings.filter((p, i) => beats[i] === 1 && p != null))
   return beats.map((b, i) => (b !== 1 ? 100 : pings[i] == null ? 25 : Math.round(25 + (75 * pings[i]) / max)))
 }
+
+// containers.json from the host checker, plus per-CT counts. A CT's own error (pct exec failed) counts as failed.
+export function parseContainers(doc) {
+  const cts = doc.cts.map((ct) => {
+    const n = (s) => ct.containers.filter((c) => c.status === s).length
+    const behind = n('behind')
+    const failed = n('failed') + (ct.error ? 1 : 0)
+    return { ...ct, behind, failed, local: n('local'), state: failed ? 'failed' : behind ? 'behind' : 'current' }
+  })
+  return {
+    checkedAt: Date.parse(doc.checked_at),
+    total: cts.reduce((t, ct) => t + ct.containers.length, 0),
+    behind: cts.reduce((t, ct) => t + ct.behind, 0),
+    cts,
+  }
+}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
-  summarize, downFirst, unavailableLabel, pollDown, barHeights,
+  summarize, downFirst, unavailableLabel, pollDown, barHeights, parseContainers,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -237,4 +237,29 @@ test('summarize: kuma failed gives no groups', () => {
   assert.deepEqual(r.groups, [])
   assert.equal(r.total, null)
   assert.equal(r.unmonitored, null)
+})
+
+const row = (name, status) => ({ name, image: `${name}:latest`, state: 'running', running: 'latest', newest: null, status, error: null })
+
+test('parseContainers: per-CT counts and state, totals across CTs', () => {
+  const r = parseContainers({
+    checked_at: '2026-11-15T21:00:00+08:00',
+    cts: [
+      { id: '100', name: 'gateway', error: null, containers: [row('npm', 'behind'), row('agent', 'current')] },
+      { id: '101', name: 'core', error: null, containers: [row('app', 'local'), row('db', 'failed'), row('n8n', 'behind')] },
+      { id: '103', name: 'ops', error: null, containers: [row('kuma', 'current')] },
+    ],
+  })
+  assert.equal(r.checkedAt, Date.parse('2026-11-15T13:00:00Z'))
+  assert.equal(r.total, 6)
+  assert.equal(r.behind, 2)
+  assert.deepEqual(r.cts.map((c) => [c.state, c.behind, c.failed, c.local]), [
+    ['behind', 1, 0, 0], ['failed', 1, 1, 1], ['current', 0, 0, 0],
+  ])
+})
+
+test('parseContainers: a CT that could not be read is failed with no containers', () => {
+  const r = parseContainers({ checked_at: '2026-11-15T21:00:00+08:00', cts: [{ id: '105', name: 'ai', error: 'timeout', containers: [] }] })
+  assert.equal(r.cts[0].state, 'failed')
+  assert.equal(r.total, 0)
 })

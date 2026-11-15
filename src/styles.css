@@ -155,6 +155,29 @@ td.ok { color: var(--teal); }
 .meter.warn i { background: var(--amber); }
 .meter.crit i { background: var(--red); }
 
+/* container images: one collapsible row per CT on a faint flat band, containers indented below */
+.cu summary { list-style: none; cursor: pointer; }
+.cu summary::-webkit-details-marker { display: none; }
+.cu-r { display: grid; grid-template-columns: 22px minmax(0, 1fr) 150px 130px; gap: 12px; align-items: baseline; padding: 6px 10px; }
+.cu-r > :nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cu-hd { color: var(--dim); font-size: 11px; }
+.cu details { margin-bottom: 2px; }
+.cu-ct { background: rgba(255, 255, 255, 0.02); padding: 7px 10px; }
+.cu-ct b { color: var(--hi); }
+.cu-ct.crit { background: rgba(239, 107, 107, 0.08); }
+.cu-ct.crit b, .cu-ct.crit > * { color: var(--red); }
+.cu-tg { color: var(--dim); }
+.cu-tg::before { content: "+"; }
+.cu details[open] .cu-tg::before { content: "\2212"; }
+.cu-n { color: var(--dim); margin-left: 12px; }
+.cu-kid { color: var(--mid); }
+.cu-kid + .cu-kid { border-top: 1px solid rgba(255, 255, 255, 0.04); }
+.cu-nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cu-kid.dim { color: var(--dim); }
+.cu .warn { color: var(--amber); }
+.cu .ok { color: var(--teal); }
+.cu .crit { color: var(--red); }
+
 @media (max-width: 900px) {
   .page { padding: 18px 16px 32px; }
   .top { gap: 40px; }
@@ -181,6 +204,8 @@ td.ok { color: var(--teal); }
   .mon .row > span:last-child:empty { display: none; }
   .foot { flex-direction: column; padding-top: 4px; }
   .fi, .fi:first-child { padding: 7px 0 0; border-left: 0; }
+  .cu-r { grid-template-columns: 16px minmax(0, 1fr) 76px 84px; gap: 8px; }
+  .cu-n { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
