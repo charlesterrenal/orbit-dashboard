@@ -198,7 +198,13 @@ test('pollDown: time spent hidden does not count as stale', () => {
   const t = 1e9
   assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: null }, 60e3, t + 600e3), true)
   assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), false)
-  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), true)
+})
+
+test('pollDown: a failed poll is not down while the last data is fresh', () => {
+  const t = 1e9
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: null }, 5e3, t + 10e3), false)
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: null }, 5e3, t + 61e3), true)
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: null, resumedAt: null }, 5e3, t), true)
 })
 
 test('parseKuma keeps pings aligned with beats', () => {

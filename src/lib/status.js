@@ -105,9 +105,11 @@ export function statusText({ state, ping, since }, now) {
 
 // Staleness counts from the later of the last data and the tab becoming visible again:
 // a hidden tab doesn't poll, so time away is not evidence of a dead backend.
+// An error only counts once there is no data yet or the data has gone stale, so one failed poll isn't an outage.
 export const pollDown = (poll, intervalMs, now) =>
-  poll.error != null ||
-  (poll.updatedAt != null && isStale(Math.max(poll.updatedAt, poll.resumedAt ?? 0), intervalMs, now))
+  poll.updatedAt == null
+    ? poll.error != null
+    : isStale(Math.max(poll.updatedAt, poll.resumedAt ?? 0), intervalMs, now)
 
 export const fmtPct = (n) => (n == null ? 'n/a' : `${+n.toFixed(1)}%`)
 
