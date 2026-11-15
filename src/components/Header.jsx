@@ -1,6 +1,5 @@
 import { fmtToday, hhmm } from '../lib/status.js'
-
-const TABS = ['directory', 'monitoring']
+import { TABS } from '../lib/tabs.js'
 
 export default function Header({ tab, now }) {
   return (

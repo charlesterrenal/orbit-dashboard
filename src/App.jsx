@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react'
 import { getConfig, getContainers, getKuma, getPve, getUpdates } from './lib/api.js'
 import { pollDown } from './lib/status.js'
 import { KUMA_MS, PVE_MS, UPDATES_MS } from './lib/intervals.js'
+import { tabFromHash as parseTab } from './lib/tabs.js'
 import { usePoll } from './lib/usePoll.js'
+import Containers from './components/Containers.jsx'
 import Directory from './components/Directory.jsx'
 import Header from './components/Header.jsx'
 import Monitoring from './components/Monitoring.jsx'
 import Footer from './components/Footer.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import Section from './components/Section.jsx'
 import Strip from './components/Strip.jsx'
 
-const tabFromHash = () => (location.hash === '#/monitoring' ? 'monitoring' : 'directory')
+const tabFromHash = () => parseTab(location.hash)
 
 function useNow(ms) {
   const [now, setNow] = useState(Date.now())
@@ -41,7 +44,10 @@ function Dashboard({ config, tab, now }) {
         </>
       )}
       {tab === 'monitoring' && (
-        <Monitoring groups={config.groups} kuma={kuma} pve={pve} updates={updates} containers={containers} now={now} />
+        <Monitoring groups={config.groups} kuma={kuma} pve={pve} updates={updates} now={now} />
+      )}
+      {tab === 'containers' && (
+        <ErrorBoundary label="container images"><Containers containers={containers} now={now} /></ErrorBoundary>
       )}
     </>
   )
