@@ -35,7 +35,8 @@ function Dashboard({ config, tab, now }) {
 
   return (
     <>
-      <Header tab={tab} now={now} checkedAt={kuma.updatedAt} />
+      {/* no countdown while Kuma is failing: the line would fill once and sit there like a rule */}
+      <Header tab={tab} now={now} checkedAt={kuma.error ? null : kuma.updatedAt} />
       <Strip groups={config.groups} kuma={kuma} pve={pve} now={now} />
       <main key={tab} className="fade">
       {tab === 'directory' && (
