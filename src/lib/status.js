@@ -162,11 +162,17 @@ export const downFirst = (services, monitors) =>
 export const unavailableLabel = (name, updatedAt) =>
   updatedAt == null ? `${name} unavailable` : `${name} unavailable, last seen ${hhmm(updatedAt)}`
 
-// Bar height (%) per check: response time scaled to the slowest in the row (at least 100ms);
-// anything not up is full height so it can't be missed.
-export function barHeights(beats, pings) {
+// Heat strip strength (0..1) per check: response time scaled to the slowest in the row (at least 100ms),
+// then faded by age so the oldest check shows at 45%. Anything not up is full strength so it can't be missed.
+export function heatLevels(beats, pings) {
   const max = Math.max(100, ...pings.filter((p, i) => beats[i] === 1 && p != null))
-  return beats.map((b, i) => (b !== 1 ? 100 : pings[i] == null ? 25 : Math.round(25 + (75 * pings[i]) / max)))
+  const last = beats.length - 1
+  return beats.map((b, i) => {
+    if (b !== 1) return 1
+    const level = pings[i] == null ? 0.25 : 0.25 + (0.75 * pings[i]) / max
+    const age = last > 0 ? 0.45 + (0.55 * i) / last : 1
+    return Math.round(level * age * 100) / 100
+  })
 }
 
 // containers.json from the host checker, plus per-CT counts. A CT's own error (pct exec failed) counts as failed.

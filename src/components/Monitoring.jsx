@@ -18,7 +18,7 @@ function Monitors({ groups, kuma, now }) {
   const monitorOf = new Map(found.map((f) => [f.service.id, f.monitor]))
   return (
     <Section
-      title={failed ? unavailableLabel('monitors', kuma.updatedAt) : 'monitors, last 50 checks, bar height is response time'}
+      title={failed ? unavailableLabel('monitors', kuma.updatedAt) : 'monitors, last 50 checks, brighter is slower'}
       alert={failed}
       className="mon"
     >

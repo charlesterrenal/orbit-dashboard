@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
-  summarize, downFirst, unavailableLabel, pollDown, barHeights, parseContainers, sparkPoints,
+  summarize, downFirst, unavailableLabel, pollDown, heatLevels, parseContainers, sparkPoints,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -213,17 +213,17 @@ test('parseKuma keeps pings aligned with beats', () => {
   assert.deepEqual(m.pings, [7, null])
 })
 
-test('barHeights scales per row', () => {
-  assert.deepEqual(barHeights([1, 1, 1], [5, 50, 100]), [29, 63, 100])
-  assert.deepEqual(barHeights([1, 1], [1000, 250]), [100, 44])
+test('heatLevels: brighter is slower, scaled per row, older checks fade', () => {
+  assert.deepEqual(heatLevels([1, 1, 1], [5, 50, 100]), [0.13, 0.45, 1])
+  assert.deepEqual(heatLevels([1], [100]), [1])
 })
 
-test('barHeights: down, pending and maintenance are full height', () => {
-  assert.deepEqual(barHeights([0, 2, 3, 1], [null, null, 9, 10]), [100, 100, 100, 33])
+test('heatLevels: down, pending and maintenance are full strength', () => {
+  assert.deepEqual(heatLevels([0, 2, 1], [null, null, 10]), [1, 1, 0.33])
 })
 
-test('barHeights: no pings gives the floor', () => {
-  assert.deepEqual(barHeights([1, 1], [null, null]), [25, 25])
+test('heatLevels: no pings gives the floor', () => {
+  assert.deepEqual(heatLevels([1, 1], [null, null]), [0.11, 0.25])
 })
 
 test('summarize: per-group counts in config order', () => {

@@ -118,9 +118,8 @@ h3.alert { color: var(--amber); }
 }
 
 /* heartbeat bars */
-.beats { display: flex; align-items: flex-end; gap: 1px; height: 16px; overflow: hidden; }
-.mon .beats { height: 22px; }
-.beats i { flex: 1; height: var(--h); background: var(--teal); opacity: 0.75; }
+.beats { display: flex; gap: 1px; height: 20px; overflow: hidden; } /* same height in both tabs */
+.beats i { flex: 1; background: var(--teal); opacity: var(--o); }
 .beats i.d { background: var(--red); opacity: 1; }
 .beats i.p { background: #4a4a50; opacity: 1; }
 .beats.shift i { animation: beat-in 0.4s ease-out; }
