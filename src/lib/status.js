@@ -182,3 +182,8 @@ export function parseContainers(doc) {
     cts,
   }
 }
+
+// SVG points for a history graph in viewBox `0 0 {span-1} 20`: newest sample at the right edge,
+// values clamped to 0..100 (null counts as 0) so a bad reading never draws outside the graph.
+export const sparkPoints = (hist, span) =>
+  hist.map((v, i) => `${span - hist.length + i},${20 - Math.min(100, Math.max(0, v ?? 0)) / 5}`).join(' ')

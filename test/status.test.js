@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
-  summarize, downFirst, unavailableLabel, pollDown, barHeights, parseContainers,
+  summarize, downFirst, unavailableLabel, pollDown, barHeights, parseContainers, sparkPoints,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -268,4 +268,9 @@ test('parseContainers: a CT that could not be read is failed with no containers'
   const r = parseContainers({ checked_at: '2026-11-15T21:00:00+08:00', cts: [{ id: '105', name: 'ai', error: 'timeout', containers: [] }] })
   assert.equal(r.cts[0].state, 'failed')
   assert.equal(r.total, 0)
+})
+
+test('sparkPoints: right-aligned, clamped', () => {
+  assert.equal(sparkPoints([0, 50, 100], 60), '57,20 58,10 59,0')
+  assert.equal(sparkPoints([-5, 150, null], 60), '57,20 58,0 59,20')
 })

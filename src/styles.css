@@ -208,6 +208,28 @@ td.ok { color: var(--teal); }
   .cu-n { display: none; }
 }
 
+/* motion: idle data, hover and press */
+.head { position: relative; }
+.next { position: absolute; left: 0; right: 0; bottom: -10px; height: 1px; background: #3a3a40; transform-origin: left; animation: next-fill linear forwards; }
+@keyframes next-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.sec { color: var(--dim); font-weight: 400; }
+.fade { display: block; animation: fade-in 0.3s ease-out; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(4px); } }
+.mb i { transition: width 0.8s ease; }
+.mt.sp { padding: 2px 0; }
+.spark { display: block; width: 100%; height: 20px; overflow: hidden; }
+.spark polyline { fill: none; stroke: #8a8a8f; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.spark polygon { fill: rgba(138, 138, 143, 0.12); }
+.spark .sh { animation: spark-in 0.6s ease-out; }
+@keyframes spark-in { from { transform: translateX(1px); } }
+.row, .mt, .gl, .cu-kid, .cu-ct, tbody tr { transition: color 0.4s, background-color 0.15s, opacity 0.1s; }
+.row:hover, .mt:hover, .gl:hover, .cu-kid:hover, tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
+.cu-ct:hover { background: rgba(255, 255, 255, 0.045); }
+.row:active, .cu summary:active, .brand a:active { opacity: 0.6; }
+.brand a { transition: color 0.2s, border-color 0.25s; }
+.cu details[open] > .cu-kid { animation: fade-in 0.25s ease-out; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  .next { display: none; }
 }

@@ -35,8 +35,9 @@ function Dashboard({ config, tab, now }) {
 
   return (
     <>
-      <Header tab={tab} now={now} />
+      <Header tab={tab} now={now} checkedAt={kuma.updatedAt} />
       <Strip groups={config.groups} kuma={kuma} pve={pve} now={now} />
+      <main key={tab} className="fade">
       {tab === 'directory' && (
         <>
           <Directory groups={config.groups} monitors={kuma.data} unavailable={kumaDown} now={now} />
@@ -49,6 +50,7 @@ function Dashboard({ config, tab, now }) {
       {tab === 'containers' && (
         <ErrorBoundary label="container images"><Containers containers={containers} now={now} /></ErrorBoundary>
       )}
+      </main>
     </>
   )
 }
