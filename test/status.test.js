@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {
   kumaTime, parseKuma, serviceStatus, storageLevel, parsePve, fmtAgo, fmtBytes, isStale,
   statusText, fmtPct, uptimeParts, hhmm, fmtDay, fmtDate, fmtToday,
-  summarize, downFirst, unavailableLabel, pollDown, barHeights, parseContainers,
+  summarize, downFirst, unavailableLabel, pollDown, heatLevels, parseContainers, sparkPoints,
 } from '../src/lib/status.js'
 
 const page = (...mons) => ({ publicGroupList: [{ monitorList: mons }] })
@@ -91,6 +91,12 @@ test('formatters', () => {
   assert.equal(fmtAgo(3 * 3600e3), '3h')
   assert.equal(fmtAgo(2 * 86400e3), '2d')
   assert.equal(fmtBytes(5.1 * 1024 ** 3), '5.1 GB')
+})
+
+test('isStale: short intervals still allow 60s', () => {
+  const t = 1e9
+  assert.equal(isStale(t, 5e3, t + 59e3), false)
+  assert.equal(isStale(t, 5e3, t + 61e3), true)
 })
 
 test('isStale', () => {
@@ -192,7 +198,13 @@ test('pollDown: time spent hidden does not count as stale', () => {
   const t = 1e9
   assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: null }, 60e3, t + 600e3), true)
   assert.equal(pollDown({ error: null, updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), false)
-  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: t + 590e3 }, 60e3, t + 600e3), true)
+})
+
+test('pollDown: a failed poll is not down while the last data is fresh', () => {
+  const t = 1e9
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: null }, 5e3, t + 10e3), false)
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: t, resumedAt: null }, 5e3, t + 61e3), true)
+  assert.equal(pollDown({ error: new Error('x'), updatedAt: null, resumedAt: null }, 5e3, t), true)
 })
 
 test('parseKuma keeps pings aligned with beats', () => {
@@ -201,17 +213,17 @@ test('parseKuma keeps pings aligned with beats', () => {
   assert.deepEqual(m.pings, [7, null])
 })
 
-test('barHeights scales per row', () => {
-  assert.deepEqual(barHeights([1, 1, 1], [5, 50, 100]), [29, 63, 100])
-  assert.deepEqual(barHeights([1, 1], [1000, 250]), [100, 44])
+test('heatLevels: brighter is slower, scaled per row, older checks fade', () => {
+  assert.deepEqual(heatLevels([1, 1, 1], [5, 50, 100]), [0.13, 0.45, 1])
+  assert.deepEqual(heatLevels([1], [100]), [1])
 })
 
-test('barHeights: down, pending and maintenance are full height', () => {
-  assert.deepEqual(barHeights([0, 2, 3, 1], [null, null, 9, 10]), [100, 100, 100, 33])
+test('heatLevels: down, pending and maintenance are full strength', () => {
+  assert.deepEqual(heatLevels([0, 2, 1], [null, null, 10]), [1, 1, 0.33])
 })
 
-test('barHeights: no pings gives the floor', () => {
-  assert.deepEqual(barHeights([1, 1], [null, null]), [25, 25])
+test('heatLevels: no pings gives the floor', () => {
+  assert.deepEqual(heatLevels([1, 1], [null, null]), [0.11, 0.25])
 })
 
 test('summarize: per-group counts in config order', () => {
@@ -262,4 +274,9 @@ test('parseContainers: a CT that could not be read is failed with no containers'
   const r = parseContainers({ checked_at: '2026-11-15T21:00:00+08:00', cts: [{ id: '105', name: 'ai', error: 'timeout', containers: [] }] })
   assert.equal(r.cts[0].state, 'failed')
   assert.equal(r.total, 0)
+})
+
+test('sparkPoints: right-aligned, clamped', () => {
+  assert.equal(sparkPoints([0, 50, 100], 60), '57,20 58,10 59,0')
+  assert.equal(sparkPoints([-5, 150, null], 60), '57,20 58,0 59,20')
 })

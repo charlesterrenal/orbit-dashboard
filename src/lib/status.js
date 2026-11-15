@@ -90,7 +90,7 @@ export function fmtBytes(n) {
   return `${n.toFixed(1)} ${units[i]}`
 }
 
-export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > 3 * intervalMs
+export const isStale = (updatedAt, intervalMs, now) => updatedAt == null || now - updatedAt > Math.max(3 * intervalMs, 60e3)
 
 export function statusText({ state, ping, since }, now) {
   switch (state) {
@@ -105,9 +105,11 @@ export function statusText({ state, ping, since }, now) {
 
 // Staleness counts from the later of the last data and the tab becoming visible again:
 // a hidden tab doesn't poll, so time away is not evidence of a dead backend.
+// An error only counts once there is no data yet or the data has gone stale, so one failed poll isn't an outage.
 export const pollDown = (poll, intervalMs, now) =>
-  poll.error != null ||
-  (poll.updatedAt != null && isStale(Math.max(poll.updatedAt, poll.resumedAt ?? 0), intervalMs, now))
+  poll.updatedAt == null
+    ? poll.error != null
+    : isStale(Math.max(poll.updatedAt, poll.resumedAt ?? 0), intervalMs, now)
 
 export const fmtPct = (n) => (n == null ? 'n/a' : `${+n.toFixed(1)}%`)
 
@@ -160,11 +162,17 @@ export const downFirst = (services, monitors) =>
 export const unavailableLabel = (name, updatedAt) =>
   updatedAt == null ? `${name} unavailable` : `${name} unavailable, last seen ${hhmm(updatedAt)}`
 
-// Bar height (%) per check: response time scaled to the slowest in the row (at least 100ms);
-// anything not up is full height so it can't be missed.
-export function barHeights(beats, pings) {
+// Heat strip strength (0..1) per check: response time scaled to the slowest in the row (at least 100ms),
+// then faded by age so the oldest check shows at 45%. Anything not up is full strength so it can't be missed.
+export function heatLevels(beats, pings) {
   const max = Math.max(100, ...pings.filter((p, i) => beats[i] === 1 && p != null))
-  return beats.map((b, i) => (b !== 1 ? 100 : pings[i] == null ? 25 : Math.round(25 + (75 * pings[i]) / max)))
+  const last = beats.length - 1
+  return beats.map((b, i) => {
+    if (b !== 1) return 1
+    const level = pings[i] == null ? 0.25 : 0.25 + (0.75 * pings[i]) / max
+    const age = last > 0 ? 0.45 + (0.55 * i) / last : 1
+    return Math.round(level * age * 100) / 100
+  })
 }
 
 // containers.json from the host checker, plus per-CT counts. A CT's own error (pct exec failed) counts as failed.
@@ -182,3 +190,8 @@ export function parseContainers(doc) {
     cts,
   }
 }
+
+// SVG points for a history graph in viewBox `0 0 {span-1} 20`: newest sample at the right edge,
+// values clamped to 0..100 (null counts as 0) so a bad reading never draws outside the graph.
+export const sparkPoints = (hist, span) =>
+  hist.map((v, i) => `${span - hist.length + i},${20 - Math.min(100, Math.max(0, v ?? 0)) / 5}`).join(' ')

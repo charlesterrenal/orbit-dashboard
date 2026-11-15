@@ -1,15 +1,32 @@
+import { useRef } from 'react'
 import { KUMA_MS, PVE_MS } from '../lib/intervals.js'
-import { pollDown, summarize, unavailableLabel, uptimeParts } from '../lib/status.js'
+import { pollDown, sparkPoints, summarize, unavailableLabel, uptimeParts } from '../lib/status.js'
 import Section from './Section.jsx'
 import Tick from './Tick.jsx'
 
 const LEVEL = { ok: '', warn: ' warn', crit: ' crit' }
 
-function Meter({ label, value, pct, level = '' }) {
+const SPAN = 60 // samples kept: 5 minutes at the 5s poll
+
+// Last SPAN values; each new sample shifts the line left by one step (1 user unit = 1px in SVG transforms).
+function Spark({ hist, n }) {
+  const pts = sparkPoints(hist, SPAN)
+  const first = SPAN - hist.length
   return (
-    <div className={`mt${level}`}>
+    <svg className="spark" viewBox={`0 0 ${SPAN - 1} 20`} preserveAspectRatio="none" aria-hidden="true">
+      <g key={n} className={n > 1 ? 'sh' : undefined}>
+        <polygon points={`${first},20 ${pts} ${SPAN - 1},20`} />
+        <polyline points={pts} />
+      </g>
+    </svg>
+  )
+}
+
+function Meter({ label, value, pct, level = '', hist, n }) {
+  return (
+    <div className={`mt${level}${hist ? ' sp' : ''}`}>
       <span className="ml" title={label}>{label}</span>
-      <span className="mb"><i style={{ width: `${pct ?? 0}%` }} /></span>
+      {hist && hist.length > 1 ? <Spark hist={hist} n={n} /> : <span className="mb"><i style={{ width: `${pct ?? 0}%` }} /></span>}
       <b className={value == null ? 'na' : undefined}>{value ?? 'n/a'}</b>
     </div>
   )
@@ -42,10 +59,17 @@ function Server({ p, pool, failed, pve }) {
   const up = p && uptimeParts(p.uptimeSec)
   const title = failed ? unavailableLabel('server', pve.updatedAt) : up ? `server, up ${up.value} ${up.unit}` : 'server'
   const mem = p && Math.round((p.memUsed / p.memTotal) * 100)
+  const hist = useRef({ at: null, cpu: [], mem: [] }).current
+  if (p && pve.updatedAt !== hist.at) {
+    hist.at = pve.updatedAt
+    hist.n = (hist.n ?? 0) + 1
+    hist.cpu = [...hist.cpu, p.cpuPct].slice(-SPAN)
+    hist.mem = [...hist.mem, mem].slice(-SPAN)
+  }
   return (
     <Section title={title} alert={failed}>
-      <Meter label="cpu" value={p && `${p.cpuPct}%`} pct={p?.cpuPct} />
-      <Meter label="memory" value={p && `${mem}%`} pct={mem} />
+      <Meter label="cpu" value={p && <Tick value={`${p.cpuPct}%`} />} pct={p?.cpuPct} hist={p && hist.cpu} n={hist.n} />
+      <Meter label="memory" value={p && <Tick value={`${mem}%`} />} pct={mem} hist={p && hist.mem} n={hist.n} />
       <Meter label={pool ? pool.name : 'disk'} value={pool && `${pool.usedPct}%`} pct={pool?.usedPct} level={pool ? LEVEL[pool.level] : ''} />
       <Meter
         label="containers"
