@@ -61,7 +61,7 @@ function LastRun({ updates, now }) {
     ['status', u.status, u.status === 'success' ? 'ok' : fine(u.status) ? '' : 'crit'],
     ['started', when(u.started_at)],
     ['completed', when(u.completed_at)],
-    ['host', u.host_status ?? 'n/a', u.host_status === 'success' ? '' : 'crit'],
+    ['host', u.host_status ?? 'n/a', u.host_status === 'failed' ? 'crit' : ''],
     ['containers', `${u.containers_ok} of ${u.containers_total} updated`],
     ['errors', u.errors || 'none', u.errors ? 'crit' : ''],
     ['next run', u.next_run ?? 'n/a'],
