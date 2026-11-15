@@ -194,6 +194,7 @@ td.ok { color: var(--teal); }
    monitoring keeps bars on a tight second line so every monitored row matches */
 @media (max-width: 560px) {
   .head { flex-wrap: nowrap; }
+  .when > span, .sec { display: none; } /* three tabs and the clock only fit without the date and seconds */
   .brand { gap: 14px; }
   .brand b { margin-right: 4px; }
   .top { grid-template-columns: 1fr; gap: 0; }
